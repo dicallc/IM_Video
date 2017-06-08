@@ -33,7 +33,7 @@ import com.xiaoxin.im.model.GroupManageConversation;
 import com.xiaoxin.im.model.MessageFactory;
 import com.xiaoxin.im.model.NomalConversation;
 import com.xiaoxin.im.ui.HomeActivity;
-import com.xiaoxin.im.ui.video.VideoShowActivity;
+import com.xiaoxin.im.ui.video.VideoListActivity;
 import com.xiaoxin.im.utils.PushUtil;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,7 +86,7 @@ public class ConversationFragment extends Fragment
       title.setBackImage(R.mipmap.ic_video);
       title.setBackListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intent mIntent=new Intent(getActivity(),VideoShowActivity.class);
+          Intent mIntent=new Intent(getActivity(),VideoListActivity.class);
           startActivity(mIntent);
         }
       });

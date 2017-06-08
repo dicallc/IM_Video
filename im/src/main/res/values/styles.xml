@@ -1,7 +1,7 @@
 <resources>
 
   <!-- Base application theme. -->
-  <style name="AppTheme" parent="@android:style/Theme.Holo.Light">
+  <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
     <item name="android:listDivider">@drawable/divider_bg</item>
   </style>
 
@@ -50,6 +50,10 @@
     <item name="android:layout_height">wrap_content</item>
     <item name="android:windowIsFloating">true</item>
     <item name="android:backgroundDimEnabled">false</item>
+  </style>
+  <style name="dialog_style" parent="@android:style/Theme.Dialog">
+    <item name="android:windowBackground">@android:color/transparent</item>
+    <item name="android:windowNoTitle">true</item>
   </style>
 
 </resources>

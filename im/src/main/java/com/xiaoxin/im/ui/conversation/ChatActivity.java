@@ -322,7 +322,7 @@ public class ChatActivity extends FragmentActivity implements ChatView {
         Intent intent_photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent_photo.resolveActivity(getPackageManager()) != null) {
             File tempFile = FileUtil.getTempFile(FileUtil.FileType.IMG);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {  //针对Android7.0，需要通过FileProvider封装过的路径，提供给外部调用
+            if (Build.VERSION.SDK_INT >= 24) {  //针对Android7.0，需要通过FileProvider封装过的路径，提供给外部调用
                 fileUri = FileProvider.getUriForFile(ChatActivity.this, "com.xiaoxin.im", tempFile);//通过FileProvider创建一个content类型的Uri，进行封装
             } else { //7.0以下，如果直接拿到相机返回的intent值，拿到的则是拍照的原图大小，很容易发生OOM，所以我们同样将返回的地址，保存到指定路径，返回到Activity时，去指定路径获取，压缩图片
                 try {

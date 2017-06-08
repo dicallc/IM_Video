@@ -27,7 +27,7 @@
         android:name="com.tencent.rdm.uuid"
         android:value="3b5b7211-6d29-457d-b39e-5385b327bf1d"/>
 
-    <activity android:name=".ui.video.VideoShowActivity">
+    <activity android:name=".ui.video.VideoListActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
@@ -236,8 +236,10 @@
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <!--<activity android:name=".ui.video.VideoShowActivity">-->
-    <!--</activity>-->
+    <!-- <activity android:name=".ui.viVideoListActivityvity"> -->
+    <!-- </activity> -->
+    <activity android:name=".ui.video.VideoShowActivity">
+    </activity>
   </application>
 
 </manifest>
