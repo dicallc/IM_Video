@@ -4,3 +4,10 @@
 /app/
 /.idea/
 /im/build/
+/im/im.iml
+/presentation/presentation.iml
+/sdk/sdk.iml
+/tlslibrary/tlslibrary.iml
+/ui/proguard-rules.pro
+/gsyVideoPlayer/
+/ui/ui.iml

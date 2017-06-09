@@ -236,8 +236,6 @@
           android:resource="@xml/file_paths"/>
     </provider>
 
-    <!-- <activity android:name=".ui.viVideoListActivityvity"> -->
-    <!-- </activity> -->
     <activity android:name=".ui.video.VideoShowActivity">
     </activity>
   </application>

@@ -36,7 +36,7 @@
   public *;
 }
 # for DexGuard only
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
 #okhttp
 -dontwarn okio.**
 -dontwarn javax.annotation.Nullable

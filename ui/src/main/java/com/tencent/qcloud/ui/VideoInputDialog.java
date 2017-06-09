@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.tencent.open.utils.Global.getContext;
+
 /**
  * 小视频输入控件
  */
