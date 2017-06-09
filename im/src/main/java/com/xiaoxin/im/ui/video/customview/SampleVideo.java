@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -40,6 +41,7 @@ public class SampleVideo extends StandardGSYVideoPlayer {
 
     //数据源
     private int mSourcePosition = 0;
+    private LinearLayout ly_bottom;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -65,9 +67,10 @@ public class SampleVideo extends StandardGSYVideoPlayer {
     private void initView() {
         mMoreScale = (TextView) findViewById(R.id.moreScale);
         mSwitchSize = (TextView) findViewById(R.id.switchSize);
+        ly_bottom = (LinearLayout) findViewById(R.id.layout_bottom);
         mChangeRotate = (TextView) findViewById(R.id.change_rotate);
         mChangeTransform = (TextView) findViewById(R.id.change_transform);
-
+        GSYVideoType.setShowType(GSYVideoType.SCREEN_TYPE_FULL);
         //切换清晰度
         mMoreScale.setOnClickListener(new OnClickListener() {
             @Override
@@ -140,7 +143,6 @@ public class SampleVideo extends StandardGSYVideoPlayer {
                 resolveTransform();
             }
         });
-
     }
 
     /**
