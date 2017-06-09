@@ -3,6 +3,7 @@ package com.xiaoxin.im.ui.video;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -26,6 +27,7 @@ public class VideoListActivity extends Activity {
   @BindView(R.id.video_list) RecyclerView mVideoList;
 
   List<VideoShowModel.InfoEntity> mlist = new ArrayList<>();
+  @BindView(R.id.swipe) SwipeRefreshLayout mSwipe;
   private VideoShowAdapter mVideoShowAdapter;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,29 @@ public class VideoListActivity extends Activity {
     ButterKnife.bind(this);
     initView();
     initData();
+  }
+
+  @Override protected void onStart() {
+    super.onStart();
+    // 不能在onCreate中设置，这个表示当前是刷新状态，如果一进来就是刷新状态，SwipeRefreshLayout会屏蔽掉下拉事件
+    //swipeRefreshLayout.setRefreshing(true);
+
+    // 设置颜色属性的时候一定要注意是引用了资源文件还是直接设置16进制的颜色，因为都是int值容易搞混
+    // 设置下拉进度的背景颜色，默认就是白色的
+    mSwipe.setProgressBackgroundColorSchemeResource(android.R.color.white);
+    // 设置下拉进度的主题颜色
+    mSwipe.setColorSchemeResources(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
+
+    // 下拉时触发SwipeRefreshLayout的下拉动画，动画完毕之后就会回调这个方法
+    mSwipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+      @Override
+      public void onRefresh() {
+        // 开始刷新，设置当前为刷新状态
+        mSwipe.setRefreshing(true);
+        initData();
+
+      }
+    });
   }
 
   private void initView() {
@@ -46,7 +71,7 @@ public class VideoListActivity extends Activity {
         List<VideoShowModel.InfoEntity> mData = mBaseQuickAdapter.getData();
         VideoShowModel.InfoEntity mInfoEntity = mData.get(mI);
         Intent intent = new Intent(VideoListActivity.this, VideoShowActivity.class);
-        intent.putExtra("url",mInfoEntity.url);
+        intent.putExtra("url", mInfoEntity.url);
         startActivity(intent);
       }
     });
@@ -55,11 +80,14 @@ public class VideoListActivity extends Activity {
   private void initData() {
     VideoShowDao.getVideoShowList(new onConnectionFinishLinstener() {
       @Override public void onSuccess(int code, Object result) {
+        mlist.clear();
         VideoShowModel mVideoShowModel = (VideoShowModel) result;
         List<VideoShowModel.InfoEntity> mInfo = mVideoShowModel.info;
         mlist.addAll(mInfo);
         mVideoShowAdapter.notifyDataSetChanged();
         KLog.e(result);
+        // 这个不能写在外边，不然会直接收起来
+        mSwipe .setRefreshing(false);
       }
 
       @Override public void onFail(int code, String result) {
