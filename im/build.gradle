@@ -158,4 +158,12 @@ dependencies {
     }
   compile 'tyrant:heartlayout:1.0.1'
   compile 'org.greenrobot:eventbus:3.0.0'
+//  apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
 }
+
+
+//apt {
+//  arguments {
+//    eventBusIndex "com.whoislcj.eventbus.MyEventBusIndex"
+//  }
+//}

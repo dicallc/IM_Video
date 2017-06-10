@@ -12,11 +12,14 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+
 import com.xiaoxin.im.R;
 import com.xiaoxin.im.model.VIdeoIngGift;
 import com.xiaoxin.im.model.VIdeoIngMember;
 import com.xiaoxin.im.model.VIdeoIngMessage;
+import com.xiaoxin.im.model.VideoShowModel;
 import com.xiaoxin.im.ui.video.adapter.MemberAdapter;
 import com.xiaoxin.im.ui.video.adapter.MessageAdapter;
 import com.xiaoxin.im.ui.video.customview.FragmentDialog;
@@ -24,9 +27,15 @@ import com.xiaoxin.im.ui.video.customview.FragmentGiftDialog;
 import com.xiaoxin.im.ui.video.customview.GiftItemView;
 import com.xiaoxin.im.ui.video.customview.HorizontialListView;
 import com.xiaoxin.im.utils.CharUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
+
 import tyrantgit.widget.HeartLayout;
 
 /**
@@ -35,53 +44,67 @@ import tyrantgit.widget.HeartLayout;
  * version:版本
  */
 public class ChatFragment extends Fragment implements View.OnClickListener, View.OnLayoutChangeListener {
-    private HorizontialListView listview ;
-    private ListView messageList ;
-    private GiftItemView giftView ;
-    private MemberAdapter mAdapter ;
-    private MessageAdapter messageAdapter ;
-    private ArrayList<VIdeoIngMember> members ;
-    private ArrayList<VIdeoIngMessage> messages ;
-    private ArrayList<VIdeoIngGift> gifts ;
-    private HeartLayout heartLayout ;
-    private Random mRandom ;
+    private HorizontialListView listview;
+    private ListView messageList;
+    private GiftItemView giftView;
+    private MemberAdapter mAdapter;
+    private MessageAdapter messageAdapter;
+    private ArrayList<VIdeoIngMember> members;
+    private ArrayList<VIdeoIngMessage> messages;
+    private ArrayList<VIdeoIngGift> gifts;
+    private HeartLayout heartLayout;
+    private Random mRandom;
     private Timer mTimer = new Timer();
-    private View sendView,menuView ,topView;
-    private EditText sendEditText ;
+    private View sendView, menuView, topView;
+    private EditText sendEditText;
     //屏幕高度
     private int screenHeight = 0;
     //软件盘弹起后所占高度阀值
     private int keyHeight = 0;
-    private View rootView ;
+    private View rootView;
+    private ImageView mClose;
 
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
-        Bundle savedInstanceState) {
+            Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_chat,null,false);
+        EventBus.getDefault().register(this);//订阅
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.fragment_chat, null, false);
         initView(view);
         initData();
         return view;
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN) //在ui线程执行
+    public void onDataSynEvent(VideoShowModel.InfoEntity infoEntity) {
+
+    }
+
     private void initView(View view) {
         mRandom = new Random();
         listview = (HorizontialListView) view.findViewById(R.id.list);
+        mClose = (ImageView) view.findViewById(R.id.close);
+        mClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
         mAdapter = new MemberAdapter(getActivity());
         listview.setAdapter(mAdapter);
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                 showDialog(mAdapter.datas.get(i));
+                showDialog(mAdapter.datas.get(i));
             }
         });
         messageList = (ListView) view.findViewById(R.id.list_message);
         messageAdapter = new MessageAdapter(getActivity());
         messageList.setAdapter(messageAdapter);
         giftView = (GiftItemView) view.findViewById(R.id.gift_item_first);
-        heartLayout = (HeartLayout)view.findViewById(R.id.heart_layout);
+        heartLayout = (HeartLayout) view.findViewById(R.id.heart_layout);
         handler.postDelayed(runnable, 2000);//每5秒执行一次runnable.
         view.findViewById(R.id.send_message).setOnClickListener(this);
         view.findViewById(R.id.gift).setOnClickListener(this);
@@ -92,13 +115,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener, View
         //获取屏幕高度
         screenHeight = getActivity().getWindowManager().getDefaultDisplay().getHeight();
         //阀值设置为屏幕高度的1/3
-        keyHeight = screenHeight/3;
+        keyHeight = screenHeight / 3;
         rootView = view.findViewById(R.id.activity_main);
         rootView.addOnLayoutChangeListener(this);
     }
 
     private void showDialog(VIdeoIngMember m) {
-        FragmentDialog.newInstance(m.name, m.sig, "确定", "取消",-1,false, new FragmentDialog.OnClickBottomListener() {
+        FragmentDialog.newInstance(m.name, m.sig, "确定", "取消", -1, false, new FragmentDialog.OnClickBottomListener() {
             @Override
             public void onPositiveClick() {
 
@@ -108,29 +131,29 @@ public class ChatFragment extends Fragment implements View.OnClickListener, View
             public void onNegtiveClick() {
 
             }
-        }).show(getChildFragmentManager(),"dialog");
+        }).show(getChildFragmentManager(), "dialog");
 
     }
 
-    Handler handler=new Handler();
-    Runnable runnable=new Runnable() {
+    Handler handler = new Handler();
+    Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (messages!=null){
+            if (messages != null) {
                 VIdeoIngMessage m = new VIdeoIngMessage();
-                m.img = "http://v1.qzone.cc/avatar/201503/06/18/27/54f981200879b698.jpg%21200x200.jpg" ;
-                m.name=CharUtils.getRandomName(8) ;
-                m.level = (int)(Math.random()*100+1) ;
-                m.message= CharUtils.getRandomString(20);
+                m.img = "http://v1.qzone.cc/avatar/201503/06/18/27/54f981200879b698.jpg%21200x200.jpg";
+                m.name = CharUtils.getRandomName(8);
+                m.level = (int) (Math.random() * 100 + 1);
+                m.message = CharUtils.getRandomString(20);
                 messages.add(m);
                 messageAdapter.notifyDataSetChanged();
-                messageList.setSelection(messageAdapter.getCount()-1);
+                messageList.setSelection(messageAdapter.getCount() - 1);
             }
             handler.postDelayed(this, 2000);
         }
     };
-    Handler heartHandler=new Handler();
-    Runnable heartRunnable=new Runnable() {
+    Handler heartHandler = new Handler();
+    Runnable heartRunnable = new Runnable() {
         @Override
         public void run() {
             heartLayout.post(new Runnable() {
@@ -158,15 +181,16 @@ public class ChatFragment extends Fragment implements View.OnClickListener, View
     private int randomColor() {
         return Color.rgb(mRandom.nextInt(255), mRandom.nextInt(255), mRandom.nextInt(255));
     }
+
     /**
      * 添加一些数据
      */
     private void initData() {
         members = new ArrayList<>();
-        for (int i=0;i<18;i++){
+        for (int i = 0; i < 18; i++) {
             VIdeoIngMember m = new VIdeoIngMember();
-            m.img = "http://v1.qzone.cc/avatar/201503/06/18/27/54f981200879b698.jpg%21200x200.jpg" ;
-            m.name="Baby" ;
+            m.img = "http://v1.qzone.cc/avatar/201503/06/18/27/54f981200879b698.jpg%21200x200.jpg";
+            m.name = "Baby";
             m.sig = "这个家伙很懒，什么都没留下！";
             members.add(m);
         }
@@ -174,12 +198,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener, View
 
 
         messages = new ArrayList<>();
-        for (int i=0;i<3;i++){
+        for (int i = 0; i < 3; i++) {
             VIdeoIngMessage m = new VIdeoIngMessage();
-            m.img = "http://www.ld12.com/upimg358/allimg/c150808/143Y5Q9254240-11513_lit.png" ;
-            m.name="Baby" ;
-            m.level = i ;
-            m.message="小新直播倡导绿色直播，内容含低俗，引诱，暴力等内容将被封停帐号。新播小伙伴们《至尊榜》活动内容重新更替，暂时下架，活动依旧有效" ;
+            m.img = "http://www.ld12.com/upimg358/allimg/c150808/143Y5Q9254240-11513_lit.png";
+            m.name = "Baby";
+            m.level = i;
+            m.message = "小新直播倡导绿色直播，内容含低俗，引诱，暴力等内容将被封停帐号。新播小伙伴们《至尊榜》活动内容重新更替，暂时下架，活动依旧有效";
             messages.add(m);
         }
         messageAdapter.setDatas(messages);
@@ -192,44 +216,46 @@ public class ChatFragment extends Fragment implements View.OnClickListener, View
         super.onDestroy();
         mTimer.cancel();
         handler.removeCallbacks(runnable);
+        EventBus.getDefault().unregister(this);//解除订阅
     }
+
 
     @Override
     public void onClick(View v) {
-        int id = v.getId() ;
-        if (id==R.id.send_message){
+        int id = v.getId();
+        if (id == R.id.send_message) {
             sendView.setVisibility(View.VISIBLE);
             menuView.setVisibility(View.GONE);
             topView.setVisibility(View.GONE);
             sendEditText.requestFocus();
             InputMethodManager inputManager =
-                    (InputMethodManager)sendEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    (InputMethodManager) sendEditText.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.showSoftInput(sendEditText, 0);
-        }else if (id==R.id.gift){
+        } else if (id == R.id.gift) {
             FragmentGiftDialog.newInstance().setOnGridViewClickListener(new FragmentGiftDialog.OnGridViewClickListener() {
                 @Override
                 public void click(VIdeoIngGift gift) {
-                    gift.name="文人骚客";
-                    gift.giftName = "送你一个小礼物" ;
-                    if (!gifts.contains(gift)){
+                    gift.name = "文人骚客";
+                    gift.giftName = "送你一个小礼物";
+                    if (!gifts.contains(gift)) {
                         gifts.add(gift);
                         giftView.setGift(gift);
                     }
                     giftView.addNum(1);
                 }
-            }).show(getChildFragmentManager(),"dialog");
+            }).show(getChildFragmentManager(), "dialog");
         }
     }
 
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         //现在认为只要控件将Activity向上推的高度超过了1/3屏幕高，就认为软键盘弹起
-        if(oldBottom != 0 && bottom != 0 &&(oldBottom - bottom > keyHeight)){
+        if (oldBottom != 0 && bottom != 0 && (oldBottom - bottom > keyHeight)) {
             sendView.setVisibility(View.VISIBLE);
             menuView.setVisibility(View.GONE);
             topView.setVisibility(View.GONE);
 //            Toast.makeText(MainActivity.getActivity(), "监听到软键盘弹起...", Toast.LENGTH_SHORT).show();
-        }else if(oldBottom != 0 && bottom != 0 &&(bottom - oldBottom > keyHeight)){
+        } else if (oldBottom != 0 && bottom != 0 && (bottom - oldBottom > keyHeight)) {
             sendView.setVisibility(View.GONE);
             menuView.setVisibility(View.VISIBLE);
             topView.setVisibility(View.VISIBLE);
