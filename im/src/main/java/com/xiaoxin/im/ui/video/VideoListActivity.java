@@ -18,6 +18,9 @@ import com.xiaoxin.im.common.onConnectionFinishLinstener;
 import com.xiaoxin.im.model.VideoShowModel;
 import com.xiaoxin.im.ui.customview.DividerGridItemDecoration;
 import com.xiaoxin.im.ui.video.dao.VideoShowDao;
+
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,6 +73,7 @@ public class VideoListActivity extends Activity {
       @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
         List<VideoShowModel.InfoEntity> mData = mBaseQuickAdapter.getData();
         VideoShowModel.InfoEntity mInfoEntity = mData.get(mI);
+        EventBus.getDefault().post(mInfoEntity);
         Intent intent = new Intent(VideoListActivity.this, VideoShowActivity.class);
         intent.putExtra("url", mInfoEntity.url);
         startActivity(intent);
