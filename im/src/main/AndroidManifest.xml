@@ -27,7 +27,7 @@
         android:name="com.tencent.rdm.uuid"
         android:value="3b5b7211-6d29-457d-b39e-5385b327bf1d"/>
 
-    <activity android:name=".ui.video.VideoListActivity">
+    <activity android:name=".ui.video.VideoHomeActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

@@ -20,6 +20,7 @@
             android:orientation="horizontal">
 
             <com.tencent.qcloud.ui.CircleImageView
+                android:id="@+id/anchor_icon"
                 android:layout_width="@dimen/avatar_size36"
                 android:layout_height="@dimen/avatar_size36"
                 android:layout_margin="2dp"
@@ -33,11 +34,19 @@
                 android:orientation="vertical"
                 android:paddingLeft="5dp">
 
-                <TextView
+                <com.xiaoxin.im.ui.video.customview.MarqueeTextview
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="直播"
+                    android:text="路漫漫其修远兮"
+                    android:ellipsize="marquee"
+                    android:maxEms="3"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:marqueeRepeatLimit="marquee_forever"
+                    android:scrollHorizontally="true"
+                    android:singleLine="true"
+                    android:id="@+id/anchor_name"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
 
@@ -46,6 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="1209"
+                    android:id="@+id/person_nums"
                     android:textColor="@android:color/white"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -76,7 +86,7 @@
     </LinearLayout>
 
     <TextView
-        android:text="狗粮: 100000"
+        android:text="新彩: 12306"
         android:textColor="@android:color/white"
         android:textSize="12sp"
         android:layout_marginTop="10dp"

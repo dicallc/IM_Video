@@ -1,29 +1,19 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.xiaoxin.im.ui.video.VideoListActivity"
-    >
-  <com.tencent.qcloud.ui.TemplateTitle
-      android:id="@+id/video_show_title"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+  <FrameLayout
+      android:id="@+id/contentPanel"
+      android:layout_marginBottom="50dp"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"  />
+
+
+  <android.support.v4.app.FragmentTabHost
+      android:id="@android:id/tabhost"
+      android:layout_gravity="bottom"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      app:titleText="放松一刻Show"
-      />
-  <android.support.v4.widget.SwipeRefreshLayout
-      android:id="@+id/swipe"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent">
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/video_list"
-      android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      >
-  </android.support.v7.widget.RecyclerView>
-  </android.support.v4.widget.SwipeRefreshLayout>
+     />
 
-</LinearLayout>
+</merge>

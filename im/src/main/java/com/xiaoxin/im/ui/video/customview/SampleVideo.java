@@ -42,6 +42,7 @@ public class SampleVideo extends StandardGSYVideoPlayer {
     //数据源
     private int mSourcePosition = 0;
     private LinearLayout ly_bottom;
+    public ImageView mClose;
 
     /**
      * 1.5.0开始加入，如果需要不同布局区分功能，需要重载
@@ -66,6 +67,7 @@ public class SampleVideo extends StandardGSYVideoPlayer {
 
     private void initView() {
         mMoreScale = (TextView) findViewById(R.id.moreScale);
+        mClose = (ImageView) findViewById(R.id.small_close);
         mSwitchSize = (TextView) findViewById(R.id.switchSize);
         ly_bottom = (LinearLayout) findViewById(R.id.layout_bottom);
         mChangeRotate = (TextView) findViewById(R.id.change_rotate);

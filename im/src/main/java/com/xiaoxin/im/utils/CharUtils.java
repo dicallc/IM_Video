@@ -1,5 +1,7 @@
 package com.xiaoxin.im.utils;
 
+import com.xiaoxin.im.R;
+
 /**
  * author：Administrator on 2016/12/26 10:32
  * description:文件说明
@@ -14,6 +16,10 @@ public class CharUtils {
   protected static String[] name_arr = {
       "冷安夏","卖身葬楼主","飞吧皮卡丘","老三的老二老大了","烤鸭蛋给家长","小心，这逼有诈","萌面欧巴桑","囧囧有神","点我者得爱情","七尺dà乳","一年级再贱i","此处禁止大小便","按键伤人","郑射你无罪","咬住JJ猛舔不放","煮人为快乐之本","温柔一刀"
   };
+
+  protected static int[] person_icons = {
+          R.mipmap.icon1, R.mipmap.icon2, R.mipmap.icon3, R.mipmap.icon4, R.mipmap.icon5, R.mipmap.icon6, R.mipmap.icon7, R.mipmap.icon8, R.mipmap.icon9, R.mipmap.icon10, R.mipmap.icon11, R.mipmap.icon12, R.mipmap.icon13, R.mipmap.icon14, R.mipmap.icon15, R.mipmap.icon16, R.mipmap.icon17, R.mipmap.icon18, R.mipmap.icon19, R.mipmap.icon20
+      };
 
   public static String getRandomString(int length) {
     int index=(int)(Math.random()*arr.length);
@@ -40,25 +46,9 @@ public class CharUtils {
   }
   public static String getRandomName(int length) {
     int index=(int)(Math.random()*name_arr.length);
-    //Random random = new Random();
-    //StringBuffer sb = new StringBuffer();
-    //for (int i = 0; i < length; i++) {
-    //  int number = random.nextInt(3);
-    //  long result = 0;
-    //  switch (number) {
-    //    case 0:
-    //      result = Math.round(Math.random() * 25 + 65);
-    //      sb.append(String.valueOf((char) result));
-    //      break;
-    //    case 1:
-    //      result = Math.round(Math.random() * 25 + 97);
-    //      sb.append(String.valueOf((char) result));
-    //      break;
-    //    case 2:
-    //      sb.append(String.valueOf(new Random().nextInt(10)));
-    //      break;
-    //  }
-    //}
     return name_arr[index];
+  }  public static int getRandomPersonIcon() {
+    int index=(int)(Math.random()*person_icons.length);
+    return person_icons[index];
   }
 }

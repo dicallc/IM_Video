@@ -5,7 +5,7 @@ package com.xiaoxin.im.model;
  */
 
 public class VIdeoIngMember {
-    public String img ;
+    public int img ;
     public String name ;
     public String sig ;
 }
