@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'AndResGuard'
 apply plugin: 'com.jakewharton.butterknife'
 
+
 android {
   signingConfigs {
     release {
@@ -158,9 +159,15 @@ dependencies {
     }
   compile 'tyrant:heartlayout:1.0.1'
   compile 'org.greenrobot:eventbus:3.0.0'
+  compile "com.android.support:multidex:1.0.1"
+//  compile("com.tinkerpatch.tinker:tinker-android-anno:1.7.11")
+  compile("com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.1.7")
 //  apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
-}
+  compile 'com.tencent.bugly:crashreport:latest.release' //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
+//  compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
 
+}
+apply from: 'tinkerpatch.gradle'
 
 //apt {
 //  arguments {

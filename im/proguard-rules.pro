@@ -77,6 +77,8 @@
 -keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent {
     <init>(Java.lang.Throwable);
 }
+-dontwarn com.tencent.bugly.**
+-keep public class com.tencent.bugly.**{*;}
 ##---------------End: proguard configuration for Gson  ----------
 #-------------------------------------------------------------------------
 

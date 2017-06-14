@@ -1,37 +1,19 @@
 package com.xiaoxin.im.ui.video;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.Toast;
-
-import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.socks.library.KLog;
-import com.tencent.qcloud.ui.TemplateTitle;
-import com.xiaoxin.im.R;
-import com.xiaoxin.im.adapter.VideoShowAdapter;
-import com.xiaoxin.im.common.onConnectionFinishLinstener;
-import com.xiaoxin.im.model.VideoShowModel;
-import com.xiaoxin.im.ui.SimpleFragment;
-import com.xiaoxin.im.ui.customview.DividerGridItemDecoration;
-import com.xiaoxin.im.ui.video.dao.VideoShowDao;
-
-import org.greenrobot.eventbus.EventBus;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.tinkerpatch.sdk.TinkerPatch;
+import com.xiaoxin.im.R;
+import com.xiaoxin.im.ui.SimpleFragment;
 
 public class VideoHomeActivity extends FragmentActivity {
 
@@ -49,6 +31,7 @@ public class VideoHomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_list);
         ButterKnife.bind(this);
+        TinkerPatch.with().fetchPatchUpdate(true);
         mLayoutInflater = LayoutInflater.from(this);
         mTabHost.setup(this, getSupportFragmentManager(), R.id.contentPanel);
         int fragmentCount = mFragmentArray.length;
@@ -68,8 +51,9 @@ public class VideoHomeActivity extends FragmentActivity {
                 Toast.makeText(getApplicationContext(),"还在努力做中",Toast.LENGTH_SHORT).show();
             }
         });
+        Log.e(TAG, "I am on patch onCreate");
     }
-
+    private static final String TAG = "Tinker.MainActivity";
     /**
      * 动态获取tabicon
      * @param index tab index
