@@ -27,7 +27,7 @@
         android:name="com.tencent.rdm.uuid"
         android:value="3b5b7211-6d29-457d-b39e-5385b327bf1d"/>
 
-    <activity android:name=".ui.video.VideoHomeActivity">
+    <activity android:name=".SplashActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 
@@ -81,6 +81,10 @@
     <activity android:name=".ui.contact.send.TCVideoRecordActivity">
     </activity>
     <activity android:name=".ui.contact.send.VideoActivity">
+    </activity>
+    <activity android:name="com.xiaoxin.im.ui.video.VideoHomeActivity">
+    </activity>
+    <activity android:name="com.xiaoxin.im.ui.gank.GankActivity">
     </activity>
 
     <!-- 消息收发service -->

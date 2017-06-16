@@ -33,6 +33,7 @@ import com.xiaoxin.im.model.GroupManageConversation;
 import com.xiaoxin.im.model.MessageFactory;
 import com.xiaoxin.im.model.NomalConversation;
 import com.xiaoxin.im.ui.HomeActivity;
+import com.xiaoxin.im.ui.gank.GankActivity;
 import com.xiaoxin.im.ui.video.VideoHomeActivity;
 import com.xiaoxin.im.utils.PushUtil;
 import java.util.ArrayList;
@@ -83,6 +84,13 @@ public class ConversationFragment extends Fragment
         }
       });
       TemplateTitle title = (TemplateTitle) view.findViewById(R.id.conversation_antionbar);
+      title.setMoreImg(R.mipmap.book);
+      title.setMoreImgAction(new View.OnClickListener() {
+        @Override public void onClick(View v) {
+          Intent mIntent=new Intent(getActivity(),GankActivity.class);
+          startActivity(mIntent);
+        }
+      });
       title.setBackImage(R.mipmap.ic_video);
       title.setBackListener(new View.OnClickListener() {
         @Override public void onClick(View v) {

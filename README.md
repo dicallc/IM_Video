@@ -6,3 +6,5 @@
 2.对IM架构使用mvp，使代码高复用
 3.使用IJKPlayer对流媒体的支持
 4.集成bugly(bug收集反馈系统)和tinber(热修复框架)可以及时解决bug在不发版本的情况下
+5.使用H5混合技术开发部分业务模块
+6.使用AndroidPerformanceMonitor优化应用UI渲染及优化

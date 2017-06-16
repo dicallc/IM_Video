@@ -11,7 +11,6 @@ import android.widget.TabHost;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.tinkerpatch.sdk.TinkerPatch;
 import com.xiaoxin.im.R;
 import com.xiaoxin.im.ui.SimpleFragment;
 
@@ -31,7 +30,7 @@ public class VideoHomeActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_list);
         ButterKnife.bind(this);
-        TinkerPatch.with().fetchPatchUpdate(true);
+        //TinkerPatch.with().fetchPatchUpdate(true);
         mLayoutInflater = LayoutInflater.from(this);
         mTabHost.setup(this, getSupportFragmentManager(), R.id.contentPanel);
         int fragmentCount = mFragmentArray.length;

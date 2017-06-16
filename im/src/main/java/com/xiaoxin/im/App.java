@@ -3,6 +3,7 @@ package com.xiaoxin.im;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import com.github.moduth.blockcanary.BlockCanary;
 import com.socks.library.KLog;
 import com.tencent.bugly.imsdk.crashreport.CrashReport;
 import com.tencent.imsdk.TIMGroupReceiveMessageOpt;
@@ -25,6 +26,8 @@ public class App extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    // 在主进程初始化调用哈
+    BlockCanary.install(this, new AppBlockCanaryContext()).start();
     initTinkerPatch();
     CrashReport.initCrashReport(getApplicationContext(), "1400032075", false);
     //useSample();

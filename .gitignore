@@ -11,3 +11,5 @@
 /ui/proguard-rules.pro
 /gsyVideoPlayer/
 /ui/ui.iml
+!/im/im-release.apk
+/CordovaLib/build/

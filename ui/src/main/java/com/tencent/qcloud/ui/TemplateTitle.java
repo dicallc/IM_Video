@@ -86,6 +86,10 @@ public class TemplateTitle extends RelativeLayout {
         moreImg = img;
         ImageView moreImgView = (ImageView) findViewById(R.id.img_more);
         moreImgView.setImageDrawable(getContext().getResources().getDrawable(moreImg));
+        ViewGroup.LayoutParams mLayoutParams = moreImgView.getLayoutParams();
+        mLayoutParams.height = 96;
+        mLayoutParams.width =96;
+        moreImgView.setLayoutParams(mLayoutParams);
     }
 
 

@@ -85,10 +85,16 @@ import java.util.List;
   }
 
   private void init() {
+    //初始化IMSDK
     SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
     int loglvl = pref.getInt("loglvl", TIMLogLevel.DEBUG.ordinal());
-    //初始化IMSDK
     InitBusiness.start(getApplicationContext(), loglvl);
+    //new Thread(new Runnable() {
+    //  @Override public void run() {
+    //
+    //  }
+    //}).start();
+
     //初始化TLS
     TlsBusiness.init(getApplicationContext());
     String id = TLSService.getInstance().getLastUserIdentifier();

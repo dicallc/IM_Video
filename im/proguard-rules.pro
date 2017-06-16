@@ -44,6 +44,10 @@
 #okhttputils
 -dontwarn com.zhy.http.**
 -keep class com.zhy.http.**{*;}
+#CordovaLib
+-dontwarn org.apache.cordova.**
+-keep class org.apache.cordova.**{*;}
+-keep public class * extends org.apache.cordova.CordovaPlugin
 #HeartLayout
 -dontwarn tyrantgit.widget.**
 -keep class ctyrantgit.widget.**{*;}
@@ -108,6 +112,8 @@
 -keepattributes *Annotation*,InnerClasses
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
+-repackageclasses ''
+-allowaccessmodification
 #----------------------------------------------------------------------------
 
 #---------------------------------默认保留区---------------------------------
@@ -182,3 +188,4 @@
 # Keep the support library
 -keep class android.support.v7.** { *; }
 -keep interface android.support.v7.** { *; }
+-keep class android.support.multidex.** {*;}
