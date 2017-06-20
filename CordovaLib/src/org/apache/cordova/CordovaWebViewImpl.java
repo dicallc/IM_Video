@@ -25,19 +25,17 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
 import android.widget.FrameLayout;
-
-import org.apache.cordova.engine.SystemWebViewEngine;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.cordova.engine.SystemWebViewEngine;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Main class for interacting with a Cordova webview. Manages plugins, events, and a CordovaWebViewEngine.
@@ -67,7 +65,7 @@ public class CordovaWebViewImpl implements CordovaWebView {
 
     /** custom view created by the browser (a video player for example) */
     private View mCustomView;
-    private WebChromeClient.CustomViewCallback mCustomViewCallback;
+    private CustomViewCallback mCustomViewCallback;
 
     private Set<Integer> boundKeyCodes = new HashSet<Integer>();
 
@@ -242,7 +240,7 @@ public class CordovaWebViewImpl implements CordovaWebView {
 
     @Override
     @Deprecated
-    public void showCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+    public void showCustomView(View view, CustomViewCallback callback) {
         // This code is adapted from the original Android Browser code, licensed under the Apache License, Version 2.0
         LOG.d(TAG, "showing Custom View");
         // if a view already exists then immediately terminate the new one

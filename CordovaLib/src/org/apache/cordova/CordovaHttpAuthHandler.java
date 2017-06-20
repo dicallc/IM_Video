@@ -18,7 +18,7 @@
 */
 package org.apache.cordova;
 
-import android.webkit.HttpAuthHandler;
+import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
 
 /**
  * Specifies interface for HTTP auth handler object which is used to handle auth requests and

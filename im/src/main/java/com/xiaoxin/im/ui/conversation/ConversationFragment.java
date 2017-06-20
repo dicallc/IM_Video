@@ -11,6 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import com.arialyy.aria.core.Aria;
+import com.arialyy.aria.core.download.DownloadTask;
+import com.socks.library.KLog;
 import com.tencent.imsdk.TIMConversation;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMMessage;
@@ -46,7 +49,7 @@ import java.util.List;
  * 会话列表界面
  */
 public class ConversationFragment extends Fragment
-    implements ConversationView,FriendshipMessageView,GroupManageMessageView {
+    implements ConversationView, FriendshipMessageView, GroupManageMessageView {
   private final String TAG = "ConversationFragment";
 
   private View view;
@@ -60,23 +63,57 @@ public class ConversationFragment extends Fragment
   private FriendshipConversation friendshipConversation;
   private GroupManageConversation groupManageConversation;
 
-
   public ConversationFragment() {
-    // Required empty public constructor
   }
 
+  @Override public void onStart() {
+    super.onStart();
+    //ZipExtractorTask mZipExtractorTask =
+    //    new ZipExtractorTask(Environment.getExternalStorageDirectory().getPath() + "/oa.zip",
+    //        Environment.getExternalStorageDirectory().getPath() + "/unzip", getActivity(), true);
+    //mZipExtractorTask.execute();
 
-  @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    //Aria.download(getActivity()).addSchedulerListener(new MySchedulerListener());
+    //Aria.download(this)
+    //    .load("http://shashayuapp.oss-cn-shenzhen.aliyuncs.com/ppmMember.zip")
+    //    .setDownloadPath(Environment.getExternalStorageDirectory().getPath() + "/oa.zip")	//文件保存路径
+    //    .start();   //启动下载
+  }
+
+  final static class MySchedulerListener extends Aria.DownloadSchedulerListener {
+    @Override public void onTaskPre(DownloadTask task) {
+      super.onTaskPre(task);
+    }
+
+    @Override public void onTaskStop(DownloadTask task) {
+      super.onTaskStop(task);
+    }
+
+    @Override public void onTaskCancel(DownloadTask task) {
+      super.onTaskCancel(task);
+    }
+
+    @Override public void onTaskRunning(DownloadTask task) {
+      super.onTaskRunning(task);
+      KLog.e("完成了: " + task.getPercent() + "速度: " + task.getConvertSpeed());
+    }
+
+    @Override public void onTaskComplete(DownloadTask task) {
+      super.onTaskComplete(task);
+      KLog.e("完成了");
+    }
+  }
+
+  @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
       Bundle savedInstanceState) {
-    if (view == null){
+    if (view == null) {
       view = inflater.inflate(R.layout.fragment_conversation, container, false);
       listView = (ListView) view.findViewById(R.id.list);
-      adapter = new ConversationAdapter(getActivity(), R.layout.item_conversation, conversationList);
+      adapter =
+          new ConversationAdapter(getActivity(), R.layout.item_conversation, conversationList);
       listView.setAdapter(adapter);
       listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
           conversationList.get(position).navToDetail(getActivity());
           if (conversationList.get(position) instanceof GroupManageConversation) {
             groupManagerPresenter.getGroupManageLastMessage();
@@ -87,14 +124,14 @@ public class ConversationFragment extends Fragment
       title.setMoreImg(R.mipmap.book);
       title.setMoreImgAction(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intent mIntent=new Intent(getActivity(),GankActivity.class);
+          Intent mIntent = new Intent(getActivity(), GankActivity.class);
           startActivity(mIntent);
         }
       });
       title.setBackImage(R.mipmap.ic_video);
       title.setBackListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
-          Intent mIntent=new Intent(getActivity(),VideoHomeActivity.class);
+          Intent mIntent = new Intent(getActivity(), VideoHomeActivity.class);
           startActivity(mIntent);
         }
       });
@@ -107,40 +144,34 @@ public class ConversationFragment extends Fragment
     }
     adapter.notifyDataSetChanged();
     return view;
-
   }
 
-  @Override
-  public void onResume(){
+  @Override public void onResume() {
     super.onResume();
     refresh();
     PushUtil.getInstance().reset();
   }
-
-
-
 
   /**
    * 更新最新消息显示
    *
    * @param message 最后一条消息
    */
-  @Override
-  public void updateMessage(TIMMessage message) {
-    if (message == null){
+  @Override public void updateMessage(TIMMessage message) {
+    if (message == null) {
       adapter.notifyDataSetChanged();
       return;
     }
-    if (message.getConversation().getType() == TIMConversationType.System){
+    if (message.getConversation().getType() == TIMConversationType.System) {
       groupManagerPresenter.getGroupManageLastMessage();
       return;
     }
     if (MessageFactory.getMessage(message) instanceof CustomMessage) return;
     NomalConversation conversation = new NomalConversation(message.getConversation());
-    Iterator<Conversation> iterator =conversationList.iterator();
-    while (iterator.hasNext()){
+    Iterator<Conversation> iterator = conversationList.iterator();
+    while (iterator.hasNext()) {
       Conversation c = iterator.next();
-      if (conversation.equals(c)){
+      if (conversation.equals(c)) {
         conversation = (NomalConversation) c;
         iterator.remove();
         break;
@@ -155,22 +186,18 @@ public class ConversationFragment extends Fragment
   /**
    * 更新好友关系链消息
    */
-  @Override
-  public void updateFriendshipMessage() {
+  @Override public void updateFriendshipMessage() {
     friendshipManagerPresenter.getFriendshipLastMessage();
   }
 
   /**
    * 删除会话
-   *
-   * @param identify
    */
-  @Override
-  public void removeConversation(String identify) {
+  @Override public void removeConversation(String identify) {
     Iterator<Conversation> iterator = conversationList.iterator();
-    while(iterator.hasNext()){
+    while (iterator.hasNext()) {
       Conversation conversation = iterator.next();
-      if (conversation.getIdentify()!=null&&conversation.getIdentify().equals(identify)){
+      if (conversation.getIdentify() != null && conversation.getIdentify().equals(identify)) {
         iterator.remove();
         adapter.notifyDataSetChanged();
         return;
@@ -180,13 +207,11 @@ public class ConversationFragment extends Fragment
 
   /**
    * 更新群信息
-   *
-   * @param info
    */
-  @Override
-  public void updateGroupInfo(TIMGroupCacheInfo info) {
-    for (Conversation conversation : conversationList){
-      if (conversation.getIdentify()!=null && conversation.getIdentify().equals(info.getGroupInfo().getGroupId())){
+  @Override public void updateGroupInfo(TIMGroupCacheInfo info) {
+    for (Conversation conversation : conversationList) {
+      if (conversation.getIdentify() != null && conversation.getIdentify()
+          .equals(info.getGroupInfo().getGroupId())) {
         adapter.notifyDataSetChanged();
         return;
       }
@@ -196,15 +221,13 @@ public class ConversationFragment extends Fragment
   /**
    * 刷新
    */
-  @Override
-  public void refresh() {
+  @Override public void refresh() {
     Collections.sort(conversationList);
     adapter.notifyDataSetChanged();
-    if (getActivity() instanceof HomeActivity)
+    if (getActivity() instanceof HomeActivity) {
       ((HomeActivity) getActivity()).setMsgUnread(getTotalUnreadNum() == 0);
+    }
   }
-
-
 
   /**
    * 获取好友关系链管理系统最后一条消息的回调
@@ -212,12 +235,11 @@ public class ConversationFragment extends Fragment
    * @param message 最后一条消息
    * @param unreadCount 未读数
    */
-  @Override
-  public void onGetFriendshipLastMessage(TIMFriendFutureItem message, long unreadCount) {
-    if (friendshipConversation == null){
+  @Override public void onGetFriendshipLastMessage(TIMFriendFutureItem message, long unreadCount) {
+    if (friendshipConversation == null) {
       friendshipConversation = new FriendshipConversation(message);
       conversationList.add(friendshipConversation);
-    }else{
+    } else {
       friendshipConversation.setLastMessage(message);
     }
     friendshipConversation.setUnreadCount(unreadCount);
@@ -230,21 +252,18 @@ public class ConversationFragment extends Fragment
    *
    * @param message 消息列表
    */
-  @Override
-  public void onGetFriendshipMessage(List<TIMFriendFutureItem> message) {
+  @Override public void onGetFriendshipMessage(List<TIMFriendFutureItem> message) {
     friendshipManagerPresenter.getFriendshipLastMessage();
   }
+
   /**
    * 初始化界面或刷新界面
-   *
-   * @param conversationList
    */
-  @Override
-  public void initView(List<TIMConversation> conversationList) {
+  @Override public void initView(List<TIMConversation> conversationList) {
     this.conversationList.clear();
     groupList = new ArrayList<>();
-    for (TIMConversation item:conversationList){
-      switch (item.getType()){
+    for (TIMConversation item : conversationList) {
+      switch (item.getType()) {
         case C2C:
         case Group:
           this.conversationList.add(new NomalConversation(item));
@@ -255,51 +274,52 @@ public class ConversationFragment extends Fragment
     friendshipManagerPresenter.getFriendshipLastMessage();
     groupManagerPresenter.getGroupManageLastMessage();
   }
+
   /**
    * 获取群管理最后一条系统消息的回调
    *
-   * @param message     最后一条消息
+   * @param message 最后一条消息
    * @param unreadCount 未读数
    */
-  @Override
-  public void onGetGroupManageLastMessage(TIMGroupPendencyItem message, long unreadCount) {
-    if (groupManageConversation == null){
+  @Override public void onGetGroupManageLastMessage(TIMGroupPendencyItem message,
+      long unreadCount) {
+    if (groupManageConversation == null) {
       groupManageConversation = new GroupManageConversation(message);
       conversationList.add(groupManageConversation);
-    }else{
+    } else {
       groupManageConversation.setLastMessage(message);
     }
     groupManageConversation.setUnreadCount(unreadCount);
     Collections.sort(conversationList);
     refresh();
   }
+
   /**
    * 获取群管理系统消息的回调
    *
    * @param message 分页的消息列表
    */
-  @Override
-  public void onGetGroupManageMessage(List<TIMGroupPendencyItem> message) {
+  @Override public void onGetGroupManageMessage(List<TIMGroupPendencyItem> message) {
 
   }
 
   @Override
-  public void onCreateContextMenu(ContextMenu menu, View v,
-      ContextMenu.ContextMenuInfo menuInfo) {
+  public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
     AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
     Conversation conversation = conversationList.get(info.position);
-    if (conversation instanceof NomalConversation){
+    if (conversation instanceof NomalConversation) {
       menu.add(0, 1, Menu.NONE, getString(R.string.conversation_del));
     }
   }
-  @Override
-  public boolean onContextItemSelected(MenuItem item) {
-    AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+  @Override public boolean onContextItemSelected(MenuItem item) {
+    AdapterView.AdapterContextMenuInfo info =
+        (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
     NomalConversation conversation = (NomalConversation) conversationList.get(info.position);
     switch (item.getItemId()) {
       case 1:
-        if (conversation != null){
-          if (presenter.delConversation(conversation.getType(), conversation.getIdentify())){
+        if (conversation != null) {
+          if (presenter.delConversation(conversation.getType(), conversation.getIdentify())) {
             conversationList.remove(conversation);
             adapter.notifyDataSetChanged();
           }
@@ -311,9 +331,9 @@ public class ConversationFragment extends Fragment
     return super.onContextItemSelected(item);
   }
 
-  private long getTotalUnreadNum(){
+  private long getTotalUnreadNum() {
     long num = 0;
-    for (Conversation conversation : conversationList){
+    for (Conversation conversation : conversationList) {
       num += conversation.getUnreadNum();
     }
     return num;

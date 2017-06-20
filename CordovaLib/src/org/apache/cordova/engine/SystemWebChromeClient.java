@@ -18,30 +18,28 @@
 */
 package org.apache.cordova.engine;
 
-import java.util.Arrays;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
-import android.webkit.ConsoleMessage;
-import android.webkit.GeolocationPermissions.Callback;
-import android.webkit.JsPromptResult;
-import android.webkit.JsResult;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebStorage;
-import android.webkit.WebView;
-import android.webkit.PermissionRequest;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-
+import com.tencent.smtt.export.external.interfaces.ConsoleMessage;
+import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
+import com.tencent.smtt.export.external.interfaces.JsPromptResult;
+import com.tencent.smtt.export.external.interfaces.JsResult;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebStorage;
+import com.tencent.smtt.sdk.WebView;
 import org.apache.cordova.CordovaDialogsHelper;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.LOG;
@@ -65,7 +63,7 @@ public class SystemWebChromeClient extends WebChromeClient {
     private CordovaDialogsHelper dialogsHelper;
     private Context appContext;
 
-    private WebChromeClient.CustomViewCallback mCustomViewCallback;
+    private IX5WebChromeClient.CustomViewCallback mCustomViewCallback;
     private View mCustomView;
 
     public SystemWebChromeClient(SystemWebViewEngine parentEngine) {
@@ -151,17 +149,16 @@ public class SystemWebChromeClient extends WebChromeClient {
 
     // console.log in api level 7: http://developer.android.com/guide/developing/debug-tasks.html
     // Expect this to not compile in a future Android release!
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onConsoleMessage(String message, int lineNumber, String sourceID)
-    {
-        //This is only for Android 2.1
-        if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.ECLAIR_MR1)
-        {
-            LOG.d(LOG_TAG, "%s: Line %d : %s", sourceID, lineNumber, message);
-            super.onConsoleMessage(message, lineNumber, sourceID);
-        }
-    }
+    //@Override
+    //public void onConsoleMessage(String message, int lineNumber, String sourceID)
+    //{
+    //    //This is only for Android 2.1
+    //    if(android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.ECLAIR_MR1)
+    //    {
+    //        LOG.d(LOG_TAG, "%s: Line %d : %s", sourceID, lineNumber, message);
+    //        super.onConsoleMessage(message, lineNumber, sourceID);
+    //    }
+    //}
 
     @TargetApi(8)
     @Override
@@ -181,7 +178,7 @@ public class SystemWebChromeClient extends WebChromeClient {
      * @param origin
      * @param callback
      */
-    public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
+    public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissionsCallback callback) {
         super.onGeolocationPermissionsShowPrompt(origin, callback);
         callback.invoke(origin, true, false);
         //Get the plugin, it should be loaded
@@ -195,7 +192,7 @@ public class SystemWebChromeClient extends WebChromeClient {
 
     // API level 7 is required for this, see if we could lower this using something else
     @Override
-    public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+    public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback callback) {
         parentEngine.getCordovaWebView().showCustomView(view, callback);
     }
 
@@ -279,12 +276,12 @@ public class SystemWebChromeClient extends WebChromeClient {
         return true;
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    @Override
-    public void onPermissionRequest(final PermissionRequest request) {
-        LOG.d(LOG_TAG, "onPermissionRequest: " + Arrays.toString(request.getResources()));
-        request.grant(request.getResources());
-    }
+    //@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    //@Override
+    //public void onPermissionRequest(final PermissionRequest request) {
+    //    LOG.d(LOG_TAG, "onPermissionRequest: " + Arrays.toString(request.getResources()));
+    //    request.grant(request.getResources());
+    //}
 
     public void destroyLastDialog(){
         dialogsHelper.destroyLastDialog();

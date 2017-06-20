@@ -21,8 +21,8 @@ package org.apache.cordova.engine;
 
 import android.annotation.TargetApi;
 import android.os.Build;
-import android.webkit.CookieManager;
-import android.webkit.WebView;
+import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.WebView;
 
 import org.apache.cordova.ICordovaCookieManager;
 
@@ -38,7 +38,9 @@ class SystemCookieManager implements ICordovaCookieManager {
         cookieManager = CookieManager.getInstance();
 
         //REALLY? Nobody has seen this UNTIL NOW?
-        cookieManager.setAcceptFileSchemeCookies(true);
+        // TODO: 2017/6/20 0020
+
+        //cookieManager.setAcceptFileSchemeCookies(true);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             cookieManager.setAcceptThirdPartyCookies(webView, true);

@@ -20,7 +20,7 @@ package org.apache.cordova;
 
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.ValueCallback;
+import com.tencent.smtt.sdk.ValueCallback;
 
 /**
  * Interface for all Cordova engines.

@@ -22,7 +22,7 @@ import java.util.Map;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
-import android.webkit.WebChromeClient.CustomViewCallback;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
 
 /**
  * Main interface for interacting with a Cordova webview - implemented by CordovaWebViewImpl.

@@ -18,11 +18,11 @@
 */
 package org.apache.cordova;
 
+import com.tencent.smtt.export.external.interfaces.ClientCertRequest;
 import java.security.Principal;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
 
-import android.webkit.ClientCertRequest;
 
 /**
  * Implementation of the ICordovaClientCertRequest for Android WebView.

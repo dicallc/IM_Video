@@ -1,7 +1,6 @@
 package com.xiaoxin.im.ui.gank;
 
 import android.os.Bundle;
-import com.xiaoxin.im.R;
 import org.apache.cordova.CordovaActivity;
 
 /**
@@ -12,7 +11,7 @@ public class GankActivity extends CordovaActivity{
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
-    setTheme(R.style.wihte_background);
+    //setTheme(R.style.wihte_background);
     super.onCreate(savedInstanceState);
 
     // enable Cordova apps to be started in the background

@@ -35,7 +35,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import android.webkit.WebViewClient;
+import com.tencent.smtt.sdk.WebViewClient;
 import android.widget.FrameLayout;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
