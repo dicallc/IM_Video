@@ -1,13 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#cccccc"
-    tools:context=".SplashActivity">
+    tools:context=".SplashActivity"
+    >
   <ImageView
       android:layout_width="match_parent"
+      android:id="@+id/splash_img"
       android:layout_height="match_parent"
-      android:scaleType="centerCrop"
-      android:src="@drawable/start_image" />
+      android:scaleType="fitXY"
+      android:src="@drawable/splash" />
+
+  <com.antonionicolaspina.revealtextview.RevealTextView
+      android:layout_width="wrap_content"
+      android:textSize="18sp"
+      android:id="@+id/tv_line_one"
+      android:textColor="@color/white"
+      android:layout_marginTop="150dp"
+      android:layout_centerHorizontal="true"
+      android:layout_height="wrap_content"
+      app:rtv_duration="2000"
+      android:text="Tiny World"/>
+  <com.antonionicolaspina.revealtextview.RevealTextView
+      android:layout_width="wrap_content"
+      android:textSize="18sp"
+      android:id="@+id/tv_line_two"
+      android:textColor="@color/white"
+      android:layout_below="@+id/tv_line_one"
+      android:layout_marginTop="10dp"
+      android:layout_centerHorizontal="true"
+      android:layout_height="wrap_content"
+      app:rtv_duration="2000"
+      android:text="Let your chat funning..."/>
+  <com.antonionicolaspina.revealtextview.RevealTextView
+      android:layout_width="wrap_content"
+      android:textSize="20sp"
+      android:textColor="@color/white"
+      android:layout_below="@+id/tv_line_two"
+      android:layout_toEndOf="@+id/tv_line_two"
+      android:layout_marginTop="10dp"
+      android:layout_marginLeft="-30dp"
+      android:layout_height="wrap_content"
+      app:rtv_duration="3000"
+      android:text="TinyChat"/>
 
 </RelativeLayout>

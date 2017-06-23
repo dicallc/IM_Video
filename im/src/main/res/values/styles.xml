@@ -86,4 +86,12 @@
     <!--是否去除标题 -->
     <item name="android:windowNoTitle">true</item>
   </style>
+
+  <style name="Transparent">
+    <item name="android:windowBackground">@color/white</item>
+    <item name="android:windowNoTitle">true</item>
+    <item name="android:windowFullscreen">true</item>
+    <item name="android:windowIsTranslucent">true</item>
+    <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+  </style>
 </resources>

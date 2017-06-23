@@ -1,6 +1,8 @@
 package com.xiaoxin.im.ui.gank;
 
+import android.app.Dialog;
 import android.os.Bundle;
+import com.xiaoxin.im.R;
 import org.apache.cordova.CordovaActivity;
 
 /**
@@ -11,9 +13,8 @@ public class GankActivity extends CordovaActivity{
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
-    //setTheme(R.style.wihte_background);
+    //showDialog();
     super.onCreate(savedInstanceState);
-
     // enable Cordova apps to be started in the background
     Bundle extras = getIntent().getExtras();
     if (extras != null && extras.getBoolean("cdvStartInBackground", false)) {
@@ -22,5 +23,11 @@ public class GankActivity extends CordovaActivity{
 
     // Set by <content src="index.html" /> in config.xml
     loadUrl(launchUrl);
+  }
+
+  private void showDialog() {
+    final Dialog dialog = new Dialog(GankActivity.this);
+    dialog.setContentView(R.layout.activity_gank_layout);
+    dialog.show();
   }
 }

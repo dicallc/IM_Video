@@ -172,6 +172,9 @@ dependencies {
   //  compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
   compile project(':CordovaLib')
 //  compile 'com.github.markzhai:blockcanary-android:1.5.0'
+  compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
+  compile 'com.antonionicolaspina:revealtextview:2.0'
+
 }
 apply from: 'tinkerpatch.gradle'
 

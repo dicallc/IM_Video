@@ -54,4 +54,5 @@
   <color name="c8">#FFFFFF</color>
   <color name="c9">#777777</color>
   <color name="colorBackground">#F5F5F5</color>
+  <color name="shadow">#cc222222</color>
 </resources>

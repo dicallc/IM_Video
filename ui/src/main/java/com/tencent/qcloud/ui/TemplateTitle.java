@@ -91,6 +91,9 @@ public class TemplateTitle extends RelativeLayout {
         mLayoutParams.width =96;
         moreImgView.setLayoutParams(mLayoutParams);
     }
+    public ImageView getMoreImg(){
+       return (ImageView) findViewById(R.id.img_more);
+    }
 
 
     /**
@@ -147,6 +150,9 @@ public class TemplateTitle extends RelativeLayout {
 
 
         }
+    }
+    public ImageView getBackImage(){
+            return (ImageView) findViewById(R.id.img_back);
     }
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;

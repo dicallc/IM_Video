@@ -11,10 +11,14 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.Toast;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import com.huawei.android.pushagent.PushManager;
 import com.tencent.imsdk.TIMCallBack;
 import com.tencent.imsdk.TIMConnListener;
@@ -45,6 +49,7 @@ import java.util.List;
 @SuppressLint("WrongConstant") public class SplashActivity extends FragmentActivity
     implements SplashView, TIMCallBack {
 
+  @BindView(R.id.splash_img) ImageView mSplashImg;
   private SplashPresenter presenter;
   private final int REQUEST_PHONE_PERMISSIONS = 0;
   private int LOGIN_RESULT_CODE = 100;
@@ -56,6 +61,7 @@ import java.util.List;
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.activity_splash);
+    ButterKnife.bind(this);
     initPermision();
   }
 
@@ -89,12 +95,6 @@ import java.util.List;
     SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
     int loglvl = pref.getInt("loglvl", TIMLogLevel.DEBUG.ordinal());
     InitBusiness.start(getApplicationContext(), loglvl);
-    //new Thread(new Runnable() {
-    //  @Override public void run() {
-    //
-    //  }
-    //}).start();
-
     //初始化TLS
     TlsBusiness.init(getApplicationContext());
     String id = TLSService.getInstance().getLastUserIdentifier();
@@ -142,7 +142,7 @@ import java.util.List;
     PushUtil.getInstance();
     //初始化消息监听
     MessageEvent.getInstance();
-    String deviceMan = android.os.Build.MANUFACTURER;
+    String deviceMan = Build.MANUFACTURER;
     //注册小米和华为推送
     if (deviceMan.equals("Xiaomi") && shouldMiInit()) {
       MiPushClient.registerPush(getApplicationContext(), "2882303761517480335", "5411748055335");
@@ -224,7 +224,7 @@ import java.util.List;
     ActivityManager am = ((ActivityManager) getSystemService(Context.ACTIVITY_SERVICE));
     List<ActivityManager.RunningAppProcessInfo> processInfos = am.getRunningAppProcesses();
     String mainProcessName = getPackageName();
-    int myPid = android.os.Process.myPid();
+    int myPid = Process.myPid();
     for (ActivityManager.RunningAppProcessInfo info : processInfos) {
       if (info.pid == myPid && mainProcessName.equals(info.processName)) {
         return true;
@@ -247,5 +247,12 @@ import java.util.List;
         finish();
       }
     }
+  }
+
+  @Override protected void onDestroy() {
+    super.onDestroy();
+    mSplashImg.setBackgroundResource(0);
+    System.gc();
+    System.runFinalization();
   }
 }

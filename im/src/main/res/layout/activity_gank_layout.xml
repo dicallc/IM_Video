@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+  <com.tencent.qcloud.ui.TemplateTitle
+      android:id="@+id/video_show_title"
+      app:canBack="true"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:titleText="放松一刻Gank" />
+    <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:orientation="vertical"-->
+            <!--android:gravity="center"-->
+            <!--android:layout_height="48dp">-->
+      <!--<TextView-->
+          <!--android:id="@+id/title"-->
+          <!--android:layout_width="wrap_content"-->
+          <!--android:layout_height="wrap_content"-->
+          <!--android:layout_centerInParent="true"-->
+          <!--android:textSize="18sp"-->
+          <!--android:maxLength="12"-->
+          <!--android:text="放松一刻Gank"-->
+          <!--android:singleLine="true"-->
+          <!--android:textColor="@color/black"/>-->
+    <!--</LinearLayout>-->
+  <me.zhanghai.android.materialprogressbar.MaterialProgressBar
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="-5dp"
+      android:indeterminate="true"
+      app:mpb_progressStyle="horizontal"
+      style="@style/Widget.MaterialProgressBar.ProgressBar.Horizontal" />
+
+</LinearLayout>

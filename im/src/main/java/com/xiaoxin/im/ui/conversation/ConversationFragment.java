@@ -2,7 +2,9 @@ package com.xiaoxin.im.ui.conversation;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -10,10 +12,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
-import com.arialyy.aria.core.Aria;
-import com.arialyy.aria.core.download.DownloadTask;
-import com.socks.library.KLog;
+import android.widget.RelativeLayout;
 import com.tencent.imsdk.TIMConversation;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMMessage;
@@ -36,9 +37,11 @@ import com.xiaoxin.im.model.GroupManageConversation;
 import com.xiaoxin.im.model.MessageFactory;
 import com.xiaoxin.im.model.NomalConversation;
 import com.xiaoxin.im.ui.HomeActivity;
+import com.xiaoxin.im.ui.customview.GuideView;
 import com.xiaoxin.im.ui.gank.GankActivity;
 import com.xiaoxin.im.ui.video.VideoHomeActivity;
 import com.xiaoxin.im.utils.PushUtil;
+import com.xiaoxin.im.utils.SpUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -62,46 +65,78 @@ public class ConversationFragment extends Fragment
   private List<String> groupList;
   private FriendshipConversation friendshipConversation;
   private GroupManageConversation groupManageConversation;
+  private TemplateTitle mTitle;
+  private GuideView guideView;
+  private GuideView mGuideView1;
+  private String mIsFirst;
 
   public ConversationFragment() {
   }
 
-  @Override public void onStart() {
-    super.onStart();
-    //ZipExtractorTask mZipExtractorTask =
-    //    new ZipExtractorTask(Environment.getExternalStorageDirectory().getPath() + "/oa.zip",
-    //        Environment.getExternalStorageDirectory().getPath() + "/unzip", getActivity(), true);
-    //mZipExtractorTask.execute();
+  public class MyThread implements Runnable {
+    @Override public void run() {
+      try {
+        Thread.sleep(2000);// 线程暂停10秒，单位毫秒
+        getActivity().runOnUiThread(new Runnable() {
+          @Override public void run() {
 
-    //Aria.download(getActivity()).addSchedulerListener(new MySchedulerListener());
-    //Aria.download(this)
-    //    .load("http://shashayuapp.oss-cn-shenzhen.aliyuncs.com/ppmMember.zip")
-    //    .setDownloadPath(Environment.getExternalStorageDirectory().getPath() + "/oa.zip")	//文件保存路径
-    //    .start();   //启动下载
+            if (TextUtils.isEmpty(mIsFirst) || "true".equals(mIsFirst)) FirstGuide();
+          }
+        });
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
+    }
   }
 
-  final static class MySchedulerListener extends Aria.DownloadSchedulerListener {
-    @Override public void onTaskPre(DownloadTask task) {
-      super.onTaskPre(task);
-    }
+  @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    mIsFirst = (String) SpUtils.getParam("isFirst", "");
+    new Thread(new MyThread()).start();
+  }
 
-    @Override public void onTaskStop(DownloadTask task) {
-      super.onTaskStop(task);
-    }
-
-    @Override public void onTaskCancel(DownloadTask task) {
-      super.onTaskCancel(task);
-    }
-
-    @Override public void onTaskRunning(DownloadTask task) {
-      super.onTaskRunning(task);
-      KLog.e("完成了: " + task.getPercent() + "速度: " + task.getConvertSpeed());
-    }
-
-    @Override public void onTaskComplete(DownloadTask task) {
-      super.onTaskComplete(task);
-      KLog.e("完成了");
-    }
+  private void FirstGuide() {
+    final ImageView iv = new ImageView(getActivity());
+    iv.setImageResource(R.drawable.img_new_task_guide);
+    RelativeLayout.LayoutParams params =
+        new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
+    iv.setLayoutParams(params);
+    guideView =
+        GuideView.Builder.newInstance(getActivity())
+            .setTargetView(mTitle.getMoreImg())//设置目标
+            .setCustomGuideView(iv)
+            .setDirction(GuideView.Direction.LEFT_BOTTOM)
+            .setShape(GuideView.MyShape.CIRCULAR)   // 设置圆形显示区域，
+            .setBgColor(getResources().getColor(R.color.shadow))
+            .setOnclickListener(new GuideView.OnClickCallback() {
+              @Override public void onClickedGuideView() {
+                guideView.hide();
+                mGuideView1.show();
+              }
+            })
+            .build();
+    final ImageView iv2 = new ImageView(getActivity());
+    iv2.setImageResource(R.drawable.img_new_task_guide_back);
+    RelativeLayout.LayoutParams params1 =
+        new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
+    iv2.setLayoutParams(params1);
+    mGuideView1 =
+        GuideView.Builder.newInstance(getActivity())
+            .setTargetView(mTitle.getBackImage())//设置目标
+            .setCustomGuideView(iv2)
+            .setDirction(GuideView.Direction.RIGHT_BOTTOM)
+            .setShape(GuideView.MyShape.CIRCULAR)   // 设置圆形显示区域，
+            .setBgColor(getResources().getColor(R.color.shadow))
+            .setOnclickListener(new GuideView.OnClickCallback() {
+              @Override public void onClickedGuideView() {
+                mGuideView1.hide();
+                //SpUtils.setParam(getActivity(),"isFirst","false");
+              }
+            })
+            .build();
+    guideView.show();
   }
 
   @Override public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -120,16 +155,17 @@ public class ConversationFragment extends Fragment
           }
         }
       });
-      TemplateTitle title = (TemplateTitle) view.findViewById(R.id.conversation_antionbar);
-      title.setMoreImg(R.mipmap.book);
-      title.setMoreImgAction(new View.OnClickListener() {
+      mTitle = (TemplateTitle) view.findViewById(R.id.conversation_antionbar);
+      mTitle.setMoreImg(R.mipmap.book);
+      mTitle.setMoreImgAction(new View.OnClickListener() {
         @Override public void onClick(View v) {
+
           Intent mIntent = new Intent(getActivity(), GankActivity.class);
           startActivity(mIntent);
         }
       });
-      title.setBackImage(R.mipmap.ic_video);
-      title.setBackListener(new View.OnClickListener() {
+      mTitle.setBackImage(R.mipmap.ic_video);
+      mTitle.setBackListener(new View.OnClickListener() {
         @Override public void onClick(View v) {
           Intent mIntent = new Intent(getActivity(), VideoHomeActivity.class);
           startActivity(mIntent);
