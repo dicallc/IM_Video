@@ -289,7 +289,6 @@ public class GuideView extends RelativeLayout implements ViewTreeObserver.OnGlob
                 guideViewParams.setMargins(offsetX, offsetY, -offsetX, -offsetY);
             }
 
-            //            guideViewLayout.addView(customGuideView);
 
             this.addView(customGuideView, guideViewParams);
         }

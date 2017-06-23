@@ -80,7 +80,7 @@ public class ConversationFragment extends Fragment
         getActivity().runOnUiThread(new Runnable() {
           @Override public void run() {
 
-            if (TextUtils.isEmpty(mIsFirst) || "true".equals(mIsFirst)) FirstGuide();
+            if (TextUtils.isEmpty(mIsFirst) || "true".equals(mIsFirst))    FirstGuide();
           }
         });
       } catch (InterruptedException e) {
@@ -109,6 +109,7 @@ public class ConversationFragment extends Fragment
             .setDirction(GuideView.Direction.LEFT_BOTTOM)
             .setShape(GuideView.MyShape.CIRCULAR)   // 设置圆形显示区域，
             .setBgColor(getResources().getColor(R.color.shadow))
+            //.showOnce()
             .setOnclickListener(new GuideView.OnClickCallback() {
               @Override public void onClickedGuideView() {
                 guideView.hide();
@@ -127,6 +128,7 @@ public class ConversationFragment extends Fragment
             .setTargetView(mTitle.getBackImage())//设置目标
             .setCustomGuideView(iv2)
             .setDirction(GuideView.Direction.RIGHT_BOTTOM)
+            //.showOnce()
             .setShape(GuideView.MyShape.CIRCULAR)   // 设置圆形显示区域，
             .setBgColor(getResources().getColor(R.color.shadow))
             .setOnclickListener(new GuideView.OnClickCallback() {

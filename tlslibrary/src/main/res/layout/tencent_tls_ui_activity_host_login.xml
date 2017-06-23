@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
+        android:src="@drawable/login"
         />
     <RelativeLayout
         android:id="@+id/head"
@@ -27,6 +28,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:layout_alignBottom="@id/head"
         android:background="@color/tencent_tls_ui_shadowgray"/>
 
@@ -36,8 +38,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:paddingLeft="@dimen/tencent_tls_ui_activity_horizontal_margin"
-        android:paddingRight="@dimen/tencent_tls_ui_activity_horizontal_margin">
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp">
 
         <com.tencent.qcloud.tlslibrary.customview.EditTextWithListPopupWindow
             android:id="@+id/selectCountryCode_hostLogin"
@@ -60,7 +62,7 @@
             <com.tencent.qcloud.tlslibrary.customview.EditTextWithClearButton
                 android:id="@+id/phoneNumber_hostLogin"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/tencent_tls_ui_edittext_height"
+                android:layout_height="35dp"
                 android:layout_weight="2"
                 android:paddingLeft="@dimen/tencent_tls_ui_edittext_leftpadding"
                 android:background="@drawable/background_bttoom"
@@ -69,14 +71,14 @@
                 android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
                 android:inputType="number"
                 android:singleLine="true"
-                android:textColor="@android:color/white"
+                android:textColor="#ffffff"
                 android:textColorHint="@android:color/white"
                 android:hint="请输入手机号"/>
 
             <Button
                 android:id="@+id/btn_requireCheckCode_hostLogin"
                 android:layout_width="0dp"
-                android:layout_height="@dimen/tencent_tls_ui_edittext_height"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:textColor="@android:color/white"
                 android:textColorHint="@android:color/white"
@@ -89,7 +91,7 @@
         <EditText
             android:id="@+id/checkCode_hostLogin"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/tencent_tls_ui_edittext_height"
+            android:layout_height="35dp"
             android:paddingLeft="@dimen/tencent_tls_ui_edittext_leftpadding"
             android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
             android:inputType="number"
@@ -102,10 +104,10 @@
         <Button
             android:id="@+id/btn_hostLogin"
             android:layout_width="fill_parent"
-            android:layout_height="@dimen/tencent_tls_ui_edittext_height"
+            android:layout_height="35dp"
             android:background="@drawable/btn_background"
             android:layout_marginTop="@dimen/tencent_tls_ui_edittext_margin"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="10dp"
             android:textSize="@dimen/tencent_tls_ui_buttonFontSize"
             android:textColor="@color/tencent_tls_ui_white"
             android:text="登录"/>

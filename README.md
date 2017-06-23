@@ -10,6 +10,9 @@
 #####5.使用H5混合技术开发部分业务模块,同时支持动态更新
 #####6.使用腾讯X5内核优化webview渲染速度和加载速度
 
+###开源库
+1.欢迎界面动画[revealtextview](https://github.com/ANPez/RevealTextView)，[属性动画知识点](http://www.jianshu.com/p/0f83fbe756aa)
+
 
 ### 更新 ###
 

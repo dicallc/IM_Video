@@ -47,7 +47,7 @@ public class VideoHomeActivity extends FragmentActivity {
         });    mTabHost.getTabWidget().getChildTabViewAt(2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"还在努力做中",Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
         Log.e(TAG, "I am on patch onCreate");

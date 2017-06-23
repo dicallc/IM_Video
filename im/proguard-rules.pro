@@ -51,6 +51,9 @@
 #HeartLayout
 -dontwarn tyrantgit.widget.**
 -keep class ctyrantgit.widget.**{*;}
+#revealtextview
+-dontwarn com.antonionicolaspina.revealtextview.**
+-keep class com.antonionicolaspina.revealtextview.**{*;}
 
 -dontwarn com.arialyy.aria.**
 -keep class com.arialyy.aria.**{*;}
