@@ -35,6 +35,8 @@ import com.tencent.qcloud.presentation.event.RefreshEvent;
 import com.tencent.qcloud.presentation.presenter.SplashPresenter;
 import com.tencent.qcloud.presentation.viewfeatures.SplashView;
 import com.tencent.qcloud.tlslibrary.activity.HostLoginActivity;
+import com.tencent.qcloud.tlslibrary.activity.IndependentLoginActivity;
+import com.tencent.qcloud.tlslibrary.service.Constants;
 import com.tencent.qcloud.tlslibrary.service.TLSService;
 import com.tencent.qcloud.tlslibrary.service.TlsBusiness;
 import com.tencent.qcloud.ui.NotifyDialog;
@@ -210,6 +212,22 @@ import java.util.List;
   @Override public void navToLogin() {
     Intent intent = new Intent(getApplicationContext(), HostLoginActivity.class);
     startActivityForResult(intent, LOGIN_RESULT_CODE);
+//    Intent intent = new Intent(SplashActivity.this, IndependentLoginActivity.class);
+//    if (Constants.thirdappPackageNameSucc != null) {
+//      intent.putExtra(Constants.EXTRA_THIRDAPP_PACKAGE_NAME_SUCC, Constants.thirdappPackageNameSucc);
+//    }
+//    if (Constants.thirdappClassNameSucc != null) {
+//      intent.putExtra(Constants.EXTRA_THIRDAPP_CLASS_NAME_SUCC, Constants.thirdappClassNameSucc);
+//    }
+//    if (Constants.thirdappPackageNameFail != null) {
+//      intent.putExtra(Constants.EXTRA_THIRDAPP_PACKAGE_NAME_FAIL, Constants.thirdappPackageNameFail);
+//    }
+//    if (Constants.thirdappClassNameFail != null) {
+//      intent.putExtra(Constants.EXTRA_THIRDAPP_CLASS_NAME_FAIL, Constants.thirdappClassNameFail);
+//    }
+//    intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
+//    startActivity(intent);
+//    finish();
   }
 
   @Override public boolean isUserLogin() {

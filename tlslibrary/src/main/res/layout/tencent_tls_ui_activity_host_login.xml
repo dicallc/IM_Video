@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/background_dark"
     tools:context=".HostLoginActivity">
     <ImageView
         android:layout_width="match_parent"
@@ -65,12 +64,12 @@
                 android:layout_height="35dp"
                 android:layout_weight="2"
                 android:paddingLeft="@dimen/tencent_tls_ui_edittext_leftpadding"
-                android:background="@drawable/background_bttoom"
                 android:paddingRight="@dimen/tencent_tls_ui_edittext_rightpadding"
                 android:layout_marginRight="@dimen/tencent_tls_ui_edittext_margin"
                 android:layout_marginBottom="@dimen/tencent_tls_ui_edittext_margin"
                 android:inputType="number"
                 android:singleLine="true"
+                android:background="@drawable/background_bttoom"
                 android:textColor="#ffffff"
                 android:textColorHint="@android:color/white"
                 android:hint="请输入手机号"/>
@@ -105,12 +104,12 @@
             android:id="@+id/btn_hostLogin"
             android:layout_width="fill_parent"
             android:layout_height="35dp"
-            android:background="@drawable/btn_background"
-            android:layout_marginTop="@dimen/tencent_tls_ui_edittext_margin"
             android:layout_marginBottom="10dp"
-            android:textSize="@dimen/tencent_tls_ui_buttonFontSize"
+            android:layout_marginTop="@dimen/tencent_tls_ui_edittext_margin"
+            android:background="@drawable/btn_background"
             android:textColor="@color/tencent_tls_ui_white"
-            android:text="登录"/>
+            android:text="登录"
+            android:textSize="@dimen/tencent_tls_ui_buttonFontSize" />
 
         <FrameLayout
             android:orientation="horizontal"
@@ -126,13 +125,14 @@
                 android:text="@string/tencent_tls_ui_independentLoginTitle"/>
 
             <TextView
-                android:textColor="@android:color/white"
-                android:textColorHint="@android:color/white"
                 android:id="@+id/hostRegisterNewUser"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center|right"
-                android:text="注册新用户"/>
+                android:text="注册新用户"
+                android:textColor="@android:color/white"
+                android:textColorHint="@android:color/white"
+                android:visibility="gone" />
 
         </FrameLayout>
 
