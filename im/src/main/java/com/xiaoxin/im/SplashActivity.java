@@ -12,6 +12,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Process;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.WindowManager;
@@ -151,16 +152,6 @@ import java.util.List;
     } else if (deviceMan.equals("HUAWEI")) {
       PushManager.requestToken(this);
     }
-
-    //String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-    //Log.d(TAG, "refreshed token: " + refreshedToken);
-    //
-    //if(!TextUtils.isEmpty(refreshedToken)) {
-    //  TIMOfflinePushToken param = new TIMOfflinePushToken(169, refreshedToken);
-    //  TIMManager.getInstance().setOfflinePushToken(param, null);
-    //}
-    //        MiPushClient.clearNotification(getApplicationContext());
-    //Log.d(TAG, "imsdk env " + TIMManager.getInstance().getEnv());
     Intent intent = new Intent(this, HomeActivity.class);
     startActivity(intent);
     finish();
@@ -212,22 +203,6 @@ import java.util.List;
   @Override public void navToLogin() {
     Intent intent = new Intent(getApplicationContext(), HostLoginActivity.class);
     startActivityForResult(intent, LOGIN_RESULT_CODE);
-//    Intent intent = new Intent(SplashActivity.this, IndependentLoginActivity.class);
-//    if (Constants.thirdappPackageNameSucc != null) {
-//      intent.putExtra(Constants.EXTRA_THIRDAPP_PACKAGE_NAME_SUCC, Constants.thirdappPackageNameSucc);
-//    }
-//    if (Constants.thirdappClassNameSucc != null) {
-//      intent.putExtra(Constants.EXTRA_THIRDAPP_CLASS_NAME_SUCC, Constants.thirdappClassNameSucc);
-//    }
-//    if (Constants.thirdappPackageNameFail != null) {
-//      intent.putExtra(Constants.EXTRA_THIRDAPP_PACKAGE_NAME_FAIL, Constants.thirdappPackageNameFail);
-//    }
-//    if (Constants.thirdappClassNameFail != null) {
-//      intent.putExtra(Constants.EXTRA_THIRDAPP_CLASS_NAME_FAIL, Constants.thirdappClassNameFail);
-//    }
-//    intent.setFlags(Intent.FLAG_ACTIVITY_FORWARD_RESULT);
-//    startActivity(intent);
-//    finish();
   }
 
   @Override public boolean isUserLogin() {
@@ -272,5 +247,25 @@ import java.util.List;
     mSplashImg.setBackgroundResource(0);
     System.gc();
     System.runFinalization();
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    switch (requestCode) {
+      case REQUEST_PHONE_PERMISSIONS: {
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          init();
+
+        } else {
+            finish();
+          // permission denied, boo! Disable the
+          // functionality that depends on this permission.
+        }
+        return;
+      }
+    }
   }
 }
