@@ -92,7 +92,10 @@ public class ConversationFragment extends Fragment
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     mIsFirst = (String) SpUtils.getParam("isFirst", "");
-    new Thread(new MyThread()).start();
+    if (!"false".equals(mIsFirst)){
+      new Thread(new MyThread()).start();
+    }
+
   }
 
   private void FirstGuide() {
@@ -134,7 +137,7 @@ public class ConversationFragment extends Fragment
             .setOnclickListener(new GuideView.OnClickCallback() {
               @Override public void onClickedGuideView() {
                 mGuideView1.hide();
-                //SpUtils.setParam(getActivity(),"isFirst","false");
+                SpUtils.setParam(getActivity(),"isFirst","false");
               }
             })
             .build();

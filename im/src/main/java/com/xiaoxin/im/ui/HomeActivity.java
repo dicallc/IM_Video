@@ -22,6 +22,7 @@ import com.xiaoxin.im.SplashActivity;
 import com.xiaoxin.im.model.FriendshipInfo;
 import com.xiaoxin.im.model.GroupInfo;
 import com.xiaoxin.im.model.UserInfo;
+import com.xiaoxin.im.ui.appstore.AppStoreFragment;
 import com.xiaoxin.im.ui.contact.ContactFragment;
 import com.xiaoxin.im.ui.conversation.ConversationFragment;
 import com.xiaoxin.im.ui.setting.SettingFragment;
@@ -37,12 +38,12 @@ import java.util.List;
   private LayoutInflater layoutInflater;
   private FragmentTabHost mTabHost;
   private final Class fragmentArray[] =
-      { ConversationFragment.class, ContactFragment.class, SettingFragment.class };
+      { ConversationFragment.class, ContactFragment.class, AppStoreFragment.class, SettingFragment.class };
   private int mTitleArray[] =
-      { R.string.home_conversation_tab, R.string.home_contact_tab, R.string.home_setting_tab };
+      { R.string.home_conversation_tab, R.string.home_contact_tab, R.string.home_app, R.string.home_setting_tab };
   private int mImageViewArray[] =
-      { R.drawable.tab_conversation, R.drawable.tab_contact, R.drawable.tab_setting };
-  private String mTextviewArray[] = { "contact", "conversation", "setting" };
+      { R.drawable.tab_conversation, R.drawable.tab_contact,R.drawable.tab_app, R.drawable.tab_setting };
+  private String mTextviewArray[] = { "contact", "conversation","app", "setting" };
   private ImageView msgUnread;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
