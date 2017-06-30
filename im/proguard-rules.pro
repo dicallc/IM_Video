@@ -57,6 +57,8 @@
 
 -dontwarn com.arialyy.aria.**
 -keep class com.arialyy.aria.**{*;}
+-dontwarn io.liteglue.**
+-keep class io.liteglue.**{*;}
 ##---------------Begin: proguard configuration for Gson  ----------
 # Gson uses generic type information stored in a class file when working with fields. Proguard
 # removes such information by default, so configure it to keep all of it.
@@ -299,6 +301,15 @@
 	*;
 }
 # end for x5.sdk classes for apps
+#aria
+-dontwarn com.arialyy.aria.**
+-keep class com.arialyy.aria.**{*;}
+-keep class **$$DownloadListenerProxy{ *; }
+-keep class **$$UploadListenerProxy{ *; }
+-keepclasseswithmembernames class * {
+    @Download.* <methods>;
+    @Upload.* <methods>;
+}
 
 ##---------------End: proguard configuration for Gson  ----------
 #-------------------------------------------------------------------------

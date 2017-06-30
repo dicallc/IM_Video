@@ -8,6 +8,12 @@ import java.util.List;
 
 public class AppStoreModel {
 
+        public AppStoreModel(String mCode) {
+                code = mCode;
+        }
+
+        public AppStoreModel() {
+        }
 
         /**
          * code : 200
@@ -20,6 +26,7 @@ public class AppStoreModel {
         public List<ContentBean> content;
 
         public static class ContentBean {
+
                 /**
                  * title : 开眼
                  * down_path : AdvertCard
@@ -29,5 +36,8 @@ public class AppStoreModel {
                 public String title;
                 public String down_path;
                 public String img;
+                public String version;
+                public String version_des;
+                public String down_size;
         }
 }

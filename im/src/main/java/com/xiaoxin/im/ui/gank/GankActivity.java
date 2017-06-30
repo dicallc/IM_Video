@@ -13,6 +13,7 @@ public class GankActivity extends CordovaActivity{
   @Override
   public void onCreate(Bundle savedInstanceState)
   {
+
     //showDialog();
     super.onCreate(savedInstanceState);
     // enable Cordova apps to be started in the background

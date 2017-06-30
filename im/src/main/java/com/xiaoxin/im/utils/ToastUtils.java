@@ -5,6 +5,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
 import com.socks.library.KLog;
+import com.xiaoxin.im.App;
 
 public class ToastUtils {
    private static Toast toast;
@@ -24,8 +25,8 @@ public class ToastUtils {
       toast.setView(view);
    }
 
-   public static void showShortToast(Context context, CharSequence msg) {
-      showToast(context.getApplicationContext(), msg, Toast.LENGTH_SHORT);
+   public static void showShortToast( CharSequence msg) {
+      showToast(App.getContext(), msg, Toast.LENGTH_SHORT);
    }
 
    public static void showShortToast(Context context, int resId) {

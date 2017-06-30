@@ -103,6 +103,7 @@ public class CordovaActivity extends Activity {
     private SimpleDateFormat mDf;
     private Date mCurDate;
     private Date mEndDate;
+    private ConfigXmlParser mParser;
 
     /**
      * Called when the activity is first created.
@@ -171,13 +172,13 @@ public class CordovaActivity extends Activity {
 
     @SuppressWarnings("deprecation")
     protected void loadConfig() {
-        ConfigXmlParser parser = new ConfigXmlParser();
-        parser.parse(this);
-        preferences = parser.getPreferences();
+        mParser = new ConfigXmlParser();
+        mParser.parse(this);
+        preferences = mParser.getPreferences();
         preferences.setPreferencesBundle(getIntent().getExtras());
-        launchUrl = parser.getLaunchUrl();
-        pluginEntries = parser.getPluginEntries();
-        Config.parser = parser;
+        launchUrl = mParser.getLaunchUrl();
+        pluginEntries = mParser.getPluginEntries();
+        Config.parser = mParser;
     }
 
     //Suppressing warnings in AndroidStudio
@@ -528,7 +529,11 @@ public class CordovaActivity extends Activity {
             LOG.d(TAG, "JSONException: Parameters fed into the method are not valid");
             e.printStackTrace();
         }
-
+    }
+    protected void  setOpenUrl(String url){
+        if (mParser==null)
+            mParser=new ConfigXmlParser();
+        mParser.setLaunchUrl(url);
     }
 
 }

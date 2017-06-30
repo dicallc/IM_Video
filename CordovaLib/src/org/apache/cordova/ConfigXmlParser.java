@@ -34,6 +34,7 @@ public class ConfigXmlParser {
     private static String TAG = "ConfigXmlParser";
 
     private String launchUrl = "file:///android_asset/www/index.html";
+    //private String launchUrl = "file:///mnt/sdcard/unzip/www/index.html";
     private CordovaPreferences prefs = new CordovaPreferences();
     private ArrayList<PluginEntry> pluginEntries = new ArrayList<PluginEntry>(20);
 
@@ -47,6 +48,9 @@ public class ConfigXmlParser {
 
     public String getLaunchUrl() {
         return launchUrl;
+    }
+    public void setLaunchUrl(String url) {
+        launchUrl=url;
     }
 
     public void parse(Context action) {
@@ -139,7 +143,9 @@ public class ConfigXmlParser {
             if (src.charAt(0) == '/') {
                 src = src.substring(1);
             }
-            launchUrl = "file:///android_asset/www/" + src;
+            //launchUrl = "file:///android_asset/www/" + src;
+            //launchUrl = "file:///mnt/sdcard/unzip/www/" + src;
+            //launchUrl = "file:///data/user/0/com.xiaoxin.im/files/unzip/www/" + src;
         }
     }
 }

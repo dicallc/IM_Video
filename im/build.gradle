@@ -1,9 +1,15 @@
 apply plugin: 'com.android.application'
 apply plugin: 'AndResGuard'
 apply plugin: 'com.jakewharton.butterknife'
-
+apply plugin: 'realm-android'
 
 android {
+  sourceSets{
+    main {
+      jniLibs.srcDirs = ['src/main/jniLibs']
+//      aidl.srcDirs = ['src/main/aidl']
+    }
+  }
   signingConfigs {
     release {
       keyAlias 'im_video'
@@ -46,11 +52,17 @@ android {
   }
   buildTypes {
     release {
+      ndk {
+        abiFilters = ["armeabi"]
+      }
       buildConfigField "boolean", "LOG_DEBUG", "false"
       minifyEnabled true
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
     debug {
+      ndk {
+        abiFilters = ["armeabi"]
+      }
       buildConfigField "boolean", "LOG_DEBUG", "true"
       minifyEnabled false
       proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -58,6 +70,17 @@ android {
   }
   packagingOptions {
     exclude '*.apk'
+    exclude "lib/arm64-v8a/librealm-jni.so"
+    exclude "lib/mips/librealm-jni.so"
+    exclude "lib/x86/librealm-jni.so"
+    exclude "lib/x86_64/librealm-jni.so"
+  }
+  splits {
+    abi {
+      enable true
+      reset()
+      include 'armeabi-v7a'
+    }
   }
   dexOptions {
     jumboMode true
@@ -136,8 +159,6 @@ andResGuard {
 
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
-  compile 'com.arialyy.aria:Aria:3.1.1'
-//  annotationProcessor 'com.arialyy.aria:aria-compiler:3.1.9'
   compile('com.github.bumptech.glide:glide:3.7.0') {
     exclude group: "com.android.support", module: "support-annotations"
   }
@@ -171,10 +192,13 @@ dependencies {
   //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
   //  compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
   compile project(':CordovaLib')
-//  compile 'com.github.markzhai:blockcanary-android:1.5.0'
+  //  compile 'com.github.markzhai:blockcanary-android:1.5.0'
   compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
   compile 'com.antonionicolaspina:revealtextview:2.0'
-
+  compile(name: 'aria-core-3.1.9', ext: 'aar')
+  compile files('libs/ZipEntry.jar')
+  compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+  compile files('libs/sqlite-connector.jar')
 }
 apply from: 'tinkerpatch.gradle'
 

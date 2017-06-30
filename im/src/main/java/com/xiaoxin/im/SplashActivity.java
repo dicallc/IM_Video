@@ -36,8 +36,6 @@ import com.tencent.qcloud.presentation.event.RefreshEvent;
 import com.tencent.qcloud.presentation.presenter.SplashPresenter;
 import com.tencent.qcloud.presentation.viewfeatures.SplashView;
 import com.tencent.qcloud.tlslibrary.activity.HostLoginActivity;
-import com.tencent.qcloud.tlslibrary.activity.IndependentLoginActivity;
-import com.tencent.qcloud.tlslibrary.service.Constants;
 import com.tencent.qcloud.tlslibrary.service.TLSService;
 import com.tencent.qcloud.tlslibrary.service.TlsBusiness;
 import com.tencent.qcloud.ui.NotifyDialog;
@@ -46,6 +44,7 @@ import com.xiaoxin.im.model.UserInfo;
 import com.xiaoxin.im.ui.HomeActivity;
 import com.xiaoxin.im.ui.customview.DialogActivity;
 import com.xiaoxin.im.utils.PushUtil;
+import io.realm.Realm;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,6 +93,8 @@ import java.util.List;
   }
 
   private void init() {
+    //初始化数据库框架
+    Realm.init(this);
     //初始化IMSDK
     SharedPreferences pref = getSharedPreferences("data", MODE_PRIVATE);
     int loglvl = pref.getInt("loglvl", TIMLogLevel.DEBUG.ordinal());
