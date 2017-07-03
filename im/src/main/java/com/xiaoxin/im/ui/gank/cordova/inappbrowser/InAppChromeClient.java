@@ -18,11 +18,11 @@
 */
 package com.xiaoxin.im.ui.gank.cordova.inappbrowser;
 
-import android.webkit.GeolocationPermissions.Callback;
-import android.webkit.JsPromptResult;
-import android.webkit.WebChromeClient;
-import android.webkit.WebStorage;
-import android.webkit.WebView;
+import com.tencent.smtt.export.external.interfaces.GeolocationPermissionsCallback;
+import com.tencent.smtt.export.external.interfaces.JsPromptResult;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebStorage;
+import com.tencent.smtt.sdk.WebView;
 
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
@@ -64,11 +64,11 @@ public class InAppChromeClient extends WebChromeClient {
      * @param origin
      * @param callback
      */
-    @Override
-    public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
-        super.onGeolocationPermissionsShowPrompt(origin, callback);
-        callback.invoke(origin, true, false);
-    }
+//    @Override
+//    public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
+//        super.onGeolocationPermissionsShowPrompt(origin, callback);
+//        callback.invoke(origin, true, false);
+//    }
 
     /**
      * Tell the client to display a prompt dialog to the user.

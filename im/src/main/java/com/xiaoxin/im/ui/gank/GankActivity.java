@@ -2,6 +2,10 @@ package com.xiaoxin.im.ui.gank;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
 import com.xiaoxin.im.R;
 import org.apache.cordova.CordovaActivity;
 
@@ -21,7 +25,6 @@ public class GankActivity extends CordovaActivity{
     if (extras != null && extras.getBoolean("cdvStartInBackground", false)) {
       moveTaskToBack(true);
     }
-
     // Set by <content src="index.html" /> in config.xml
     loadUrl(launchUrl);
   }
