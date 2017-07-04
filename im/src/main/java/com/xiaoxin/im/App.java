@@ -2,6 +2,7 @@ package com.xiaoxin.im;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.support.multidex.MultiDex;
 import com.socks.library.KLog;
 import com.tencent.bugly.imsdk.crashreport.CrashReport;
@@ -13,6 +14,7 @@ import com.tencent.qalsdk.sdk.MsfSdkUtils;
 import com.tencent.tinker.loader.app.ApplicationLike;
 import com.tinkerpatch.sdk.TinkerPatch;
 import com.tinkerpatch.sdk.loader.TinkerPatchApplicationLike;
+import com.xiaoxin.im.ui.appstore.PreLoadX5Service;
 import com.xiaoxin.im.utils.Foreground;
 
 /**
@@ -26,6 +28,7 @@ public class App extends Application {
   @Override public void onCreate() {
     super.onCreate();
     // 在主进程初始化调用哈
+    initX5();
     //BlockCanary.install(this, new AppBlockCanaryContext()).start();
     initTinkerPatch();
     CrashReport.initCrashReport(getApplicationContext(), "1400032075", false);
@@ -76,6 +79,10 @@ public class App extends Application {
       // 不同的是，会通过handler的方式去轮询
       TinkerPatch.with().fetchPatchUpdateAndPollWithInterval();
     }
+  }
+  private void initX5() {
+    Intent intent = new Intent(this, PreLoadX5Service.class);
+    startService(intent);
   }
 
 
