@@ -2,10 +2,7 @@ package com.xiaoxin.im.ui.gank;
 
 import android.app.Dialog;
 import android.os.Bundle;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-
+import android.view.View;
 import com.xiaoxin.im.R;
 import org.apache.cordova.CordovaActivity;
 
@@ -27,6 +24,10 @@ public class GankActivity extends CordovaActivity{
     }
     // Set by <content src="index.html" /> in config.xml
     loadUrl(launchUrl);
+  }
+
+  @Override protected View loaddingFinish() {
+    return null;
   }
 
   private void showDialog() {

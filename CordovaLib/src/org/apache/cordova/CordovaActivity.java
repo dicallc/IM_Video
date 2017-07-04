@@ -35,12 +35,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
-import com.tencent.smtt.sdk.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.Toast;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import org.apache.cordova.engine.NomalCallBack;
+import org.apache.cordova.engine.SystemWebView;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -75,7 +79,7 @@ import org.json.JSONObject;
  * deprecated in favor of the config.xml file.
  *
  */
-public class CordovaActivity extends Activity {
+public abstract class CordovaActivity extends Activity {
     public static String TAG = "CordovaActivity";
 
     // The webview for our app
@@ -157,6 +161,15 @@ public class CordovaActivity extends Activity {
 
     protected void init() {
         appView = makeWebView();
+       SystemWebView mSystemWebView= (SystemWebView) appView.getView();
+        mSystemWebView.setNormaWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageFinished(WebView view, String url)
+            {
+                super.onPageFinished(view, url);
+                Toast.makeText(CordovaActivity.this, "网页加载完成", Toast.LENGTH_SHORT).show();
+            }
+        });
         createViews();
         if (!appView.isInitialized()) {
             appView.init(cordovaInterface, pluginEntries, preferences);
@@ -214,9 +227,22 @@ public class CordovaActivity extends Activity {
     protected CordovaWebView makeWebView() {
         return new CordovaWebViewImpl(makeWebViewEngine());
     }
+    protected  abstract View loaddingFinish();
 
     protected CordovaWebViewEngine makeWebViewEngine() {
-        return CordovaWebViewImpl.createEngine(this, preferences);
+        return CordovaWebViewImpl.createEngine(this, preferences, new NomalCallBack() {
+            @Override public void onSuccess(int code, Object result) {
+
+            }
+
+            @Override public void onFail(int code, String result) {
+
+            }
+
+            @Override public void onFinish(int code, String result) {
+                View mView = loaddingFinish();
+            }
+        });
     }
 
     protected CordovaInterfaceImpl makeCordovaInterface() {

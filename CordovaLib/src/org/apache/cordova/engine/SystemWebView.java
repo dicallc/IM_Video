@@ -35,7 +35,7 @@ import org.apache.cordova.CordovaWebViewEngine;
 public class SystemWebView extends WebView implements CordovaWebViewEngine.EngineView {
     private SystemWebViewClient viewClient;
     SystemWebChromeClient chromeClient;
-    private SystemWebViewEngine parentEngine;
+    public SystemWebViewEngine parentEngine;
     private CordovaInterface cordova;
 
     public SystemWebView(Context context) {
@@ -67,6 +67,9 @@ public class SystemWebView extends WebView implements CordovaWebViewEngine.Engin
     @Override
     public void setWebViewClient(WebViewClient client) {
         viewClient = (SystemWebViewClient)client;
+        super.setWebViewClient(client);
+    }
+    public void setNormaWebViewClient(WebViewClient client){
         super.setWebViewClient(client);
     }
 

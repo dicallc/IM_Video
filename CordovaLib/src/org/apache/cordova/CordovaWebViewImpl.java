@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.cordova.engine.NomalCallBack;
 import org.apache.cordova.engine.SystemWebViewEngine;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +45,7 @@ import org.json.JSONObject;
 public class CordovaWebViewImpl implements CordovaWebView {
 
     public static final String TAG = "CordovaWebViewImpl";
+
 
     private PluginManager pluginManager;
 
@@ -68,8 +70,8 @@ public class CordovaWebViewImpl implements CordovaWebView {
     private CustomViewCallback mCustomViewCallback;
 
     private Set<Integer> boundKeyCodes = new HashSet<Integer>();
-
-    public static CordovaWebViewEngine createEngine(Context context, CordovaPreferences preferences) {
+    public static CordovaWebViewEngine createEngine(Context context, CordovaPreferences preferences,final NomalCallBack linstener) {
+        mLinstener=linstener;
         String className = preferences.getString("webview", SystemWebViewEngine.class.getCanonicalName());
         try {
             Class<?> webViewClass = Class.forName(className);
@@ -78,7 +80,9 @@ public class CordovaWebViewImpl implements CordovaWebView {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create webview. ", e);
         }
+
     }
+     static NomalCallBack mLinstener;
 
     public CordovaWebViewImpl(CordovaWebViewEngine cordovaWebViewEngine) {
         this.engine = cordovaWebViewEngine;
@@ -516,6 +520,7 @@ public class CordovaWebViewImpl implements CordovaWebView {
 
         @Override
         public void onPageFinishedLoading(String url) {
+            mLinstener.onFinish(0x110,"");
             LOG.d(TAG, "onPageFinished(" + url + ")");
 
             clearLoadTimeoutTimer();
