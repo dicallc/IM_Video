@@ -39,5 +39,6 @@ public class AppStoreModel {
                 public String version;
                 public String version_des;
                 public String down_size;
+                public String app_type;
         }
 }

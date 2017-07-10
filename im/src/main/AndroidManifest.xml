@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xiaoxin.im">
+
   <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
   <uses-permission android:name="android.permission.RECORD_AUDIO"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -82,13 +83,17 @@
     </activity>
     <activity android:name=".ui.contact.send.VideoActivity">
     </activity>
-    <activity android:name="com.xiaoxin.im.ui.video.VideoHomeActivity">
+    <activity android:name=".ui.video.VideoHomeActivity">
     </activity>
-    <activity android:name="com.xiaoxin.im.ui.gank.GankActivity">
+    <activity android:name=".ui.gank.GankActivity">
     </activity>
-    <activity android:name="com.xiaoxin.im.ui.appstore.ui.AppWebViewActivity">
+    <activity
+        android:name=".ui.appstore.ui.AppWebViewActivity"
+        android:configChanges="orientation|screenSize|keyboardHidden">
     </activity>
-
+    <activity
+        android:name="com.lzy.imagepicker.ui.ImagePreviewDelActivity"
+        android:theme="@style/ImagePickerThemeFullScreen"/>
     <!-- 消息收发service -->
     <service
         android:name="com.tencent.qalsdk.service.QalService"
@@ -232,17 +237,19 @@
         android:process=":HwPushService"/>
     <!-- hwpush -->
 
-    <provider
-        android:name="android.support.v4.content.FileProvider"
-        android:authorities="com.xiaoxin.im"
-        android:exported="false"
-        android:grantUriPermissions="true">
-      <meta-data
-          android:name="android.support.FILE_PROVIDER_PATHS"
-          android:resource="@xml/file_paths"/>
-    </provider>
+    <!--<provider-->
+        <!--android:name="android.support.v4.content.FileProvider"-->
+        <!--android:authorities="com.xiaoxin.im"-->
+        <!--android:exported="false"-->
+        <!--android:grantUriPermissions="true">-->
+      <!--<meta-data-->
+          <!--android:name="android.support.FILE_PROVIDER_PATHS"-->
+          <!--android:resource="@xml/file_paths"/>-->
+    <!--</provider>-->
 
     <activity android:name=".ui.video.VideoShowActivity">
+    </activity>
+    <activity android:name=".ui.appstore.ui.H5WebViewActivity">
     </activity>
   </application>
 

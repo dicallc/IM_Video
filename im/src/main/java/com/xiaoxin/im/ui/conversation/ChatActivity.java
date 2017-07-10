@@ -4,12 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.content.FileProvider;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +17,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.bean.ImageItem;
+import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.socks.library.KLog;
 import com.tencent.imsdk.TIMConversationType;
 import com.tencent.imsdk.TIMMessage;
 import com.tencent.imsdk.TIMMessageStatus;
@@ -309,9 +310,11 @@ public class ChatActivity extends FragmentActivity implements ChatView {
      */
     @Override
     public void sendImage() {
-        Intent intent_album = new Intent("android.intent.action.GET_CONTENT");
-        intent_album.setType("image/*");
-        startActivityForResult(intent_album, IMAGE_STORE);
+        //Intent intent_album = new Intent("android.intent.action.GET_CONTENT");
+        //intent_album.setType("image/*");
+        //startActivityForResult(intent_album, IMAGE_STORE);
+        Intent intent = new Intent(ChatActivity.this, ImageGridActivity.class);
+        startActivityForResult(intent, IMAGE_STORE);
     }
 
     /**
@@ -319,22 +322,25 @@ public class ChatActivity extends FragmentActivity implements ChatView {
      */
     @Override
     public void sendPhoto() {
-        Intent intent_photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent_photo.resolveActivity(getPackageManager()) != null) {
-            File tempFile = FileUtil.getTempFile(FileUtil.FileType.IMG);
-            if (Build.VERSION.SDK_INT >= 24) {  //针对Android7.0，需要通过FileProvider封装过的路径，提供给外部调用
-                fileUri = FileProvider.getUriForFile(ChatActivity.this, "com.xiaoxin.im", tempFile);//通过FileProvider创建一个content类型的Uri，进行封装
-            } else { //7.0以下，如果直接拿到相机返回的intent值，拿到的则是拍照的原图大小，很容易发生OOM，所以我们同样将返回的地址，保存到指定路径，返回到Activity时，去指定路径获取，压缩图片
-                try {
-                    fileUri = Uri.fromFile(tempFile);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            intent_photo.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
-
-            startActivityForResult(intent_photo, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        }
+        Intent intent = new Intent(this, ImageGridActivity.class);
+        intent.putExtra(ImageGridActivity.EXTRAS_TAKE_PICKERS,true); // 是否是直接打开相机
+        startActivityForResult(intent, IMAGE_STORE);
+        //Intent intent_photo = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        //if (intent_photo.resolveActivity(getPackageManager()) != null) {
+        //    File tempFile = FileUtil.getTempFile(FileUtil.FileType.IMG);
+        //    if (Build.VERSION.SDK_INT >= 24) {  //针对Android7.0，需要通过FileProvider封装过的路径，提供给外部调用
+        //        fileUri = FileProvider.getUriForFile(ChatActivity.this, "com.xiaoxin.im", tempFile);//通过FileProvider创建一个content类型的Uri，进行封装
+        //    } else { //7.0以下，如果直接拿到相机返回的intent值，拿到的则是拍照的原图大小，很容易发生OOM，所以我们同样将返回的地址，保存到指定路径，返回到Activity时，去指定路径获取，压缩图片
+        //        try {
+        //            fileUri = Uri.fromFile(tempFile);
+        //        } catch (Exception e) {
+        //            e.printStackTrace();
+        //        }
+        //    }
+        //    intent_photo.putExtra(MediaStore.EXTRA_OUTPUT, fileUri);
+        //
+        //    startActivityForResult(intent_photo, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+        //}
     }
 
     /**
@@ -474,36 +480,58 @@ public class ChatActivity extends FragmentActivity implements ChatView {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && fileUri != null) {
-                showImagePreview(fileUri.toString());
-            }
-        } else if (requestCode == IMAGE_STORE) {
-            if (resultCode == RESULT_OK && data != null) {
-                showImagePreview(FileUtil.getFilePath(this, data.getData()));
-            }
-
-        } else if (requestCode == FILE_CODE) {
-            if (resultCode == RESULT_OK) {
-                sendFile(FileUtil.getFilePath(this, data.getData()));
-            }
-        } else if (requestCode == IMAGE_PREVIEW){
-            if (resultCode == RESULT_OK) {
-                boolean isOri = data.getBooleanExtra("isOri",false);
-                String path = data.getStringExtra("path");
+        if (resultCode == ImagePicker.RESULT_CODE_ITEMS) {
+            if (data != null && requestCode == IMAGE_STORE) {
+                ArrayList<ImageItem> images =
+                    (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
+                String path = images.get(0).path;
+                KLog.e(images.get(0).path);
                 File file = new File(path);
                 if (file.exists() && file.length() > 0){
                     if (file.length() > 1024 * 1024 * 10){
                         Toast.makeText(this, getString(R.string.chat_file_too_large),Toast.LENGTH_SHORT).show();
                     }else{
-                        Message message = new ImageMessage(path,isOri);
+                        Message message = new ImageMessage(path,false);
                         presenter.sendMessage(message.getMessage());
                     }
                 }else{
                     Toast.makeText(this, getString(R.string.chat_file_not_exist),Toast.LENGTH_SHORT).show();
                 }
             }
-        } else if (requestCode == VIDEO_RECORD) {
+        }
+        //if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+        //    if (resultCode == RESULT_OK && fileUri != null) {
+        //        showImagePreview(fileUri.toString());
+        //    }
+        //} else if (requestCode == IMAGE_STORE) {
+        //    if (resultCode == RESULT_OK && data != null) {
+        //        showImagePreview(FileUtil.getFilePath(this, data.getData()));
+        //    }
+        //
+        //} else
+            if (requestCode == FILE_CODE) {
+            if (resultCode == RESULT_OK) {
+                sendFile(FileUtil.getFilePath(this, data.getData()));
+            }
+        }
+        //else if (requestCode == IMAGE_PREVIEW){
+        //    if (resultCode == RESULT_OK) {
+        //        boolean isOri = data.getBooleanExtra("isOri",false);
+        //        String path = data.getStringExtra("path");
+        //        File file = new File(path);
+        //        if (file.exists() && file.length() > 0){
+        //            if (file.length() > 1024 * 1024 * 10){
+        //                Toast.makeText(this, getString(R.string.chat_file_too_large),Toast.LENGTH_SHORT).show();
+        //            }else{
+        //                Message message = new ImageMessage(path,isOri);
+        //                presenter.sendMessage(message.getMessage());
+        //            }
+        //        }else{
+        //            Toast.makeText(this, getString(R.string.chat_file_not_exist),Toast.LENGTH_SHORT).show();
+        //        }
+        //    }
+        //}
+        else if (requestCode == VIDEO_RECORD) {
             if (resultCode == RESULT_OK) {
                 String videoPath = data.getStringExtra("videoPath");
                 String coverPath = data.getStringExtra("coverPath");

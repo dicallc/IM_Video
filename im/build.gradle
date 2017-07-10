@@ -4,10 +4,10 @@ apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'realm-android'
 
 android {
-  sourceSets{
+  sourceSets {
     main {
       jniLibs.srcDirs = ['src/main/jniLibs']
-//      aidl.srcDirs = ['src/main/aidl']
+      //      aidl.srcDirs = ['src/main/aidl']
     }
   }
   signingConfigs {
@@ -46,8 +46,8 @@ android {
     multiDexEnabled true
     ndk {
       //设置支持的SO库架构
-//      abiFilters 'arm64-v8a', 'armeabi' //, 'x86', , 'x86_64', 'arm64-v8a'
-      abiFilters  'armeabi' //, 'x86', , 'x86_64', 'arm64-v8a'
+      //      abiFilters 'arm64-v8a', 'armeabi' //, 'x86', , 'x86_64', 'arm64-v8a'
+      abiFilters 'armeabi' //, 'x86', , 'x86_64', 'arm64-v8a'
     }
   }
   buildTypes {
@@ -164,12 +164,6 @@ dependencies {
   }
   compile 'com.jakewharton:butterknife:8.6.0'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
-  //  compile('com.jakewharton:butterknife:8.6.0') {
-  //    exclude group: "com.android.support", module: "support-annotations"
-  //  }
-  //  compile('com.android.support:recyclerview-v7:25+') {
-  //    exclude group: "com.android.support", module: "support-v4"
-  //  }
   compile project(':ui')
   compile 'com.android.support:recyclerview-v7:25+'
   //  compile rootProject .ext.androidDependencies[ "support_v4"]
@@ -185,20 +179,17 @@ dependencies {
   compile 'tyrant:heartlayout:1.0.1'
   compile 'org.greenrobot:eventbus:3.0.0'
   compile 'com.android.support:multidex:1.0.1'
-  //  compile("com.tinkerpatch.tinker:tinker-android-anno:1.7.11")
   compile 'com.tinkerpatch.sdk:tinkerpatch-android-sdk:1.1.7'
-  //  apt 'org.greenrobot:eventbus-annotation-processor:3.0.1'
   compile 'com.tencent.bugly:crashreport:latest.release'
-  //其中latest.release指代最新Bugly SDK版本号，也可以指定明确的版本号，例如2.1.9
-  //  compile 'com.tencent.bugly:nativecrashreport:latest.release' //其中latest.release指代最新Bugly NDK版本号，也可以指定明确的版本号，例如3.0
   compile project(':CordovaLib')
-  //  compile 'com.github.markzhai:blockcanary-android:1.5.0'
   compile 'me.zhanghai.android.materialprogressbar:library:1.4.1'
   compile 'com.antonionicolaspina:revealtextview:2.0'
   compile(name: 'aria-core-3.1.9', ext: 'aar')
   compile files('libs/ZipEntry.jar')
   compile 'com.afollestad.material-dialogs:core:0.9.4.5'
-
+  compile 'com.android.support.constraint:constraint-layout:1.0.2'
+  compile 'com.android.support:design:25+'
+  compile 'com.lzy.widget:imagepicker:0.5.5'
 }
 apply from: 'tinkerpatch.gradle'
 

@@ -21,9 +21,7 @@ package com.xiaoxin.im.ui.gank.cordova.inappbrowser;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,20 +35,24 @@ import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import com.tencent.smtt.sdk.CookieManager;
-import com.tencent.smtt.sdk.CookieSyncManager;
-import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
-import com.tencent.smtt.sdk.ValueCallback;
-import com.tencent.smtt.sdk.WebChromeClient;
-import com.tencent.smtt.sdk.WebSettings;
-import com.tencent.smtt.sdk.WebView;
-import com.tencent.smtt.sdk.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-
+import com.tencent.smtt.export.external.interfaces.HttpAuthHandler;
+import com.tencent.smtt.sdk.CookieManager;
+import com.tencent.smtt.sdk.CookieSyncManager;
+import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebChromeClient;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.Config;
 import org.apache.cordova.CordovaArgs;
@@ -62,12 +64,6 @@ import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.StringTokenizer;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class InAppBrowser extends CordovaPlugin {
@@ -632,14 +628,14 @@ public class InAppBrowser extends CordovaPlugin {
                 back.setLayoutParams(backLayoutParams);
                 back.setContentDescription("Back Button");
                 back.setId(Integer.valueOf(2));
-                Resources activityRes = cordova.getActivity().getResources();
-                int backResId = activityRes.getIdentifier("ic_action_previous_item", "drawable", cordova.getActivity().getPackageName());
-                Drawable backIcon = activityRes.getDrawable(backResId);
+                //Resources activityRes = cordova.getActivity().getResources();
+                //int backResId = activityRes.getIdentifier("ic_action_previous_item", "drawable", cordova.getActivity().getPackageName());
+                //Drawable backIcon = activityRes.getDrawable(backResId);
                 if (Build.VERSION.SDK_INT >= 16)
                     back.setBackground(null);
                 else
                     back.setBackgroundDrawable(null);
-                back.setImageDrawable(backIcon);
+                //back.setImageDrawable(backIcon);
                 back.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 back.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
                 if (Build.VERSION.SDK_INT >= 16)
@@ -658,13 +654,13 @@ public class InAppBrowser extends CordovaPlugin {
                 forward.setLayoutParams(forwardLayoutParams);
                 forward.setContentDescription("Forward Button");
                 forward.setId(Integer.valueOf(3));
-                int fwdResId = activityRes.getIdentifier("ic_action_next_item", "drawable", cordova.getActivity().getPackageName());
-                Drawable fwdIcon = activityRes.getDrawable(fwdResId);
+                //int fwdResId = activityRes.getIdentifier("ic_action_next_item", "drawable", cordova.getActivity().getPackageName());
+                //Drawable fwdIcon = activityRes.getDrawable(fwdResId);
                 if (Build.VERSION.SDK_INT >= 16)
                     forward.setBackground(null);
                 else
                     forward.setBackgroundDrawable(null);
-                forward.setImageDrawable(fwdIcon);
+                //forward.setImageDrawable(fwdIcon);
                 forward.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 forward.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
                 if (Build.VERSION.SDK_INT >= 16)
@@ -706,13 +702,13 @@ public class InAppBrowser extends CordovaPlugin {
                 close.setLayoutParams(closeLayoutParams);
                 close.setContentDescription("Close Button");
                 close.setId(Integer.valueOf(5));
-                int closeResId = activityRes.getIdentifier("ic_action_remove", "drawable", cordova.getActivity().getPackageName());
-                Drawable closeIcon = activityRes.getDrawable(closeResId);
+                //int closeResId = activityRes.getIdentifier("ic_action_remove", "drawable", cordova.getActivity().getPackageName());
+                //Drawable closeIcon = activityRes.getDrawable(closeResId);
                 if (Build.VERSION.SDK_INT >= 16)
                     close.setBackground(null);
                 else
                     close.setBackgroundDrawable(null);
-                close.setImageDrawable(closeIcon);
+                //close.setImageDrawable(closeIcon);
                 close.setScaleType(ImageView.ScaleType.FIT_CENTER);
                 back.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
                 if (Build.VERSION.SDK_INT >= 16)

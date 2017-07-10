@@ -9,6 +9,7 @@
       android:layout_width="match_parent"
       android:id="@+id/appstore_title"
       android:layout_height="wrap_content"
+      app:moreImg="@mipmap/ic_add_more"
       app:titleText="@string/home_app"/>
   <ImageView
       android:layout_width="match_parent"

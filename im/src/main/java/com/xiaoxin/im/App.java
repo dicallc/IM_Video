@@ -3,6 +3,8 @@ package com.xiaoxin.im;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import com.lzy.imagepicker.ImagePicker;
+import com.lzy.imagepicker.view.CropImageView;
 import com.socks.library.KLog;
 import com.tencent.bugly.imsdk.crashreport.CrashReport;
 import com.tencent.imsdk.TIMGroupReceiveMessageOpt;
@@ -14,6 +16,7 @@ import com.tencent.tinker.loader.app.ApplicationLike;
 import com.tinkerpatch.sdk.TinkerPatch;
 import com.tinkerpatch.sdk.loader.TinkerPatchApplicationLike;
 import com.xiaoxin.im.utils.Foreground;
+import com.xiaoxin.im.utils.GlideImageLoader;
 
 /**
  * Created by Administrator on 2017/5/31 0031.
@@ -25,6 +28,7 @@ public class App extends Application {
 
   @Override public void onCreate() {
     super.onCreate();
+    initPicker();
     // 在主进程初始化调用哈
     //BlockCanary.install(this, new AppBlockCanaryContext()).start();
     initTinkerPatch();
@@ -43,6 +47,21 @@ public class App extends Application {
         }
       });
     }
+  }
+
+  private void initPicker() {
+    ImagePicker imagePicker = ImagePicker.getInstance();
+    imagePicker.setImageLoader(new GlideImageLoader());   //设置图片加载器
+    imagePicker.setShowCamera(true);  //显示拍照按钮
+    imagePicker.setMultiMode(false);
+    imagePicker.setCrop(true);        //允许裁剪（单选才有效）
+    imagePicker.setSaveRectangle(true); //是否按矩形区域保存
+    imagePicker.setSelectLimit(1);    //选中数量限制
+    imagePicker.setStyle(CropImageView.Style.RECTANGLE);  //裁剪框的形状
+    imagePicker.setFocusWidth(800);   //裁剪框的宽度。单位像素（圆形自动取宽高最小值）
+    imagePicker.setFocusHeight(800);  //裁剪框的高度。单位像素（圆形自动取宽高最小值）
+    //imagePicker.setOutPutX(1000);//保存文件的宽度。单位像素
+    //imagePicker.setOutPutY(1000);//保存文件的高度。单位像素
   }
 
   @Override protected void attachBaseContext(Context base) {
