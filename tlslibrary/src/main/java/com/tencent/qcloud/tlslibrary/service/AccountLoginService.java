@@ -47,8 +47,8 @@ public class AccountLoginService {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                username = AccountLoginService.this.txt_username.getText().toString();
-                password = AccountLoginService.this.txt_password.getText().toString();
+                username = AccountLoginService.this.txt_username.getText().toString().trim();
+                password = AccountLoginService.this.txt_password.getText().toString().trim();
 
                 // 验证用户名和密码的有效性
                 if (username.length() == 0 || password.length() == 0) {

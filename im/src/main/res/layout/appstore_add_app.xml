@@ -65,22 +65,31 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
+        android:padding="10dp"
         android:layout_marginTop="8dp"
             android:layout_height="60dp">
       <CheckBox
           android:id="@+id/check_update"
           android:layout_width="0dp"
           android:layout_weight="1"
+          android:checked="true"
           android:layout_height="wrap_content"
           android:text="上传微应用"
           />
-      <CheckBox
-          android:id="@+id/check_fast_run"
+      <LinearLayout
           android:layout_width="0dp"
           android:layout_weight="1"
+          android:gravity="right"
           android:layout_height="wrap_content"
-          android:text="创建快捷方式"
-          />
+          >
+        <CheckBox
+            android:id="@+id/check_fast_run"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="创建快捷方式"
+            />
+      </LinearLayout>
+
 
     </LinearLayout>
 

@@ -22,6 +22,7 @@ import com.tencent.qcloud.presentation.event.MessageEvent;
 import com.tencent.qcloud.tlslibrary.service.TlsBusiness;
 import com.xiaoxin.im.R;
 import com.xiaoxin.im.SplashActivity;
+import com.xiaoxin.im.cache.UserDao;
 import com.xiaoxin.im.common.Constant;
 import com.xiaoxin.im.model.FriendshipInfo;
 import com.xiaoxin.im.model.GroupInfo;
@@ -76,6 +77,7 @@ import java.util.List;
       @Override
       public void onSuccess(TIMUserProfile profile) {
         Constant.sTIMUserProfile=profile;
+        UserDao.saveUserEntry(profile.getIdentifier());
       }
     });
 

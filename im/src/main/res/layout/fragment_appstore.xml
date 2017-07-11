@@ -1,25 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     >
-  <com.tencent.qcloud.ui.TemplateTitle
-      android:layout_width="match_parent"
-      android:id="@+id/appstore_title"
-      android:layout_height="wrap_content"
-      app:moreImg="@mipmap/ic_add_more"
-      app:titleText="@string/home_app"/>
-  <ImageView
-      android:layout_width="match_parent"
-      android:src="@mipmap/apps_banner"
-      android:scaleType="centerCrop"
-      android:layout_height="110dp"
-      />
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/app_list"
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="match_parent"
-      ></android.support.v7.widget.RecyclerView>
-</LinearLayout>
+      android:orientation="vertical"
+      >
+    <com.tencent.qcloud.ui.TemplateTitle
+        android:id="@+id/appstore_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:moreImg="@mipmap/ic_add_more"
+        app:titleText="@string/home_app"
+        />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="110dp"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/apps_banner"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/custom_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="自定义微应用"
+        android:textSize="14sp"
+        android:visibility="gone"
+        />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/custom_app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        ></android.support.v7.widget.RecyclerView>
+  </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

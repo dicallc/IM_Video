@@ -26,6 +26,19 @@ public class AppStoreModel {
         public List<ContentBean> content;
 
         public static class ContentBean {
+                public ContentBean() {
+                }
+
+                public ContentBean(String mTitle, String mDown_path, String mImg,
+                    String mVersion_des, String mApp_type,String is) {
+                        title = mTitle;
+                        down_path = mDown_path;
+                        img = mImg;
+                        version_des = mVersion_des;
+                        app_type = mApp_type;
+                        isCustom = is;
+                }
+
 
                 /**
                  * title : 开眼
@@ -40,5 +53,6 @@ public class AppStoreModel {
                 public String version_des;
                 public String down_size;
                 public String app_type;
+                public String isCustom;
         }
 }

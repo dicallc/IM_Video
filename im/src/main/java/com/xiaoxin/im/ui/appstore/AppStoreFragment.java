@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,10 +35,13 @@ import com.qiniu.android.storage.UploadManager;
 import com.socks.library.KLog;
 import com.tencent.qcloud.ui.TemplateTitle;
 import com.xiaoxin.im.R;
+import com.xiaoxin.im.cache.AppDao;
 import com.xiaoxin.im.common.Constant;
 import com.xiaoxin.im.common.onConnectionFinishLinstener;
 import com.xiaoxin.im.model.AppCacheModel;
 import com.xiaoxin.im.model.AppStoreModel;
+import com.xiaoxin.im.model.CustomAppBean;
+import com.xiaoxin.im.model.CustomAppModel;
 import com.xiaoxin.im.model.QiNiuTokie;
 import com.xiaoxin.im.ui.appstore.adapter.AppStoreAdapter;
 import com.xiaoxin.im.ui.appstore.dao.AppStoreDao;
@@ -68,10 +72,13 @@ public class AppStoreFragment extends Fragment {
   Unbinder unbinder;
 
   List<AppStoreModel.ContentBean> mlist = new ArrayList<>();
+  List<AppStoreModel.ContentBean> mCustomlist = new ArrayList<>();
+  @BindView(R.id.custom_title) TextView mCustomTitle;
+  @BindView(R.id.custom_app_list) RecyclerView mCustomAppList;
 
   private String mParam1;
   private String mParam2;
-  private AppStoreAdapter adapter;
+  private AppStoreAdapter NorMalAppadapter;
   private String mAppTitle;
   private AppStoreModel.ContentBean mDownAppModel;
   private Realm mRealm;
@@ -86,6 +93,11 @@ public class AppStoreFragment extends Fragment {
   private EditText app_des;
   private String mSelectIconPath;
   private String mToken;
+  private RealmResults<CustomAppModel> mCustomAppListsFromDb;
+  private AppStoreAdapter CustomAppAdapter;
+  private int mDbCustomAppSize;
+  private Intent.ShortcutIconResource mIconRes;
+  private MaterialDialog mDialog;
 
   public AppStoreFragment() {
   }
@@ -124,13 +136,110 @@ public class AppStoreFragment extends Fragment {
 
   private void initData() {
     loadUpdateTokie();
+    loadCustomAppList();
+    loadNormalApp();
+  }
+
+  private void loadCustomAppList() {
+    loadCustomAppListFromDB();
+  }
+
+  private void loadCustomAppListFromDB() {
+    getRelam();
+    mRealm.executeTransactionAsync(new Realm.Transaction() {
+
+      @Override public void execute(Realm realm) {
+        mCustomAppListsFromDb = realm.where(CustomAppModel.class).findAll();
+        mDbCustomAppSize = mCustomAppListsFromDb.size();
+        if (mCustomAppListsFromDb.size() > 0) {
+          DbCustomAppDataToCache(mCustomAppListsFromDb);
+          RefreshCustomAppView();
+        }
+
+        loadCustomAppListFromNet();
+      }
+    });
+  }
+
+  private void loadCustomAppListFromNet() {
+    AppStoreDao.loadCustomAppList(new onConnectionFinishLinstener() {
+      @Override public void onSuccess(int code, Object result) {
+        CustomAppBean mCustomAppBean = (CustomAppBean) result;
+        List<CustomAppBean.ContentEntity.MsgEntity> mMsg = mCustomAppBean.content.msg;
+        int netCustomAppSize = mMsg.size();
+        //如果是服务器的集合长度大就保存到数据库中
+        if (netCustomAppSize > mDbCustomAppSize) {
+          //服务器数据填充集合
+          NetCustomAppDataToCache(mMsg);
+          saveCustomListToDb(mMsg);
+          RefreshCustomAppView();
+        }
+      }
+
+      @Override public void onFail(int code, String result) {
+
+      }
+    });
+  }
+
+  private void RefreshCustomAppView() {
+    getActivity().runOnUiThread(new Runnable() {
+      @Override public void run() {
+        if (CustomAppAdapter.getData().size() > 0) {
+          mCustomAppList.setVisibility(View.VISIBLE);
+          mCustomTitle.setVisibility(View.VISIBLE);
+          CustomAppAdapter.notifyDataSetChanged();
+        } else {
+          mCustomAppList.setVisibility(View.GONE);
+          mCustomTitle.setVisibility(View.GONE);
+        }
+      }
+    });
+  }
+
+  private void DbCustomAppDataToCache(RealmResults<CustomAppModel> mMsg) {
+    mCustomlist.clear();
+    for (CustomAppModel mModel : mMsg) {
+      mCustomlist.add(new AppStoreModel.ContentBean(mModel.mApp_name, mModel.mApp_path, mModel.mKey,
+          mModel.mApp_des, "h5", "true"));
+    }
+  }
+
+  private void NetCustomAppDataToCache(List<CustomAppBean.ContentEntity.MsgEntity> mMsg) {
+    mCustomlist.clear();
+    for (int i = 0; i < mMsg.size(); i++) {
+      CustomAppBean.ContentEntity.MsgEntity mMsgEntity = mMsg.get(i);
+      mCustomlist.add(
+          new AppStoreModel.ContentBean(mMsgEntity.app_ame, mMsgEntity.down_path, mMsgEntity.img,
+              mMsgEntity.version_des, "h5", "true"));
+    }
+    CustomAppAdapter.notifyDataSetChanged();
+  }
+
+  private void saveCustomListToDb(final List<CustomAppBean.ContentEntity.MsgEntity> mMsg) {
+    // TODO: 2017/7/11 0011 是否会成功呢
+    mRealm.executeTransaction(new Realm.Transaction() {
+      @Override public void execute(Realm realm) {
+        for (int i = 0; i < mMsg.size(); i++) {
+          CustomAppModel mOrder = realm.createObject(CustomAppModel.class);
+          CustomAppBean.ContentEntity.MsgEntity mMsgEntity = mMsg.get(i);
+          mOrder.mApp_name = mMsgEntity.app_ame;
+          mOrder.mApp_path = mMsgEntity.down_path;
+          mOrder.mApp_des = mMsgEntity.version_des;
+          mOrder.mKey = mMsgEntity.img;
+        }
+      }
+    });
+  }
+
+  private void loadNormalApp() {
     AppStoreDao.getAppList(new onConnectionFinishLinstener() {
       @Override public void onSuccess(int code, Object result) {
         mlist.clear();
         AppStoreModel models = (AppStoreModel) result;
         List<AppStoreModel.ContentBean> content = models.content;
         mlist.addAll(content);
-        adapter.notifyDataSetChanged();
+        NorMalAppadapter.notifyDataSetChanged();
       }
 
       @Override public void onFail(int code, String result) {
@@ -158,35 +267,105 @@ public class AppStoreFragment extends Fragment {
         ShowAddAppDialog();
       }
     });
-    mAppList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
-    mAppList.addItemDecoration(new DividerGridItemDecoration(getActivity()));
-    adapter = new AppStoreAdapter(mlist);
-    adapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+    initNomalAppView();
+    initCustomAppView();
+  }
+
+  private void initCustomAppView() {
+    mCustomAppList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+    mCustomAppList.addItemDecoration(new DividerGridItemDecoration(getActivity()));
+    CustomAppAdapter = new AppStoreAdapter(mCustomlist);
+    CustomAppAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
-        List<AppStoreModel.ContentBean> mData = mBaseQuickAdapter.getData();
-        mDownAppModel = mData.get(mI);
-        //cheAppType(mDownAppModel);
-        if ("h5".equals(mDownAppModel.app_type)) {
-          openH5WebView(mDownAppModel);
-          return;
-        }
-        mAppTitle = mDownAppModel.title;
-        //检查文件是否存在
-        if (AppUpdateUtils.checkFile(getActivity(), mAppTitle)) {
-          //比较服务器版本和本地版本
-          if (checkAppVersion()) {
-            //显示更新框
-            showUpdateDialog();
-          } else {
-            //直接打开
-            openWebView();
-          }
-        } else {
-          startDown(mDownAppModel.down_path, mAppTitle);
-        }
+        ItemClick(mBaseQuickAdapter, mI);
       }
     });
-    mAppList.setAdapter(adapter);
+    CustomAppAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+      @Override
+      public boolean onItemLongClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
+        showCustomMenuDialog(mCustomlist.get(position));
+        return true;
+      }
+    });
+    mCustomAppList.setAdapter(CustomAppAdapter);
+  }
+
+  private void showCustomMenuDialog(final AppStoreModel.ContentBean mContentBean) {
+
+    new MaterialDialog.Builder(getActivity()).items(R.array.custion_function)
+        .itemsCallback(new MaterialDialog.ListCallback() {
+          @Override public void onSelection(MaterialDialog mMaterialDialog, View mView, int mI,
+              CharSequence mCharSequence) {
+            //添加快捷方式
+            if (mI == 0) {
+              addShortCut(mContentBean.title, Constant.URL_HEAD+mContentBean.down_path);
+              ToastUtils.showShortToast("添加成功");
+            } else if (mI == 1) {
+              showloadDialog("正在删除中");
+              //删除微应用,先把服务器数据删除，再把数据库删除掉，然后获取数据库数据刷新列表
+              AppStoreDao.deleteApp(new onConnectionFinishLinstener() {
+                @Override public void onSuccess(int code, Object result) {
+                  AppDao.deleteCustomApp(mContentBean.title, new onConnectionFinishLinstener() {
+                    @Override public void onSuccess(int code, Object result) {
+                      getActivity().runOnUiThread(new Runnable() {
+                        @Override public void run() {
+                          loadCustomAppListFromDB();
+                          dismissloadDialog();
+                        }
+                      });
+
+                    }
+
+                    @Override public void onFail(int code, String result) {
+                            KLog.e(result);
+                    }
+                  });
+                }
+
+                @Override public void onFail(int code, String result) {
+
+                }
+              }, mContentBean.title);
+            }
+          }
+        })
+        .show();
+  }
+
+  private void initNomalAppView() {
+    mAppList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+    mAppList.addItemDecoration(new DividerGridItemDecoration(getActivity()));
+    NorMalAppadapter = new AppStoreAdapter(mlist);
+    NorMalAppadapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
+      @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
+        ItemClick(mBaseQuickAdapter, mI);
+      }
+    });
+    mAppList.setAdapter(NorMalAppadapter);
+  }
+
+  private void ItemClick(BaseQuickAdapter mBaseQuickAdapter, int mI) {
+    List<AppStoreModel.ContentBean> mData = mBaseQuickAdapter.getData();
+    mDownAppModel = mData.get(mI);
+    //cheAppType(mDownAppModel);
+    if ("h5".equals(mDownAppModel.app_type)) {
+      openH5WebView(mDownAppModel);
+      return;
+    }
+    mAppTitle = mDownAppModel.title;
+    //检查文件是否存在
+    if (AppUpdateUtils.checkFile(getActivity(), mAppTitle)) {
+      //比较服务器版本和本地版本
+      if (checkAppVersion()) {
+        //显示更新框
+        showUpdateDialog();
+      } else {
+        //直接打开
+        openWebView();
+      }
+    } else {
+      startDown(mDownAppModel.down_path, mAppTitle);
+    }
   }
 
   private void ShowAddAppDialog() {
@@ -200,11 +379,8 @@ public class AppStoreFragment extends Fragment {
       }
     });
     name_ly = (TextInputLayout) view.findViewById(R.id.name_ly);
-    //name_ly.setOnClickListener(this);
     app_path = (EditText) view.findViewById(R.id.app_path);
-    //app_path.setOnClickListener(this);
     app_path_ly = (TextInputLayout) view.findViewById(R.id.app_path_ly);
-    //app_path_ly.setOnClickListener(this);
     mCheck_update = (CheckBox) view.findViewById(R.id.check_update);
     mCheck_fast_run = (CheckBox) view.findViewById(R.id.check_fast_run);
     new MaterialDialog.Builder(getActivity()).title("微应用添加")
@@ -212,6 +388,7 @@ public class AppStoreFragment extends Fragment {
         .onPositive(new MaterialDialog.SingleButtonCallback() {
           @Override public void onClick(@NonNull MaterialDialog mMaterialDialog,
               @NonNull DialogAction mDialogAction) {
+            showloadDialog("正在添加微应用");
             if (TextUtils.isEmpty(app_name.getText().toString().trim())) {
               ToastUtils.showShortToast("微应用名字不能为空");
               return;
@@ -228,11 +405,14 @@ public class AppStoreFragment extends Fragment {
               ToastUtils.showShortToast("微应用Icon还没有选择");
               return;
             }
-            if (!Utils.isUrl(Constant.URL_HEAD+app_path.getText().toString().trim())) {
+            if (!Utils.isUrl(Constant.URL_HEAD + app_path.getText().toString().trim())) {
               ToastUtils.showShortToast("微应用网址格式错误");
               return;
             }
-
+            if (mCheck_fast_run.isChecked()) {
+              addShortCut(app_name.getText().toString().trim(),
+                  Constant.URL_HEAD + app_path.getText().toString().trim());
+            }
             updateImage();
           }
 
@@ -264,27 +444,49 @@ public class AppStoreFragment extends Fragment {
         .show();
   }
 
-  private void updateAppModel(String mKey) {
+  private void addShortCut(String tName, String url) {
+    // 安装的Intent
+    Intent shortcut = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+    // 快捷名称
+    shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, tName);
+    // 快捷图标是允许重复
+    shortcut.putExtra("duplicate", false);
+    Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
+    shortcutIntent.putExtra("app_name", tName);
+    shortcutIntent.putExtra("url", url);
+    shortcutIntent.setClassName("com.xiaoxin.im",
+        "com.xiaoxin.im.SplashActivity");
+    shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+    shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+    mIconRes = Intent.ShortcutIconResource.fromContext(getActivity(), R.mipmap.ic_launcher);
+    shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, mIconRes);
+
+    // 发送广播
+    getActivity().sendBroadcast(shortcut);
+  }
+
+  private void updateAppModel(final String mKey) {
+    final String app_name = this.app_name.getText().toString().trim();
+    final String app_des = this.app_des.getText().toString().trim();
+    final String app_path = this.app_path.getText().toString().trim();
     AppStoreDao.UpdateApp(new onConnectionFinishLinstener() {
       @Override public void onSuccess(int code, Object result) {
         ToastUtils.showShortToast("上传成功");
+        saveCustiomAppModel(app_name, app_des, app_path, mKey);
+        loadCustomAppListFromDB();
+        dismissloadDialog();
       }
 
       @Override public void onFail(int code, String result) {
         ToastUtils.showShortToast("上传失败");
       }
-    }, app_name.getText().toString().trim(), mKey, app_des.getText().toString().trim(),Constant.URL_HEAD+app_path.getText().toString().trim());
+    }, app_name, mKey, app_des, Constant.URL_HEAD + app_path);
   }
 
   private void openH5WebView(AppStoreModel.ContentBean mDownAppModel) {
     Intent mIntent = new Intent(getActivity(), H5WebViewActivity.class);
-    mIntent.putExtra("url", mDownAppModel.down_path);
+    mIntent.putExtra("url", Constant.URL_HEAD + mDownAppModel.down_path);
     startActivity(mIntent);
-  }
-
-  private void cheAppType(AppStoreModel.ContentBean mDownAppModel) {
-    //if ("ionic".equals(mDownAppModel.app_type))
-    //  re
   }
 
   private void showUpdateDialog() {
@@ -358,6 +560,23 @@ public class AppStoreFragment extends Fragment {
     });
   }
 
+  /**
+   * 保存自定义微应用
+   */
+  private void saveCustiomAppModel(final String mApp_name, final String mApp_des,
+      final String mApp_path, final String mKey) {
+    getRelam();
+    mRealm.executeTransaction(new Realm.Transaction() {
+      @Override public void execute(Realm realm) {
+        CustomAppModel mCacheModel = realm.createObject(CustomAppModel.class);
+        mCacheModel.mApp_name = mApp_name;
+        mCacheModel.mApp_des = mApp_des;
+        mCacheModel.mApp_path = mApp_path;
+        mCacheModel.mKey = mKey;
+      }
+    });
+  }
+
   private void openWebView() {
     Intent mIntent = new Intent(getActivity(), AppWebViewActivity.class);
     mIntent.putExtra("name", mAppTitle);
@@ -408,5 +627,19 @@ public class AppStoreFragment extends Fragment {
 
     // TODO validate success, do something
 
+  }
+
+  protected void showloadDialog(String title) {
+    mDialog = new MaterialDialog.Builder(getActivity()).title(title)
+        .content("请深呼吸休息一下")
+        .progress(true, 0)
+        .progressIndeterminateStyle(true)
+        .show();
+  }
+
+  protected void dismissloadDialog() {
+    if (null != mDialog) {
+      mDialog.dismiss();
+    }
   }
 }

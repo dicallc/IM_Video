@@ -11,6 +11,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.socks.library.KLog;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
@@ -30,6 +31,7 @@ public class H5WebViewActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     Intent mIntent = getIntent();
     mUrl = mIntent.getStringExtra("url");
+    KLog.e("url 接收到的URL"+mUrl);
     getWindow().setFormat(PixelFormat.TRANSLUCENT);
     getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE
         | WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);

@@ -307,4 +307,9 @@
   <string name="message_notify_push">离线消息推送</string>
   <string name="message_notify_c2c_music">自定义C2C消息推送声音</string>
   <string name="message_notify_group_music">自定义群消息推送声音</string>
+
+  <string-array name="custion_function">
+    <item>添加快捷方式</item>
+    <item>删除微应用</item>
+  </string-array>
 </resources>

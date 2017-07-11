@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -42,6 +43,7 @@ import com.tencent.qcloud.ui.NotifyDialog;
 import com.xiaomi.mipush.sdk.MiPushClient;
 import com.xiaoxin.im.model.UserInfo;
 import com.xiaoxin.im.ui.HomeActivity;
+import com.xiaoxin.im.ui.appstore.ui.H5WebViewActivity;
 import com.xiaoxin.im.ui.customview.DialogActivity;
 import com.xiaoxin.im.utils.PushUtil;
 import io.realm.Realm;
@@ -59,12 +61,26 @@ import java.util.List;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    clearNotification();
-    getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-        WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    setContentView(R.layout.activity_splash);
-    ButterKnife.bind(this);
-    initPermision();
+    Intent intent = getIntent();
+    if (intent != null&& !TextUtils.isEmpty(intent.getStringExtra("app_name"))) {
+      String tName = intent.getStringExtra("app_name");
+      String url = intent.getStringExtra("url");
+      if (tName != null) {
+        Intent redirectIntent = new Intent();
+        redirectIntent.setClass(SplashActivity.this, H5WebViewActivity.class);
+        redirectIntent.putExtra("app_name", tName);
+        redirectIntent.putExtra("url", url);
+        startActivity(redirectIntent);
+      }
+    }else{
+      clearNotification();
+      getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+          WindowManager.LayoutParams.FLAG_FULLSCREEN);
+      setContentView(R.layout.activity_splash);
+      ButterKnife.bind(this);
+      initPermision();
+    }
+
   }
 
   /**
