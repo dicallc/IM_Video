@@ -28,12 +28,17 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.lzy.imagepicker.ImagePicker;
 import com.lzy.imagepicker.bean.ImageItem;
 import com.lzy.imagepicker.ui.ImageGridActivity;
+import com.qiniu.android.http.ResponseInfo;
+import com.qiniu.android.storage.UpCompletionHandler;
+import com.qiniu.android.storage.UploadManager;
 import com.socks.library.KLog;
 import com.tencent.qcloud.ui.TemplateTitle;
 import com.xiaoxin.im.R;
+import com.xiaoxin.im.common.Constant;
 import com.xiaoxin.im.common.onConnectionFinishLinstener;
 import com.xiaoxin.im.model.AppCacheModel;
 import com.xiaoxin.im.model.AppStoreModel;
+import com.xiaoxin.im.model.QiNiuTokie;
 import com.xiaoxin.im.ui.appstore.adapter.AppStoreAdapter;
 import com.xiaoxin.im.ui.appstore.dao.AppStoreDao;
 import com.xiaoxin.im.ui.appstore.impl.MySchedulerListener;
@@ -41,14 +46,19 @@ import com.xiaoxin.im.ui.appstore.ui.AppWebViewActivity;
 import com.xiaoxin.im.ui.appstore.ui.H5WebViewActivity;
 import com.xiaoxin.im.ui.customview.DividerGridItemDecoration;
 import com.xiaoxin.im.utils.AppUpdateUtils;
+import com.xiaoxin.im.utils.ToastUtils;
+import com.xiaoxin.im.utils.Utils;
 import io.realm.Realm;
 import io.realm.RealmQuery;
 import io.realm.RealmResults;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.json.JSONObject;
 
 public class AppStoreFragment extends Fragment {
   private static final String ARG_PARAM1 = "param1";
@@ -70,8 +80,12 @@ public class AppStoreFragment extends Fragment {
   private TextInputLayout name_ly;
   private EditText app_path;
   private TextInputLayout app_path_ly;
-  private CheckBox checkBox;
+  private CheckBox mCheck_update;
   private ImageView mAdd_img;
+  private CheckBox mCheck_fast_run;
+  private EditText app_des;
+  private String mSelectIconPath;
+  private String mToken;
 
   public AppStoreFragment() {
   }
@@ -109,6 +123,7 @@ public class AppStoreFragment extends Fragment {
   }
 
   private void initData() {
+    loadUpdateTokie();
     AppStoreDao.getAppList(new onConnectionFinishLinstener() {
       @Override public void onSuccess(int code, Object result) {
         mlist.clear();
@@ -120,6 +135,19 @@ public class AppStoreFragment extends Fragment {
 
       @Override public void onFail(int code, String result) {
         KLog.e(result);
+      }
+    });
+  }
+
+  private void loadUpdateTokie() {
+    AppStoreDao.loadUpdateTokie(new onConnectionFinishLinstener() {
+      @Override public void onSuccess(int code, Object result) {
+        QiNiuTokie mTokie = (QiNiuTokie) result;
+        mToken = mTokie.content.uploadToken;
+      }
+
+      @Override public void onFail(int code, String result) {
+        mToken = null;
       }
     });
   }
@@ -164,6 +192,7 @@ public class AppStoreFragment extends Fragment {
   private void ShowAddAppDialog() {
     View view = View.inflate(getActivity(), R.layout.appstore_add_app, null);
     app_name = (EditText) view.findViewById(R.id.app_name);
+    app_des = (EditText) view.findViewById(R.id.app_des);
     mAdd_img = (ImageView) view.findViewById(R.id.add);
     mAdd_img.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
@@ -176,12 +205,75 @@ public class AppStoreFragment extends Fragment {
     //app_path.setOnClickListener(this);
     app_path_ly = (TextInputLayout) view.findViewById(R.id.app_path_ly);
     //app_path_ly.setOnClickListener(this);
-    checkBox = (CheckBox) view.findViewById(R.id.checkBox);
+    mCheck_update = (CheckBox) view.findViewById(R.id.check_update);
+    mCheck_fast_run = (CheckBox) view.findViewById(R.id.check_fast_run);
     new MaterialDialog.Builder(getActivity()).title("微应用添加")
         .customView(view, false)
+        .onPositive(new MaterialDialog.SingleButtonCallback() {
+          @Override public void onClick(@NonNull MaterialDialog mMaterialDialog,
+              @NonNull DialogAction mDialogAction) {
+            if (TextUtils.isEmpty(app_name.getText().toString().trim())) {
+              ToastUtils.showShortToast("微应用名字不能为空");
+              return;
+            }
+            if (TextUtils.isEmpty(app_des.getText().toString().trim())) {
+              ToastUtils.showShortToast("微应用描述不能为空");
+              return;
+            }
+            if (TextUtils.isEmpty(mSelectIconPath)) {
+              ToastUtils.showShortToast("微应用Icon还没有选择");
+              return;
+            }
+            if (TextUtils.isEmpty(app_path.getText().toString().trim())) {
+              ToastUtils.showShortToast("微应用Icon还没有选择");
+              return;
+            }
+            if (!Utils.isUrl(Constant.URL_HEAD+app_path.getText().toString().trim())) {
+              ToastUtils.showShortToast("微应用网址格式错误");
+              return;
+            }
+
+            updateImage();
+          }
+
+          private void updateImage() {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+            String key = "icon_" + sdf.format(new Date());
+            String token = mToken;
+            if (null == token) {
+              ToastUtils.showShortToast("获取Tokie失败");
+              return;
+            }
+            UploadManager uploadManager = new UploadManager();
+            uploadManager.put(mSelectIconPath, key, token, new UpCompletionHandler() {
+              @Override public void complete(String key, ResponseInfo info, JSONObject res) {
+                if (info.isOK()) {
+                  updateAppModel(key);
+                  KLog.e("key" + key);
+                  KLog.e("Upload Success");
+                } else {
+                  KLog.e("Upload Fail");
+                }
+                KLog.e(key + ",\r\n " + info + ",\r\n " + res);
+              }
+            }, null);
+          }
+        })
         .positiveText("添加")
         .negativeText("取消")
         .show();
+  }
+
+  private void updateAppModel(String mKey) {
+    AppStoreDao.UpdateApp(new onConnectionFinishLinstener() {
+      @Override public void onSuccess(int code, Object result) {
+        ToastUtils.showShortToast("上传成功");
+      }
+
+      @Override public void onFail(int code, String result) {
+        ToastUtils.showShortToast("上传失败");
+      }
+    }, app_name.getText().toString().trim(), mKey, app_des.getText().toString().trim(),Constant.URL_HEAD+app_path.getText().toString().trim());
   }
 
   private void openH5WebView(AppStoreModel.ContentBean mDownAppModel) {
@@ -285,9 +377,6 @@ public class AppStoreFragment extends Fragment {
   public void showPhoto() {
     Intent intent = new Intent(getActivity(), ImageGridActivity.class);
     startActivityForResult(intent, IMAGE_PICKER);
-    //Intent intent_album = new Intent("android.intent.action.GET_CONTENT");
-    //intent_album.setType("image/*");
-    //startActivityForResult(intent_album, IMAGE_STORE);
   }
 
   @Override public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -296,8 +385,9 @@ public class AppStoreFragment extends Fragment {
       if (data != null && requestCode == IMAGE_PICKER) {
         ArrayList<ImageItem> images =
             (ArrayList<ImageItem>) data.getSerializableExtra(ImagePicker.EXTRA_RESULT_ITEMS);
-        KLog.e(images.get(0).path);
-        Glide.with(getActivity()).load(images.get(0).path).into(mAdd_img);
+        mSelectIconPath = images.get(0).path;
+        KLog.e(mSelectIconPath);
+        Glide.with(getActivity()).load(mSelectIconPath).into(mAdd_img);
       }
     }
   }

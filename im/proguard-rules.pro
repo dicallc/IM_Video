@@ -309,6 +309,10 @@
     @Download.* <methods>;
     @Upload.* <methods>;
 }
+#七牛
+-keep class com.qiniu.**{*;}
+-keep class com.qiniu.**{public <init>();}
+-ignorewarnings
 
 ##---------------End: proguard configuration for Gson  ----------
 #-------------------------------------------------------------------------

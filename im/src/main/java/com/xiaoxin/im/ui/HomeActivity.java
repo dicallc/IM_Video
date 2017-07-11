@@ -14,11 +14,15 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.tencent.imsdk.TIMFriendshipManager;
 import com.tencent.imsdk.TIMManager;
+import com.tencent.imsdk.TIMUserProfile;
+import com.tencent.imsdk.TIMValueCallBack;
 import com.tencent.qcloud.presentation.event.MessageEvent;
 import com.tencent.qcloud.tlslibrary.service.TlsBusiness;
 import com.xiaoxin.im.R;
 import com.xiaoxin.im.SplashActivity;
+import com.xiaoxin.im.common.Constant;
 import com.xiaoxin.im.model.FriendshipInfo;
 import com.xiaoxin.im.model.GroupInfo;
 import com.xiaoxin.im.model.UserInfo;
@@ -55,10 +59,26 @@ import java.util.List;
       startActivity(intent);
     } else {
       initView();
+      initData();
       Toast.makeText(this, getString(
           TIMManager.getInstance().getEnv() == 0 ? R.string.env_normal : R.string.env_test),
           Toast.LENGTH_SHORT).show();
     }
+  }
+
+  private void initData() {
+    TIMFriendshipManager.getInstance().getSelfProfile(new TIMValueCallBack<TIMUserProfile>() {
+      @Override
+      public void onError(int i, String s) {
+
+      }
+
+      @Override
+      public void onSuccess(TIMUserProfile profile) {
+        Constant.sTIMUserProfile=profile;
+      }
+    });
+
   }
 
   private void initView() {
