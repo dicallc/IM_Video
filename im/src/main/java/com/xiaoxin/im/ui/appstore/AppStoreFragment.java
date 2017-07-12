@@ -173,6 +173,11 @@ public class AppStoreFragment extends Fragment {
           NetCustomAppDataToCache(mMsg);
           saveCustomListToDb(mMsg);
           RefreshCustomAppView();
+        } else if (netCustomAppSize == 0 && mDbCustomAppSize == 0) {
+          //如果数据库和网络上数据都为0 刷新内存中数据
+          mCustomlist.clear();
+          CustomAppAdapter.getData().clear();
+          RefreshCustomAppView();
         }
       }
 
@@ -298,7 +303,7 @@ public class AppStoreFragment extends Fragment {
               CharSequence mCharSequence) {
             //添加快捷方式
             if (mI == 0) {
-              addShortCut(mContentBean.title, Constant.URL_HEAD+mContentBean.down_path);
+              addShortCut(mContentBean.title, Constant.URL_HEAD + mContentBean.down_path);
               ToastUtils.showShortToast("添加成功");
             } else if (mI == 1) {
               showloadDialog("正在删除中");
@@ -313,11 +318,10 @@ public class AppStoreFragment extends Fragment {
                           dismissloadDialog();
                         }
                       });
-
                     }
 
                     @Override public void onFail(int code, String result) {
-                            KLog.e(result);
+                      KLog.e(result);
                     }
                   });
                 }
@@ -325,7 +329,7 @@ public class AppStoreFragment extends Fragment {
                 @Override public void onFail(int code, String result) {
 
                 }
-              }, mContentBean.title);
+              }, mContentBean.title, mContentBean.img);
             }
           }
         })
@@ -454,8 +458,7 @@ public class AppStoreFragment extends Fragment {
     Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
     shortcutIntent.putExtra("app_name", tName);
     shortcutIntent.putExtra("url", url);
-    shortcutIntent.setClassName("com.xiaoxin.im",
-        "com.xiaoxin.im.SplashActivity");
+    shortcutIntent.setClassName("com.xiaoxin.im", "com.xiaoxin.im.SplashActivity");
     shortcutIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
     mIconRes = Intent.ShortcutIconResource.fromContext(getActivity(), R.mipmap.ic_launcher);

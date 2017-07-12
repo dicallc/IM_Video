@@ -95,11 +95,12 @@ public class AppStoreDao {
           }
         });
   }
-  public static void deleteApp(final onConnectionFinishLinstener mLinstener,String app_name) {
+  public static void deleteApp(final onConnectionFinishLinstener mLinstener,String app_name,String img) {
     OkHttpUtils.get()//
         .url(Constant.delete_custom_app)//
         .addParams("username", Constant.getNikeName())
         .addParams("app_ame", app_name)
+        .addParams("img", img)
         .build()
         .execute(new CommonImpl() {
 
