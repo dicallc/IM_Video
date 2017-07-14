@@ -1,0 +1,6 @@
+<resources>
+  <string name="app_name">ColdSleep</string>
+  <string name="action_colded">切换已冷冻列表</string>
+  <string name="action_cold">切换未冷冻列表</string>
+  <string name="action_all">切换全部列表</string>
+</resources>

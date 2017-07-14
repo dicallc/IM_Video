@@ -282,7 +282,7 @@ public class AppStoreFragment extends Fragment {
     CustomAppAdapter = new AppStoreAdapter(mCustomlist);
     CustomAppAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
-        ItemClick(mBaseQuickAdapter, mI);
+        ItemClick(Constant.H5TypeCustom,mBaseQuickAdapter, mI);
       }
     });
     CustomAppAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
@@ -342,18 +342,18 @@ public class AppStoreFragment extends Fragment {
     NorMalAppadapter = new AppStoreAdapter(mlist);
     NorMalAppadapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
-        ItemClick(mBaseQuickAdapter, mI);
+        ItemClick(Constant.H5TypeNomal,mBaseQuickAdapter, mI);
       }
     });
     mAppList.setAdapter(NorMalAppadapter);
   }
 
-  private void ItemClick(BaseQuickAdapter mBaseQuickAdapter, int mI) {
+  private void ItemClick(String type,BaseQuickAdapter mBaseQuickAdapter, int mI) {
     List<AppStoreModel.ContentBean> mData = mBaseQuickAdapter.getData();
     mDownAppModel = mData.get(mI);
     //cheAppType(mDownAppModel);
     if ("h5".equals(mDownAppModel.app_type)) {
-      openH5WebView(mDownAppModel);
+      openH5WebView(type,mDownAppModel);
       return;
     }
     mAppTitle = mDownAppModel.title;
@@ -486,9 +486,14 @@ public class AppStoreFragment extends Fragment {
     }, app_name, mKey, app_des, Constant.URL_HEAD + app_path);
   }
 
-  private void openH5WebView(AppStoreModel.ContentBean mDownAppModel) {
+  private void openH5WebView(String type,AppStoreModel.ContentBean mDownAppModel) {
     Intent mIntent = new Intent(getActivity(), H5WebViewActivity.class);
-    mIntent.putExtra("url", Constant.URL_HEAD + mDownAppModel.down_path);
+    if (Constant.H5TypeNomal.equals(type)){
+      mIntent.putExtra("url",  mDownAppModel.down_path);
+    }else if(Constant.H5TypeCustom.equals(type)){
+      mIntent.putExtra("url", Constant.URL_HEAD + mDownAppModel.down_path);
+    }
+
     startActivity(mIntent);
   }
 

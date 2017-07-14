@@ -166,7 +166,6 @@ dependencies {
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
   compile project(':ui')
   compile 'com.android.support:recyclerview-v7:25+'
-  //  compile rootProject .ext.androidDependencies[ "support_v4"]
   compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
   compile 'com.squareup.okhttp3:okhttp:3.8.0'
   compile 'com.zhy:okhttputils:2.6.2'

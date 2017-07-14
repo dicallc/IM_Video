@@ -37,6 +37,8 @@ public class Constant {
   public static final String username = "username";
   public static final String URL_HEAD = "http://www.";
   public static final String QINiu_URL_HEAD = "http://7xnk07.com1.z0.glb.clouddn.com/";
+  public static final String H5TypeNomal = "nomal";
+  public static final String H5TypeCustom= "custom";
 
   public static String getNikeName() {
     //如果内存中姓名为空就取数据库中的
