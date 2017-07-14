@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,12 +14,15 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.google.gson.Gson;
 import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.RecycleViewDivider;
+import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
+import com.xiaoxin.sleep.model.AppCache;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
   List<AppInfo> Dislist = new ArrayList<>();
   private AppListAdapter mAdapter;
   private MaterialDialog mDialog;
-  private List<AppInfo> mAllUserAppInfos;
+  private List<AppInfo> mAllUserAppInfos=new ArrayList<>();
   private FloatingActionButton mFab;
   private String selectedItem = LibraryCons.SELECTENABLE;
 
@@ -45,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
   Runnable loadDisAppThread = new Runnable() {
     @Override public void run() {
+      clearCache();
       mAllUserAppInfos = Utils.getAllUserAppInfos(MainActivity.this);
       //获取未被禁用的app列表
       ShellUtils.CommandResult allEnAppsRes =
@@ -71,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
           }
         }
       }
+      //saveLocalCache();
       KLog.e("Dislist" + Dislist);
 
       runOnUiThread(new Runnable() {
@@ -81,30 +87,28 @@ public class MainActivity extends AppCompatActivity {
       });
     }
   };
-  Runnable loadEnAppThread = new Runnable() {
-    @Override public void run() {
-      List<AppInfo> mAllUserAppInfos = Utils.getAllUserAppInfos(MainActivity.this);
-      ShellUtils.CommandResult mCommandResult =
-          ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
-      String mSuccessMsg = mCommandResult.successMsg;
-      String[] mSplit = mSuccessMsg.split("package:");
-      for (int i = 1; i < mSplit.length; i++) {
-        for (AppInfo mAppInfo : mAllUserAppInfos) {
-          if (mSplit[i].equals(mAppInfo.packageName)) {
-            mAppInfo.isSelect = false;
-            list.add(mAppInfo);
-          }
-        }
-      }
-      runOnUiThread(new Runnable() {
-        @Override public void run() {
-          mAdapter.notifyDataSetChanged();
-        }
-      });
-    }
-  };
+
+  private void clearCache() {
+    list.clear();
+    EnList.clear();
+    Dislist.clear();
+    mAllUserAppInfos.clear();
+  }
+  private void SetMemoryCache(AppCache mAppCache) {
+    EnList.addAll(mAppCache.en);
+    Dislist.addAll(mAppCache.dis);
+    mAllUserAppInfos.addAll(mAppCache.all);
+  }
+
+  private void saveLocalCache() {
+    AppCache mAppCache = new AppCache(EnList, Dislist, mAllUserAppInfos);
+    String mJson = new Gson().toJson(mAppCache);
+    SpUtils.setParam(MainActivity.this, LibraryCons.LOCAL_DB_NAME, mJson);
+  }
 
   private void initData() {
+    showloadDialog("获取列表中");
+    //getLocalCache();
     initListData();
     mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override
@@ -131,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
                       true);
                   mBaseQuickAdapter.getData().remove(mAppInfo);
                   initListData();
-
                 }
               })
               .show();
@@ -141,6 +144,20 @@ public class MainActivity extends AppCompatActivity {
       }
     });
   }
+
+  private void getLocalCache() {
+    String json = (String) SpUtils.getParam(MainActivity.this, LibraryCons.LOCAL_DB_NAME, "");
+    if (!TextUtils.isEmpty(json)){
+      AppCache mAppCache = new Gson().fromJson(json, AppCache.class);
+      clearCache();
+      SetMemoryCache(mAppCache);
+      list.addAll(mAppCache.en);
+      mAdapter.notifyDataSetChanged();
+    }
+
+  }
+
+
 
   private void initListData() {
     new Thread(loadDisAppThread).start();
