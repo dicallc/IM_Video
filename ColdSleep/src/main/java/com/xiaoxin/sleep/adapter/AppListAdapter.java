@@ -1,6 +1,9 @@
 package com.xiaoxin.sleep.adapter;
 
 import android.support.annotation.Nullable;
+import android.widget.ImageView;
+
+import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.chad.library.adapter.base.BaseViewHolder;
 import com.xiaoxin.library.model.AppInfo;
@@ -23,8 +26,8 @@ public class AppListAdapter extends BaseQuickAdapter<AppInfo, BaseViewHolder> {
       mBaseViewHolder.setChecked(R.id.checkBox,false);
     }
     mBaseViewHolder.setText(R.id.item_name, mAppInfo.appName);
-    mBaseViewHolder.setImageDrawable(R.id.item_icon,mAppInfo.drawable);
-    //ImageView mView = mBaseViewHolder.getView(R.id.item_icon);
-    //Glide.with(mContext).load(mAppInfo.drawable).into(mView);
+//    mBaseViewHolder.setImageDrawable(R.id.item_icon,mAppInfo.drawable);
+    ImageView mView = mBaseViewHolder.getView(R.id.item_icon);
+    Glide.with(mContext).load(mAppInfo.file_path).into(mView);
   }
 }
