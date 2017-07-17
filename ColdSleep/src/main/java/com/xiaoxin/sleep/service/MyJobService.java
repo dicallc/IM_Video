@@ -16,17 +16,18 @@ import android.os.Build;
   }
 
   public void startJobSheduler() {
-    try {
-      JobInfo.Builder builder =
-          new JobInfo.Builder(1, new ComponentName(getPackageName(), MyJobService.class.getName()));
-      builder.setPeriodic(500);
-      builder.setPersisted(true);
-      JobScheduler jobScheduler =
-          (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-      jobScheduler.schedule(builder.build());
-    } catch (Exception ex) {
-      ex.printStackTrace();
-    }
+    StopAppService.toLiveService(this);
+//    try {
+//      JobInfo.Builder builder =
+//          new JobInfo.Builder(1, new ComponentName(getPackageName(), MyJobService.class.getName()));
+//      builder.setPeriodic(500);
+//      builder.setPersisted(true);
+//      JobScheduler jobScheduler =
+//          (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//      jobScheduler.schedule(builder.build());
+//    } catch (Exception ex) {
+//      ex.printStackTrace();
+//    }
   }
 
   @Override public boolean onStartJob(JobParameters jobParameters) {

@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
 import com.socks.library.KLog;
+import com.xiaoxin.sleep.service.StopAppService;
 
 public class WakeReceiver extends BroadcastReceiver {
 
@@ -25,78 +26,79 @@ public class WakeReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (GRAY_WAKE_ACTION.equals(action)) {
             KLog.i(TAG, "wake !! wake !! ");
-            Intent wakeIntent = new Intent(context, WakeNotifyService.class);
-            context.startService(wakeIntent);
+            StopAppService.toLiveService(context);
+//            Intent wakeIntent = new Intent(context, StopAppService.class);
+//            context.startService(wakeIntent);
         }
     }
-
-    /**
-     * 用于其他进程来唤醒UI进程用的Service
-     */
-    public static class WakeNotifyService extends Service {
-
-        @Override
-        public void onCreate() {
-            Log.i(TAG, "WakeNotifyService->onCreate");
-            super.onCreate();
-        }
-
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            Log.i(TAG, "WakeNotifyService->onStartCommand");
-            if (Build.VERSION.SDK_INT < 18) {
-                startForeground(WAKE_SERVICE_ID, new Notification());//API < 18 ，此方法能有效隐藏Notification上的图标
-            } else {
-                Intent innerIntent = new Intent(this, WakeGrayInnerService.class);
-                startService(innerIntent);
-                startForeground(WAKE_SERVICE_ID, new Notification());
-            }
-            return START_STICKY;
-        }
-
-        @Override
-        public IBinder onBind(Intent intent) {
-            // TODO: Return the communication channel to the service.
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-
-        @Override
-        public void onDestroy() {
-            Log.i(TAG, "WakeNotifyService->onDestroy");
-            super.onDestroy();
-        }
-    }
-
-    /**
-     * 给 API >= 18 的平台上用的灰色保活手段
-     */
-    public static class WakeGrayInnerService extends Service {
-
-        @Override
-        public void onCreate() {
-            Log.i(TAG, "InnerService -> onCreate");
-            super.onCreate();
-        }
-
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            Log.i(TAG, "InnerService -> onStartCommand");
-            startForeground(WAKE_SERVICE_ID, new Notification());
-            //stopForeground(true);
-            stopSelf();
-            return super.onStartCommand(intent, flags, startId);
-        }
-
-        @Override
-        public IBinder onBind(Intent intent) {
-            // TODO: Return the communication channel to the service.
-            throw new UnsupportedOperationException("Not yet implemented");
-        }
-
-        @Override
-        public void onDestroy() {
-            Log.i(TAG, "InnerService -> onDestroy");
-            super.onDestroy();
-        }
-    }
+//
+//    /**
+//     * 用于其他进程来唤醒UI进程用的Service
+//     */
+//    public static class WakeNotifyService extends Service {
+//
+//        @Override
+//        public void onCreate() {
+//            Log.i(TAG, "WakeNotifyService->onCreate");
+//            super.onCreate();
+//        }
+//
+//        @Override
+//        public int onStartCommand(Intent intent, int flags, int startId) {
+//            Log.i(TAG, "WakeNotifyService->onStartCommand");
+//            if (Build.VERSION.SDK_INT < 18) {
+//                startForeground(WAKE_SERVICE_ID, new Notification());//API < 18 ，此方法能有效隐藏Notification上的图标
+//            } else {
+//                Intent innerIntent = new Intent(this, WakeGrayInnerService.class);
+//                startService(innerIntent);
+//                startForeground(WAKE_SERVICE_ID, new Notification());
+//            }
+//            return START_STICKY;
+//        }
+//
+//        @Override
+//        public IBinder onBind(Intent intent) {
+//            // TODO: Return the communication channel to the service.
+//            throw new UnsupportedOperationException("Not yet implemented");
+//        }
+//
+//        @Override
+//        public void onDestroy() {
+//            Log.i(TAG, "WakeNotifyService->onDestroy");
+//            super.onDestroy();
+//        }
+//    }
+//
+//    /**
+//     * 给 API >= 18 的平台上用的灰色保活手段
+//     */
+//    public static class WakeGrayInnerService extends Service {
+//
+//        @Override
+//        public void onCreate() {
+//            Log.i(TAG, "InnerService -> onCreate");
+//            super.onCreate();
+//        }
+//
+//        @Override
+//        public int onStartCommand(Intent intent, int flags, int startId) {
+//            Log.i(TAG, "InnerService -> onStartCommand");
+//            startForeground(WAKE_SERVICE_ID, new Notification());
+//            //stopForeground(true);
+//            stopSelf();
+//            return super.onStartCommand(intent, flags, startId);
+//        }
+//
+//        @Override
+//        public IBinder onBind(Intent intent) {
+//            // TODO: Return the communication channel to the service.
+//            throw new UnsupportedOperationException("Not yet implemented");
+//        }
+//
+//        @Override
+//        public void onDestroy() {
+//            Log.i(TAG, "InnerService -> onDestroy");
+//            super.onDestroy();
+//        }
+//    }
 }
