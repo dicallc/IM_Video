@@ -1,9 +1,14 @@
 package com.xiaoxin.sleep;
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,14 +18,11 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
-import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.RecycleViewDivider;
@@ -28,13 +30,13 @@ import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.model.AppCache;
-
-import java.io.File;
+import com.xiaoxin.sleep.service.StopAppService;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static int REQUEST_IGNORE_BATTERY_CODE;
     @BindView(R.id.app_list)
     RecyclerView mAppList;
 
@@ -54,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         initView();
         initData();
+        wakeService();
+    }
+
+    private void wakeService() {
+        Intent grayIntent = new Intent(getApplicationContext(), StopAppService.class);
+        startService(grayIntent);
     }
 
     Runnable loadLocalDBRunnle = new Runnable() {
@@ -69,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             long start = System.currentTimeMillis();
             mAllUserAppInfos = Utils.getAllUserAppInfos(MainActivity.this);
             long end = System.currentTimeMillis();
-            KLog.d("dicallc function last time is " + (end - start));
+            //KLog.d("dicallc function last time is " + (end - start));
 
             //获取未被禁用的app列表
             ShellUtils.CommandResult allEnAppsRes =
@@ -99,11 +107,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             saveLocalCache();
-            KLog.e("Dislist" + Dislist);
+            //KLog.e("Dislist" + Dislist);
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    if (0==mAdapter.getData().size()){
+                        list.addAll(EnList);
+                    }
                     mAdapter.notifyDataSetChanged();
                     goneloadDialog();
                 }
@@ -197,6 +208,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+        }else{
+            initListData();
         }
 
 
@@ -291,4 +304,53 @@ public class MainActivity extends AppCompatActivity {
     protected void goneloadDialog() {
         if (null != mDialog) if (mDialog.isShowing()) mDialog.dismiss();
     }
+    @TargetApi(Build.VERSION_CODES.M)
+    public static boolean isIgnoringBatteryOptimizations(Activity activity){
+        String packageName = activity.getPackageName();
+        PowerManager pm = (PowerManager) activity
+            .getSystemService(Context.POWER_SERVICE);
+        if (pm.isIgnoringBatteryOptimizations(packageName)) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+    /**
+     * 针对N以上的Doze模式
+     *
+     * @param activity
+     */
+    public static void isIgnoreBatteryOption(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            try {
+                Intent intent = new Intent();
+                String packageName = activity.getPackageName();
+                PowerManager pm = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
+                if (!pm.isIgnoringBatteryOptimizations(packageName)) {
+                    //               intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
+                    intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
+                    intent.setData(Uri.parse("package:" + packageName));
+                    activity.startActivityForResult(intent, REQUEST_IGNORE_BATTERY_CODE);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            //if (requestCode == BatteryUtils.REQUEST_IGNORE_BATTERY_CODE){
+            //    //TODO something
+            //}
+        }else if (resultCode == RESULT_CANCELED){
+            //if (requestCode == BatteryUtils.REQUEST_IGNORE_BATTERY_CODE){
+            //    ToastUtils.show(getActivity(), "请开启忽略电池优化~");
+            //}
+        }
+    }
+
+
+
 }
