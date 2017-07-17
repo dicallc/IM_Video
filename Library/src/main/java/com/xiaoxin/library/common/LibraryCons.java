@@ -14,6 +14,7 @@ public class LibraryCons {
   public static final String SELECTENABLE="enable";
   public static final String SELECTDisabled="Disabled";
   public static final String SELECTEAll="all";
+  public static final String LOCAL_DB_NAME="appcache";
 
 
 }

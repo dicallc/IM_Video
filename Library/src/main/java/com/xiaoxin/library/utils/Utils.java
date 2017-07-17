@@ -23,10 +23,6 @@ public class Utils {
     PackageManager pm = mContext.getApplication().getPackageManager();
     List<PackageInfo> packgeInfos =
         pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
-        /* 获取应用程序的名称，不是包名，而是清单文件中的labelname
-            String str_name = packageInfo.applicationInfo.loadLabel(pm).toString();
-            appInfo.setAppName(str_name);
-         */
     for (PackageInfo packgeInfo : packgeInfos) {
       ApplicationInfo mApplicationInfo = packgeInfo.applicationInfo;
       //如果是系统程序就跳出本次循环
