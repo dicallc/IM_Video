@@ -33,6 +33,13 @@
 -keep class com.google.gson.examples.android.model.** { *; }
 -keep com.xiaoxin.sleep.model.** { *; }
 
+#Eventbus
+-keepattributes *Annotation*
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
 #-------------------------------------------------------------------------
 
 #---------------------------------3.与js互相调用的类------------------------

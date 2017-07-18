@@ -3,7 +3,6 @@ package com.xiaoxin.sleep.model;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
-//Model�� �������洢RunningService��Ϣ
 public class RunSericeModel {
   
 	private String appLabel;    //Ӧ�ó����ǩ

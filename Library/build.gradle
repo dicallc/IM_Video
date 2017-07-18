@@ -36,4 +36,7 @@ dependencies {
   }
   compile 'com.github.zhaokaiqiang.klog:library:1.6.0'
   compile 'com.google.code.gson:gson:2.2.4'
+  compile 'org.greenrobot:eventbus:3.0.0'
+  compile 'com.xdandroid:hellodaemon:+'
+  compile 'me.shaohui:bottomdialog:1.1.9'
 }

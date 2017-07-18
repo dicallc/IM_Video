@@ -1,13 +1,8 @@
 package com.xiaoxin.sleep.receiver;
 
-import android.app.Notification;
-import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.os.IBinder;
-import android.util.Log;
 import com.socks.library.KLog;
 import com.xiaoxin.sleep.service.StopAppService;
 
@@ -25,7 +20,7 @@ public class WakeReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (GRAY_WAKE_ACTION.equals(action)) {
-            KLog.i(TAG, "wake !! wake !! ");
+            KLog.e(TAG, "wake !! wake !! 又收到了");
             StopAppService.toLiveService(context);
 //            Intent wakeIntent = new Intent(context, StopAppService.class);
 //            context.startService(wakeIntent);
