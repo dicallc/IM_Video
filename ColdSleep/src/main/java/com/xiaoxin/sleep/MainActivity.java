@@ -34,9 +34,9 @@ import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.service.StopAppService;
-import com.xiaoxin.sleep.utils.ToastUtils;
 import java.util.ArrayList;
 import java.util.List;
+import me.shaohui.bottomdialog.BaseBottomDialog;
 import me.shaohui.bottomdialog.BottomDialog;
 
 public class MainActivity extends AppCompatActivity {
@@ -162,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
       }
     });
     mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
+
+      private BaseBottomDialog mShow;
+
       @Override
       public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
         final AppInfo mAppInfo = (AppInfo) mBaseQuickAdapter.getData().get(mI);
@@ -183,27 +186,62 @@ public class MainActivity extends AppCompatActivity {
               .show();
           return true;
         } else if (LibraryCons.SELECTENABLE.equals(selectedItem)) {
-          BottomDialog.create(getSupportFragmentManager())
-              .setLayoutRes(R.layout.dialog_content_normal)
-              .setViewListener(new BottomDialog.ViewListener() {
-                @Override public void bindView(View mView) {
-                  TextView mViewById = (TextView) mView.findViewById(R.id.fuc_delete);
-                  TextView app_title = (TextView) mView.findViewById(R.id.app_title);
-                  ImageView app_icon = (ImageView) mView.findViewById(R.id.app_icon);
-                  app_title.setText(mAppInfo.appName);
-                  Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
-                  mViewById.setOnClickListener(new View.OnClickListener() {
-                    @Override public void onClick(View v) {
-                      ToastUtils.showShortToast("点击了");
-                    }
-                  });
-                }
-              })
-              .show();
+          mShow = BottomDialog.create(getSupportFragmentManager())
+                .setLayoutRes(R.layout.dialog_content_normal)
+                .setViewListener(new BottomDialog.ViewListener() {
+                  @Override public void bindView(View mView) {
+                    TextView uninstall_app = (TextView) mView.findViewById(R.id.fuc_delete);
+                    TextView app_title = (TextView) mView.findViewById(R.id.app_title);
+                    ImageView app_icon = (ImageView) mView.findViewById(R.id.app_icon);
+                    app_title.setText(mAppInfo.appName);
+                    Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+                    uninstall_app.setOnClickListener(new View.OnClickListener() {
+                      @Override public void onClick(View v) {
+                        ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true,
+                            true);
+                        findDataBeanDelete(mAppInfo);
+                        mAdapter.notifyDataSetChanged();
+                        mShow.dismiss();
+                      }
+                    });
+                  }
+                })
+                .show();
         }
         return false;
       }
     });
+  }
+
+  private void findDataBeanDelete(AppInfo mAppInfo) {
+    if (null!=findModel(list,mAppInfo)){
+      AppInfo mModel = findModel(list, mAppInfo);
+      list.remove(mModel);
+    }
+    if (null!=findModel(EnList,mAppInfo)){
+      AppInfo mModel = findModel(EnList, mAppInfo);
+      EnList.remove(mModel);
+    }
+    if (null!=findModel(Dislist,mAppInfo)){
+      AppInfo mModel = findModel(Dislist, mAppInfo);
+      Dislist.remove(mModel);
+    }
+    if (null!=findModel(mAllUserAppInfos,mAppInfo)){
+      AppInfo mModel = findModel(mAllUserAppInfos, mAppInfo);
+      mAllUserAppInfos.remove(mModel);
+    }
+  }
+
+  private AppInfo findModel(List<AppInfo> lists,AppInfo mAppInfo) {
+    AppInfo mPartModel = null;
+    for (AppInfo info:lists) {
+      if (info.appName.equals(mAppInfo.appName))
+      {
+        mPartModel=info;
+        break;
+      }
+    }
+    return mPartModel;
   }
 
   private void getLocalCache() {
