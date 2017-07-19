@@ -2,11 +2,12 @@
 #---------------------------------1.实体类---------------------------------
 
 -keep class com.xiaoxin.library.model.** { *; }
-
+-keep class com.xiaoxin.sleep.model.** { *; }
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
-
+-keep class com.xdandroid.hellodaemon.**{*;}
+-dontwarn com.xdandroid.hellodaemon.**
 #BaseRecyclerViewAdapterHelper
 -keep class com.chad.library.adapter.** {
    *;
@@ -31,8 +32,6 @@
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class com.google.gson.examples.android.model.** { *; }
--keep com.xiaoxin.sleep.model.** { *; }
-
 #Eventbus
 -keepattributes *Annotation*
 -keepclassmembers class ** {

@@ -1,5 +1,6 @@
 package com.xiaoxin.sleep;
 
+import android.animation.Animator;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
@@ -9,7 +10,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -34,10 +37,9 @@ import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.service.StopAppService;
+import com.xiaoxin.sleep.view.DialogWithCircularReveal;
 import java.util.ArrayList;
 import java.util.List;
-import me.shaohui.bottomdialog.BaseBottomDialog;
-import me.shaohui.bottomdialog.BottomDialog;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
   List<AppInfo> list = new ArrayList<>();
   List<AppInfo> EnList = new ArrayList<>();
   List<AppInfo> Dislist = new ArrayList<>();
+  @BindView(R.id.main_layout) ConstraintLayout mMainLayout;
   private AppListAdapter mAdapter;
   private MaterialDialog mDialog;
   private List<AppInfo> mAllUserAppInfos = new ArrayList<>();
@@ -163,81 +166,98 @@ public class MainActivity extends AppCompatActivity {
     });
     mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
 
-      private BaseBottomDialog mShow;
+      private DialogWithCircularReveal dialog;
+      private DialogWithCircularReveal mReveal1;
+      private DialogWithCircularReveal mReveal;
+      public Animator mCircularReveal;
 
       @Override
       public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
+
         final AppInfo mAppInfo = (AppInfo) mBaseQuickAdapter.getData().get(mI);
         if (LibraryCons.SELECTDisabled.equals(selectedItem)) {
-          new MaterialDialog.Builder(MainActivity.this).title("操作")
-              .items(R.array.sleep_custion_function)
-              .itemsCallback(new MaterialDialog.ListCallback() {
-                @Override public void onSelection(MaterialDialog dialog, View view, int which,
-                    CharSequence text) {
-                  //消失操作框
-                  dialog.dismiss();
-                  showloadDialog("操作中");
-                  ShellUtils.execCommand(LibraryCons.make_app_to_enble + mAppInfo.packageName, true,
-                      true);
-                  mBaseQuickAdapter.getData().remove(mAppInfo);
-                  initListData();
-                }
-              })
-              .show();
+          View mInflate = View.inflate(MainActivity.this, R.layout.dialog_dis_content_normal, null);
+          TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
+          TextView fuc_remoove = (TextView) mInflate.findViewById(R.id.fuc_remoove);
+          TextView fuc_wake = (TextView) mInflate.findViewById(R.id.fuc_wake);
+          TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
+          ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
+          app_title.setText(mAppInfo.appName);
+          Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+          fuc_remoove.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+              dialog.dismiss();
+              showloadDialog("操作中");
+              ShellUtils.execCommand(LibraryCons.make_app_to_enble + mAppInfo.packageName, true,
+                  true);
+              mBaseQuickAdapter.getData().remove(mAppInfo);
+              initListData();
+            }
+          });
+          uninstall_app.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+              dialog.dismiss();
+              ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
+              findDataBeanDelete(mAppInfo);
+              mAdapter.notifyDataSetChanged();
+            }
+          });
+          dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
+          dialog.setRevealview(R.id.myView);
+
+          dialog.showDialog();
           return true;
         } else if (LibraryCons.SELECTENABLE.equals(selectedItem)) {
-          mShow = BottomDialog.create(getSupportFragmentManager())
-                .setLayoutRes(R.layout.dialog_content_normal)
-                .setViewListener(new BottomDialog.ViewListener() {
-                  @Override public void bindView(View mView) {
-                    TextView uninstall_app = (TextView) mView.findViewById(R.id.fuc_delete);
-                    TextView app_title = (TextView) mView.findViewById(R.id.app_title);
-                    ImageView app_icon = (ImageView) mView.findViewById(R.id.app_icon);
-                    app_title.setText(mAppInfo.appName);
-                    Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
-                    uninstall_app.setOnClickListener(new View.OnClickListener() {
-                      @Override public void onClick(View v) {
-                        ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true,
-                            true);
-                        findDataBeanDelete(mAppInfo);
-                        mAdapter.notifyDataSetChanged();
-                        mShow.dismiss();
-                      }
-                    });
-                  }
-                })
-                .show();
+          //未冷冻列表
+          View mInflate = View.inflate(MainActivity.this, R.layout.dialog_content_normal, null);
+          TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
+          TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
+          ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
+          app_title.setText(mAppInfo.appName);
+          Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+          uninstall_app.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+              dialog.dismiss();
+              ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
+              findDataBeanDelete(mAppInfo);
+              mAdapter.notifyDataSetChanged();
+              Snackbar.make(mMainLayout, "删除成功", Snackbar.LENGTH_SHORT)
+                  .show();
+            }
+          });
+          dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
+          dialog.setRevealview(R.id.myView);
+          dialog.showDialog();
         }
-        return false;
+        return true;
       }
     });
   }
 
   private void findDataBeanDelete(AppInfo mAppInfo) {
-    if (null!=findModel(list,mAppInfo)){
+    if (null != findModel(list, mAppInfo)) {
       AppInfo mModel = findModel(list, mAppInfo);
       list.remove(mModel);
     }
-    if (null!=findModel(EnList,mAppInfo)){
+    if (null != findModel(EnList, mAppInfo)) {
       AppInfo mModel = findModel(EnList, mAppInfo);
       EnList.remove(mModel);
     }
-    if (null!=findModel(Dislist,mAppInfo)){
+    if (null != findModel(Dislist, mAppInfo)) {
       AppInfo mModel = findModel(Dislist, mAppInfo);
       Dislist.remove(mModel);
     }
-    if (null!=findModel(mAllUserAppInfos,mAppInfo)){
+    if (null != findModel(mAllUserAppInfos, mAppInfo)) {
       AppInfo mModel = findModel(mAllUserAppInfos, mAppInfo);
       mAllUserAppInfos.remove(mModel);
     }
   }
 
-  private AppInfo findModel(List<AppInfo> lists,AppInfo mAppInfo) {
+  private AppInfo findModel(List<AppInfo> lists, AppInfo mAppInfo) {
     AppInfo mPartModel = null;
-    for (AppInfo info:lists) {
-      if (info.appName.equals(mAppInfo.appName))
-      {
-        mPartModel=info;
+    for (AppInfo info : lists) {
+      if (info.appName.equals(mAppInfo.appName)) {
+        mPartModel = info;
         break;
       }
     }
