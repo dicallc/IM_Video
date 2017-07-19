@@ -1,15 +1,15 @@
 package com.xiaoxin.library.utils;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-
 import com.xiaoxin.library.model.AppInfo;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -51,6 +51,11 @@ public class Utils {
     }
     return mAppInfos;
   }
+  public static void openApp(Context context,String packageName) {
+    Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+    context.startActivity(intent);
+  }
+
 
   /**
    * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)

@@ -159,7 +159,13 @@ public class MainActivity extends AppCompatActivity {
     mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override
       public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
-        AppInfo mAppInfo = list.get(position);
+        AppInfo mAppInfo = (AppInfo) mBaseQuickAdapter.getData().get(position);
+        if (LibraryCons.SELECTDisabled.equals(selectedItem)){
+          Utils.openApp(MainActivity.this,mAppInfo.packageName);
+        }else{
+
+        }
+        AppInfo appInfo = list.get(position);
         mAppInfo.isSelect = !mAppInfo.isSelect;
         mAdapter.notifyDataSetChanged();
       }
@@ -184,6 +190,13 @@ public class MainActivity extends AppCompatActivity {
           ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
           app_title.setText(mAppInfo.appName);
           Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+          //解冻
+          fuc_wake.setOnClickListener(new View.OnClickListener() {
+            @Override public void onClick(View v) {
+
+            }
+          });
+          //移出列表
           fuc_remoove.setOnClickListener(new View.OnClickListener() {
             @Override public void onClick(View v) {
               dialog.dismiss();
@@ -407,9 +420,7 @@ public class MainActivity extends AppCompatActivity {
       //    //TODO something
       //}
     } else if (resultCode == RESULT_CANCELED) {
-      //if (requestCode == BatteryUtils.REQUEST_IGNORE_BATTERY_CODE){
-      //    ToastUtils.show(getActivity(), "请开启忽略电池优化~");
-      //}
+      isIgnoreBatteryOption(MainActivity.this);
     }
   }
 }
