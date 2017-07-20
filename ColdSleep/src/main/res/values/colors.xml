@@ -5,4 +5,7 @@
   <color name="colorAccent">#FF4081</color>
   <color name="font_color">#555555</color>
   <color name="white">#ffffff</color>
+  <color name="custom_black">#212121</color>
+  <color name="custom_medum_black">#727272</color>
+  <color name="custom_blue">#0091EA</color>
 </resources>
