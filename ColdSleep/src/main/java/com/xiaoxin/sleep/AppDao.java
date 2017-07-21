@@ -1,16 +1,16 @@
 package com.xiaoxin.sleep;
 
 import android.app.Activity;
-import android.content.Context;
 import com.google.gson.Gson;
 import com.xiaoxin.library.common.LibraryCons;
-import com.xiaoxin.library.common.onCommonLinstener;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.model.AppCache;
+import com.xiaoxin.sleep.model.Event;
 import java.util.ArrayList;
 import java.util.List;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * dao层，与数据打交道，所有数据应从此取，存到此
@@ -20,7 +20,7 @@ public class AppDao {
   private AppDao() {
   }
 
-  public static synchronized AppDao getInstance(Context context) {
+  public static synchronized AppDao getInstance() {
     return SingleHolder.dao;
   }
 
@@ -33,6 +33,14 @@ public class AppDao {
   List<AppInfo> Dislist = new ArrayList<>();
   private List<AppInfo> mAllUserAppInfos = new ArrayList<>();
 
+  public List<AppInfo> getAllUserAppList() {
+    return mAllUserAppInfos;
+  }
+
+  public void setAllUserAppInfos(List<AppInfo> mAllUserAppInfos) {
+    this.mAllUserAppInfos = mAllUserAppInfos;
+  }
+
   private void clearCache() {
     //    list.clear();
     EnList.clear();
@@ -40,17 +48,17 @@ public class AppDao {
     mAllUserAppInfos.clear();
   }
 
-  private void initListData(Activity mActivity,onCommonLinstener mLinstener) {
-    new SyncThread(mActivity,mLinstener).start();
+  public void initListData(Activity mActivity) {
+    new SyncThread(mActivity).start();
   }
 
   class SyncThread extends Thread {
-    private final onCommonLinstener mLinstener;
+    //private final onCommonLinstener mLinstener;
     public Activity mContext;
 
-    public SyncThread(Activity mContext, onCommonLinstener mLinstener) {
+    public SyncThread(Activity mContext) {
       this.mContext = mContext;
-      this.mLinstener=mLinstener;
+      //this.mLinstener=mLinstener;
     }
 
     @Override public void run() {
@@ -70,6 +78,7 @@ public class AppDao {
         for (AppInfo mAppInfo : mAllUserAppInfos) {
           if (mSplit[i].equals(mAppInfo.packageName)) {
             mAppInfo.isSelect = false;
+            mAppInfo.isEnable = true;
             EnList.add(mAppInfo);
             //看缓存列表是否存在不存在就添加
             checkCacheExit(mAppInfo);
@@ -80,22 +89,16 @@ public class AppDao {
         for (AppInfo mAppInfo : mAllUserAppInfos) {
           if (DisApps[i].equals(mAppInfo.packageName)) {
             mAppInfo.isSelect = true;
+            mAppInfo.isEnable = false;
             Dislist.add(mAppInfo);
           }
         }
       }
       saveLocalCache();
-      //KLog.e("Dislist" + Dislist);
-      //mLinstener.
-      //runOnUiThread(new Runnable() {
-      //  @Override public void run() {
-      //    if (0 == mAdapter.getData().size()) {
-      //      list.addAll(EnList);
-      //    }
-      //    mAdapter.notifyDataSetChanged();
-      //    goneloadDialog();
-      //  }
-      //});
+      if (0 == list.size()) {
+        list.addAll(EnList);
+      }
+      EventBus.getDefault().post(new Event(Event.MONDAY));
     }
   }
   private void checkCacheExit(AppInfo mAppInfo) {
