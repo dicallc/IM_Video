@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.xiaoxin.sleep.ui.SelectAppActivity"
-    >
+    tools:context="com.xiaoxin.sleep.MainActivity">
   <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       android:id="@+id/appbar"
@@ -38,4 +36,13 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       />
-</LinearLayout>
+  <android.support.design.widget.FloatingActionButton
+      android:id="@+id/fab"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:backgroundTint="#24A060"
+      android:background="#24A060"
+      android:layout_gravity="bottom|center_horizontal"
+      android:layout_margin="@dimen/fab_margin"
+      app:srcCompat="@mipmap/ice"/>
+</android.support.design.widget.CoordinatorLayout>

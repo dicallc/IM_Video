@@ -8,4 +8,5 @@
   <color name="custom_black">#212121</color>
   <color name="custom_medum_black">#727272</color>
   <color name="custom_blue">#0091EA</color>
+  <color name="select_item_bg_color">#D4E9F3</color>
 </resources>

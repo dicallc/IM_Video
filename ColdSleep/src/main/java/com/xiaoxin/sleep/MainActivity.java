@@ -14,10 +14,9 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,12 +30,10 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.google.gson.Gson;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
-import com.xiaoxin.library.utils.RecycleViewDivider;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.model.AppCache;
-import com.xiaoxin.sleep.service.StopAppService;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,84 +59,10 @@ public class MainActivity extends AppCompatActivity {
     ButterKnife.bind(this);
     initView();
     initData();
-    //wakeService();
     isIgnoreBatteryOption(this);
   }
 
-  private void wakeService() {
-    Intent grayIntent = new Intent(getApplicationContext(), StopAppService.class);
-    startService(grayIntent);
-  }
 
-  Runnable loadLocalDBRunnle = new Runnable() {
-    @Override public void run() {
-      getLocalCache();
-    }
-  };
-  Runnable loadDisAppThread = new Runnable() {
-    @Override public void run() {
-      clearCache();
-      long start = System.currentTimeMillis();
-      mAllUserAppInfos = Utils.getAllUserAppInfos(MainActivity.this);
-      long end = System.currentTimeMillis();
-      //获取未被禁用的app列表
-      ShellUtils.CommandResult allEnAppsRes =
-          ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
-      String mAllEnMsg = allEnAppsRes.successMsg;
-      String[] mSplit = mAllEnMsg.split("package:");
-      ShellUtils.CommandResult allDisAppsRes =
-          ShellUtils.execCommand(LibraryCons.allDisabledPackage, true, true);
-      String[] DisApps = allDisAppsRes.successMsg.split("package:");
-      for (int i = 1; i < mSplit.length; i++) {
-        for (AppInfo mAppInfo : mAllUserAppInfos) {
-          if (mSplit[i].equals(mAppInfo.packageName)) {
-            mAppInfo.isSelect = false;
-            EnList.add(mAppInfo);
-            //看缓存列表是否存在不存在就添加
-            checkCacheExit(mAppInfo);
-          }
-        }
-      }
-      for (int i = 1; i < DisApps.length; i++) {
-        for (AppInfo mAppInfo : mAllUserAppInfos) {
-          if (DisApps[i].equals(mAppInfo.packageName)) {
-            mAppInfo.isSelect = true;
-            Dislist.add(mAppInfo);
-          }
-        }
-      }
-      saveLocalCache();
-      //KLog.e("Dislist" + Dislist);
-
-      runOnUiThread(new Runnable() {
-        @Override public void run() {
-          if (0 == mAdapter.getData().size()) {
-            list.addAll(EnList);
-          }
-          mAdapter.notifyDataSetChanged();
-          goneloadDialog();
-        }
-      });
-    }
-
-    private void checkCacheExit(AppInfo mAppInfo) {
-      int index = 0;
-      for (int j = 0; j < list.size(); j++) {
-        AppInfo model = list.get(j);
-        if (model.appName.equals(mAppInfo.appName)) index++;
-        if (j == list.size() - 1 && index == 0) {
-          list.add(mAppInfo);
-        }
-      }
-    }
-  };
-
-  private void clearCache() {
-    //    list.clear();
-    EnList.clear();
-    Dislist.clear();
-    mAllUserAppInfos.clear();
-  }
 
   private void SetMemoryCache(AppCache mAppCache) {
     EnList.addAll(mAppCache.en);
@@ -154,8 +77,7 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void initData() {
-    showloadDialog("获取列表中");
-    new Thread(loadLocalDBRunnle).start();
+    //showloadDialog("获取列表中");
     mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
       @Override
       public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
@@ -277,27 +199,11 @@ public class MainActivity extends AppCompatActivity {
     return mPartModel;
   }
 
-  private void getLocalCache() {
-    String json = (String) SpUtils.getParam(MainActivity.this, LibraryCons.LOCAL_DB_NAME, "");
-    if (!TextUtils.isEmpty(json)) {
-      AppCache mAppCache = new Gson().fromJson(json, AppCache.class);
-      clearCache();
-      SetMemoryCache(mAppCache);
-      list.addAll(mAppCache.en);
-      runOnUiThread(new Runnable() {
-        @Override public void run() {
-          mAdapter.notifyDataSetChanged();
-          goneloadDialog();
-          initListData();
-        }
-      });
-    } else {
-      initListData();
-    }
-  }
 
   private void initListData() {
-    new Thread(loadDisAppThread).start();
+    List<AppInfo> mList = AppDao.getInstance().getUserSaveDisAppFromDB();
+    list.clear();
+    list.addAll(mList);
   }
 
   private void initFloatBar() {
@@ -321,16 +227,13 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void initView() {
-    //showloadDialog("加载列表中");
     initRecylerView();
     initToobar();
     initFloatBar();
   }
 
   private void initRecylerView() {
-    mAppList.setLayoutManager(new LinearLayoutManager(this));
-    mAppList.addItemDecoration(
-        new RecycleViewDivider(this, LinearLayoutManager.VERTICAL, R.drawable.divider_mileage));
+    mAppList.setLayoutManager(new GridLayoutManager(this,4));
     mAdapter = new AppListAdapter(list);
     mAppList.setAdapter(mAdapter);
   }

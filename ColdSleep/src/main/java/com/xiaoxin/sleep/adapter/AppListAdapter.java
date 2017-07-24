@@ -16,18 +16,17 @@ import java.util.List;
 
 public class AppListAdapter extends BaseQuickAdapter<AppInfo, BaseViewHolder> {
   public AppListAdapter(@Nullable List<AppInfo> data) {
-    super(R.layout.app_i_view, data);
+    super(R.layout.app_dislist_i_view, data);
   }
 
   @Override protected void convert(BaseViewHolder mBaseViewHolder, AppInfo mAppInfo) {
-    if (mAppInfo.isSelect){
-      mBaseViewHolder.setChecked(R.id.checkBox,true);
-    }else{
-      mBaseViewHolder.setChecked(R.id.checkBox,false);
-    }
-    mBaseViewHolder.setText(R.id.item_name, mAppInfo.appName);
-//    mBaseViewHolder.setImageDrawable(R.id.item_icon,mAppInfo.drawable);
-    ImageView mView = mBaseViewHolder.getView(R.id.item_icon);
+    //if (mAppInfo.isSelect){
+    //  mBaseViewHolder.setChecked(R.id.checkBox,true);
+    //}else{
+    //  mBaseViewHolder.setChecked(R.id.checkBox,false);
+    //}
+    mBaseViewHolder.setText(R.id.app_name, mAppInfo.appName);
+    ImageView mView = mBaseViewHolder.getView(R.id.app_icon);
     Glide.with(mContext).load(mAppInfo.file_path).into(mView);
   }
 }
