@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.sleep.AppDao;
@@ -52,7 +53,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
 
   private void initData() {
     showloadDialog("获取app中");
-    AppDao.getInstance().initListData(SelectAppActivity.this);
+
   }
 
   private void initTab() {
@@ -71,6 +72,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
   @Subscribe(threadMode = ThreadMode.MAIN) public void onAppDaoMessage(Event msg) {
     switch (msg.getCurrentDay()) {
       case Event.MONDAY:
+        KLog.e("MONDAY");
         goneloadDialog();
         break;
 

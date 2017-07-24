@@ -12,6 +12,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.sleep.AppDao;
@@ -53,6 +54,7 @@ public class AppListFragment extends BaseFragment
   @Override public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initRecylerView();
+    AppDao.getInstance().initListData(getActivity());
   }
 
   private void initRecylerView() {
@@ -71,6 +73,7 @@ public class AppListFragment extends BaseFragment
   @Subscribe(threadMode = ThreadMode.MAIN,priority = 100) public void onAppDaoMessage(Event msg) {
     switch (msg.getCurrentDay()) {
       case Event.MONDAY:
+        KLog.e("MONDAY");
         list.clear();
         List<AppInfo> mAllUserAppList = AppDao.getInstance().getList();
         list.addAll(mAllUserAppList);
