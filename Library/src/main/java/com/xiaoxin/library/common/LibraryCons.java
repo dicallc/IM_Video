@@ -17,6 +17,9 @@ public class LibraryCons {
   public static final String SELECTEAll="all";
   public static final String LOCAL_DB_NAME="appcache";
   public static final String LOCAL_USER_DISAPP_DB_NAME="user_disapp_cache";
+  public static final String NotFIRST ="not_First";
+  public static final String ACTION="action";
+  public static final String ACTION_OPEN="open";
 
 
 }

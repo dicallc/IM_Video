@@ -47,6 +47,7 @@ public class Utils {
       String path = mContext.getFilesDir().getPath();
       String icon_path = Utils.savePic(bm, path, packageName);
       AppInfo appInfo = new AppInfo(appName, packageName, icon_path);
+      //如果是在用户已经选择冷冻列表中则要设置选中状态
       mAppInfos.add(appInfo);
     }
     return mAppInfos;

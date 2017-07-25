@@ -10,6 +10,7 @@ public class AppInfo {
     public String file_path;
     public boolean isEnable;
     public boolean isSelect;
+    public boolean isWarn;
 
     public AppInfo(String appName, String packageName, String icon_path) {
         this.appName = appName;

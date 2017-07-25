@@ -20,11 +20,11 @@ public class AppListAdapter extends BaseQuickAdapter<AppInfo, BaseViewHolder> {
   }
 
   @Override protected void convert(BaseViewHolder mBaseViewHolder, AppInfo mAppInfo) {
-    //if (mAppInfo.isSelect){
-    //  mBaseViewHolder.setChecked(R.id.checkBox,true);
-    //}else{
-    //  mBaseViewHolder.setChecked(R.id.checkBox,false);
-    //}
+    if (mAppInfo.isWarn){
+      mBaseViewHolder.setTextColor(R.id.app_name,mContext.getResources().getColor(R.color.text_danger_color));
+    }else{
+      mBaseViewHolder.setTextColor(R.id.app_name,mContext.getResources().getColor(R.color.main_color));
+    }
     mBaseViewHolder.setText(R.id.app_name, mAppInfo.appName);
     ImageView mView = mBaseViewHolder.getView(R.id.app_icon);
     Glide.with(mContext).load(mAppInfo.file_path).into(mView);

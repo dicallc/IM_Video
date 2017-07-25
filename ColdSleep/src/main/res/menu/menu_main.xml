@@ -3,19 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.xiaoxin.sleep.MainActivity">
   <item
-      android:id="@+id/action_cold"
-      android:orderInCategory="100"
-      android:title="@string/action_cold"
-      app:showAsAction="never"/>
-  <item
-      android:id="@+id/action_colded"
-      android:orderInCategory="100"
-      android:title="@string/action_colded"
-      app:showAsAction="never"/>
-
-  <item
-      android:id="@+id/action_all"
-      android:orderInCategory="100"
-      android:title="@string/action_all"
-      app:showAsAction="never"/>
+      android:id="@+id/action_setting"
+      android:icon="@drawable/ic_setting"
+      android:title="搜索"
+      app:showAsAction="ifRoom" />
 </menu>

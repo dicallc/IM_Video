@@ -1,172 +1,124 @@
 package com.xiaoxin.sleep;
 
-import android.animation.Animator;
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.afollestad.materialdialogs.MaterialDialog;
+import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
-import com.google.gson.Gson;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
-import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
-import com.xiaoxin.sleep.model.AppCache;
+import com.xiaoxin.sleep.common.BaseActivity;
+import com.xiaoxin.sleep.ui.SelectAppActivity;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener {
 
-  private static int REQUEST_IGNORE_BATTERY_CODE;
   @BindView(R.id.app_list) RecyclerView mAppList;
 
   List<AppInfo> list = new ArrayList<>();
   List<AppInfo> EnList = new ArrayList<>();
   List<AppInfo> Dislist = new ArrayList<>();
   @BindView(R.id.main_layout) ConstraintLayout mMainLayout;
+  @BindView(R.id.fab) FloatingActionButton mFab;
+  @BindView(R.id.toolbar) Toolbar mToolbar;
   private AppListAdapter mAdapter;
-  private MaterialDialog mDialog;
   private List<AppInfo> mAllUserAppInfos = new ArrayList<>();
-  private FloatingActionButton mFab;
-  private String selectedItem = LibraryCons.SELECTENABLE;
+  private ViewCompleteImpl mViewComplete;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    //StatusBarUtil.setColor(MainActivity.this, getResources().getColor(R.color.main_color));
     ButterKnife.bind(this);
     initView();
     initData();
     isIgnoreBatteryOption(this);
-  }
-
-
-
-  private void SetMemoryCache(AppCache mAppCache) {
-    EnList.addAll(mAppCache.en);
-    Dislist.addAll(mAppCache.dis);
-    mAllUserAppInfos.addAll(mAppCache.all);
-  }
-
-  private void saveLocalCache() {
-    AppCache mAppCache = new AppCache(EnList, Dislist, mAllUserAppInfos);
-    String mJson = new Gson().toJson(mAppCache);
-    SpUtils.setParam(MainActivity.this, LibraryCons.LOCAL_DB_NAME, mJson);
+    mViewComplete = new ViewCompleteImpl();
+    getContentView().getViewTreeObserver().addOnGlobalLayoutListener(mViewComplete);
   }
 
   private void initData() {
-    //showloadDialog("获取列表中");
-    mAdapter.setOnItemClickListener(new BaseQuickAdapter.OnItemClickListener() {
-      @Override
-      public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
-        AppInfo mAppInfo = (AppInfo) mBaseQuickAdapter.getData().get(position);
-        if (LibraryCons.SELECTDisabled.equals(selectedItem)){
-          Utils.openApp(MainActivity.this,mAppInfo.packageName);
-        }else{
-
-        }
-        AppInfo appInfo = list.get(position);
-        mAppInfo.isSelect = !mAppInfo.isSelect;
-        mAdapter.notifyDataSetChanged();
-      }
-    });
+    List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
+    list.clear();
+    list.addAll(sList);
+    mAdapter.setOnItemClickListener(this);
     mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
 
       private DialogWithCircularReveal dialog;
-      private DialogWithCircularReveal mReveal1;
-      private DialogWithCircularReveal mReveal;
-      public Animator mCircularReveal;
 
       @Override
-      public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
-
-        final AppInfo mAppInfo = (AppInfo) mBaseQuickAdapter.getData().get(mI);
-        if (LibraryCons.SELECTDisabled.equals(selectedItem)) {
-          View mInflate = View.inflate(MainActivity.this, R.layout.dialog_dis_content_normal, null);
-          TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
-          TextView fuc_remoove = (TextView) mInflate.findViewById(R.id.fuc_remoove);
-          TextView fuc_wake = (TextView) mInflate.findViewById(R.id.fuc_wake);
-          TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
-          ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
-          app_title.setText(mAppInfo.appName);
-          Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
-          //解冻
-          fuc_wake.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-
-            }
-          });
-          //移出列表
-          fuc_remoove.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-              dialog.dismiss();
-              showloadDialog("操作中");
-              ShellUtils.execCommand(LibraryCons.make_app_to_enble + mAppInfo.packageName, true,
-                  true);
-              mBaseQuickAdapter.getData().remove(mAppInfo);
-              initListData();
-            }
-          });
-          uninstall_app.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-              dialog.dismiss();
-              ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
-              findDataBeanDelete(mAppInfo);
-              mAdapter.notifyDataSetChanged();
-            }
-          });
-          dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
-          dialog.setRevealview(R.id.myView);
-
-          dialog.showDialog();
-          return true;
-        } else if (LibraryCons.SELECTENABLE.equals(selectedItem)) {
-          //未冷冻列表
-          View mInflate = View.inflate(MainActivity.this, R.layout.dialog_content_normal, null);
-          TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
-          TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
-          ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
-          app_title.setText(mAppInfo.appName);
-          Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
-          uninstall_app.setOnClickListener(new View.OnClickListener() {
-            @Override public void onClick(View v) {
-              dialog.dismiss();
-              ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
-              findDataBeanDelete(mAppInfo);
-              mAdapter.notifyDataSetChanged();
-              Snackbar.make(mMainLayout, "删除成功", Snackbar.LENGTH_SHORT)
-                  .show();
-            }
-          });
-          dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
-          dialog.setRevealview(R.id.myView);
-          dialog.showDialog();
-        }
+      public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView, final int mI) {
+        final List<AppInfo> mData = mBaseQuickAdapter.getData();
+        final AppInfo mAppInfo =  mData.get(mI);
+        View mInflate = View.inflate(MainActivity.this, R.layout.dialog_dis_content_normal, null);
+        TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
+        TextView fuc_remoove = (TextView) mInflate.findViewById(R.id.fuc_remoove);
+        TextView fuc_wake = (TextView) mInflate.findViewById(R.id.fuc_wake);
+        TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
+        ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
+        app_title.setText(mAppInfo.appName);
+        Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+        //解冻
+        fuc_wake.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            WarnApp(mAppInfo);
+          }
+        });
+        //移出列表
+        fuc_remoove.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            dialog.dismiss();
+            showloadDialog("操作中");
+            WarnApp(mAppInfo);
+            mBaseQuickAdapter.getData().remove(mAppInfo);
+            mBaseQuickAdapter.notifyDataSetChanged();
+            //缓存
+            AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+          }
+        });
+        uninstall_app.setOnClickListener(new View.OnClickListener() {
+          @Override public void onClick(View v) {
+            dialog.dismiss();
+            ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
+            mBaseQuickAdapter.getData().remove(mAppInfo);
+            mAdapter.notifyDataSetChanged();
+            //缓存
+            AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+          }
+        });
+        dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
+        dialog.setRevealview(R.id.myView);
+        dialog.showDialog();
         return true;
       }
     });
+  }
+
+  private void WarnApp(AppInfo mAppInfo) {
+    ShellUtils.execCommand(LibraryCons.make_app_to_enble + mAppInfo.packageName, true, true);
+    mAppInfo.isWarn = true;
+  }
+
+  private void openApp(AppInfo mAppInfo) {
+    Utils.openApp(MainActivity.this, mAppInfo.packageName);
+    mAdapter.notifyDataSetChanged();
   }
 
   private void findDataBeanDelete(AppInfo mAppInfo) {
@@ -200,47 +152,35 @@ public class MainActivity extends AppCompatActivity {
   }
 
 
-  private void initListData() {
-    List<AppInfo> mList = AppDao.getInstance().getUserSaveDisAppFromDB();
-    list.clear();
-    list.addAll(mList);
+  @OnClick(R.id.fab) public void onFabClicked() {
+    sleepApp();
   }
 
-  private void initFloatBar() {
-    mFab = (FloatingActionButton) findViewById(R.id.fab);
-    mFab.setOnClickListener(new View.OnClickListener() {
-      @Override public void onClick(View view) {
-        showloadDialog("正在冷冻中");
-        List<AppInfo> part = new ArrayList<>();
-        List<AppInfo> mData = mAdapter.getData();
-        for (AppInfo mAppInfo : mData) {
-          if (mAppInfo.isSelect) {
-            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
-                true);
-            part.add(mAppInfo);
-          }
-        }
-        mData.removeAll(part);
-        initListData();
+  private void sleepApp() {
+    showloadDialog("正在冷冻中");
+    //找出已经解冻的app进行冻结
+    List<AppInfo> mData = mAdapter.getData();
+    for (AppInfo mAppInfo : mData) {
+      if (mAppInfo.isWarn) {
+        ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true, true);
+        mAppInfo.isWarn = false;
       }
-    });
+    }
+    mAdapter.notifyDataSetChanged();
+    goneloadDialog();
+    //缓存
+    AppDao.getInstance().saveUserSaveDisAppToDB(mData);
   }
 
   private void initView() {
     initRecylerView();
-    initToobar();
-    initFloatBar();
+    setSupportActionBar(mToolbar);
   }
 
   private void initRecylerView() {
-    mAppList.setLayoutManager(new GridLayoutManager(this,4));
+    mAppList.setLayoutManager(new GridLayoutManager(this, 4));
     mAdapter = new AppListAdapter(list);
     mAppList.setAdapter(mAdapter);
-  }
-
-  private void initToobar() {
-    Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -248,82 +188,29 @@ public class MainActivity extends AppCompatActivity {
     return true;
   }
 
+  @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
+    //打开app先解冻
+    List<AppInfo> mData = mBaseQuickAdapter.getData();
+    AppInfo mAppInfo = mData.get(position);
+    WarnApp(mAppInfo);
+    openApp(mAppInfo);
+    //缓存
+    AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+  }
+
   @Override public boolean onOptionsItemSelected(MenuItem item) {
-    int id = item.getItemId();
-    if (id == R.id.action_colded) {
-      //切换已冷冻 记录标识符
-      selectedItem = LibraryCons.SELECTDisabled;
-      mFab.setVisibility(View.GONE);
-      mAdapter.getData().clear();
-      mAdapter.getData().addAll(Dislist);
-    } else if (id == R.id.action_cold) {
-      //切换到未冷冻
-      selectedItem = LibraryCons.SELECTENABLE;
-      mFab.setVisibility(View.VISIBLE);
-      mAdapter.getData().clear();
-      mAdapter.getData().addAll(EnList);
-    } else {
-      //切换到全部app
-      selectedItem = LibraryCons.SELECTEAll;
-      mFab.setVisibility(View.GONE);
-      mAdapter.getData().clear();
-      mAdapter.getData().addAll(mAllUserAppInfos);
-    }
-    mAdapter.notifyDataSetChanged();
-    return true;
+    Intent mIntent = new Intent(mActivity, SelectAppActivity.class);
+    mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
+    startActivity(mIntent);
+    return super.onOptionsItemSelected(item);
   }
 
-  protected void showloadDialog(String title) {
-    mDialog = new MaterialDialog.Builder(this).title(title)
-        .content("请深呼吸休息一下")
-        .progress(true, 0)
-        .progressIndeterminateStyle(true)
-        .show();
-  }
+  class ViewCompleteImpl implements ViewTreeObserver.OnGlobalLayoutListener {
 
-  protected void goneloadDialog() {
-    if (null != mDialog) if (mDialog.isShowing()) mDialog.dismiss();
-  }
-
-  @TargetApi(Build.VERSION_CODES.M)
-  public static boolean isIgnoringBatteryOptimizations(Activity activity) {
-    String packageName = activity.getPackageName();
-    PowerManager pm = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-    if (pm.isIgnoringBatteryOptimizations(packageName)) {
-      return true;
-    } else {
-      return false;
+    @Override public void onGlobalLayout() {
+      revealShow(getContentView());
+      getContentView().getViewTreeObserver().removeOnGlobalLayoutListener(mViewComplete);
     }
   }
 
-  /**
-   * 针对N以上的Doze模式
-   */
-  public static void isIgnoreBatteryOption(Activity activity) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      try {
-        Intent intent = new Intent();
-        String packageName = activity.getPackageName();
-        PowerManager pm = (PowerManager) activity.getSystemService(Context.POWER_SERVICE);
-        if (!pm.isIgnoringBatteryOptimizations(packageName)) {
-          //               intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-          intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-          intent.setData(Uri.parse("package:" + packageName));
-          activity.startActivityForResult(intent, REQUEST_IGNORE_BATTERY_CODE);
-        }
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
-  }
-
-  @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    if (resultCode == RESULT_OK) {
-      //if (requestCode == BatteryUtils.REQUEST_IGNORE_BATTERY_CODE){
-      //    //TODO something
-      //}
-    } else if (resultCode == RESULT_CANCELED) {
-      isIgnoreBatteryOption(MainActivity.this);
-    }
-  }
 }

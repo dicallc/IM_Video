@@ -14,6 +14,7 @@ import butterknife.ButterKnife;
 import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
+import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.MainActivity;
 import com.xiaoxin.sleep.R;
@@ -42,6 +43,15 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    String action = getIntent().getStringExtra(LibraryCons.ACTION);
+
+    //第一次为false，点击冷冻后既不是第一次
+    boolean isFirst = (boolean) SpUtils.getParam(mActivity, LibraryCons.NotFIRST, false);
+    if (isFirst&&!LibraryCons.ACTION_OPEN.equals(action)){
+      Intent mIntent=new Intent(mActivity,MainActivity.class);
+      startActivity(mIntent);
+      finish();
+    }
     setContentView(R.layout.activity_select_app);
     ButterKnife.bind(this);
     EventBus.getDefault().register(this);
@@ -87,14 +97,18 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
   @Override public void onClick(View v) {
     switch (v.getId()) {
       case R.id.fab:
-        List<AppInfo> mList = mAppListFragment.list;
         showloadDialog("正在冷冻中");
+        SpUtils.setParam(mActivity,LibraryCons.NotFIRST,true);
+        List<AppInfo> mList = mAppListFragment.list;
         List<AppInfo> part = new ArrayList<>();
         for (AppInfo mAppInfo : mList) {
           if (mAppInfo.isSelect) {
-            mAppInfo.isEnable = false;
-            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
-                true);
+            //  如果已经禁用了，就不执行命令了
+            if (mAppInfo.isEnable){
+              mAppInfo.isEnable = false;
+              ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
+                  true);
+            }
             part.add(mAppInfo);
           }
         }

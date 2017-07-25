@@ -8,6 +8,8 @@
 #---------------------------------2.第三方包-------------------------------
 -keep class com.xdandroid.hellodaemon.**{*;}
 -dontwarn com.xdandroid.hellodaemon.**
+-keep class com.jaeger.library.**{*;}
+-dontwarn com.jaeger.library.**
 #BaseRecyclerViewAdapterHelper
 -keep class com.chad.library.adapter.** {
    *;
