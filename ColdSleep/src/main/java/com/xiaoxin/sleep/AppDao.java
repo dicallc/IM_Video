@@ -14,6 +14,7 @@ import com.xiaoxin.sleep.utils.Utils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
@@ -113,14 +114,14 @@ public class AppDao {
             //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
             for (AppInfo userdis : userSaveDisAppFromDB) {
                 for (AppInfo info : EnList) {
-                    if (info.appName.equals(userdis.appName)){
-                        userdis.isWarn=true;
+                    if (info.appName.equals(userdis.appName)) {
+                        userdis.isWarn = true;
                         break;
                     }
                 }
             }
             saveUserSaveDisAppToDB(userSaveDisAppFromDB);
-            EventBus.getDefault().post(new Event(Event.getDisList,userSaveDisAppFromDB));
+            EventBus.getDefault().post(new Event(Event.getDisList, userSaveDisAppFromDB));
 
         }
     }
@@ -228,6 +229,7 @@ public class AppDao {
             SpUtils.setParam(App.getAppContext(), LibraryCons.LOCAL_USER_DISAPP_DB_NAME, mJson);
         }
     }
+
     private AppInfo findModel(List<AppInfo> lists, AppInfo mAppInfo) {
         AppInfo mPartModel = null;
         for (AppInfo info : lists) {
@@ -237,5 +239,11 @@ public class AppDao {
             }
         }
         return mPartModel;
+    }
+
+    public List<AppInfo> sortAppList(List<AppInfo> list) {
+        Collections.sort(list);
+        List<AppInfo> appInfos = list.subList(0, 7);
+        return appInfos;
     }
 }

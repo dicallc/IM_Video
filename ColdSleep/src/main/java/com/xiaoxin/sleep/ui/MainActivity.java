@@ -181,6 +181,7 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
         //打开app先解冻
         List<AppInfo> mData = mBaseQuickAdapter.getData();
         AppInfo mAppInfo = mData.get(position);
+        mAppInfo.open_num++;
         WarnApp(mAppInfo);
         openApp(mAppInfo);
         //缓存
