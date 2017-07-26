@@ -1,237 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
-    android:orientation="vertical"
-    xmlns:stv="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
-    tools:context="com.xiaoxin.sleep.ui.SettingActivity"
-    >
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      >
-   <TextView
-       android:layout_width="match_parent"
-       android:textSize="14sp"
-       android:paddingLeft="10dp"
-       android:background="@color/white"
-       android:textColor="@color/main_color"
-       android:text="编辑"
-       android:gravity="center_vertical"
-       android:layout_height="40dp"/>
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:orientation="vertical"
-      android:background="@color/white"
-      android:paddingLeft="10dp"
-      android:gravity="center_vertical"
-      android:layout_height="72.5dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#555555"
-        android:text="选择应用"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="13sp"
-        android:textColor="#757575"
-        android:layout_marginTop="5dp"
-        android:text="显示在主界面立即冻结"
-        android:layout_height="wrap_content"/>
-  </LinearLayout>
-  <View
-      android:layout_width="match_parent"
-      android:background="#E0E0E0"
-      android:layout_height="0.5dp"/>
-  <TextView
-      android:layout_width="match_parent"
-      android:textSize="14sp"
-      android:paddingLeft="10dp"
-      android:background="@color/white"
-      android:textColor="@color/main_color"
-      android:text="通用"
-      android:gravity="center_vertical"
-      android:layout_height="40dp"/>
-  <com.allen.library.SuperTextView
-      android:layout_width="match_parent"
-      android:layout_height="60dp"
-      stv:sLeftTopTextString="锁屏睡眠"
-      stv:sLeftTopTextSize="16sp"
-      stv:sLeftViewGravity="left_center"
-      stv:sRightViewType="switchBtn" />
+    tools:context="com.xiaoxin.sleep.ui.MainActivity">
 
-    <LinearLayout
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:orientation="vertical"
-        android:background="@color/white"
-        android:paddingLeft="10dp"
-            android:gravity="center_vertical"
-            android:layout_height="72.5dp">
-       <TextView
-           android:layout_width="wrap_content"
-           android:textSize="16sp"
-           android:textColor="#555555"
-           android:text="锁屏睡眠时间"
-           android:layout_height="wrap_content"/>
-       <TextView
-           android:layout_width="wrap_content"
-           android:textSize="13sp"
-           android:textColor="#757575"
-           android:layout_marginTop="5dp"
-           android:text="默认是立即睡眠"
-           android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <View
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/main_color"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.xiaoxin.sleep.ui.SettingActivity">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:background="#E0E0E0"
-            android:layout_height="0.5dp"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@color/white"
-        android:gravity="center_vertical"
-        android:paddingLeft="10dp"
-        android:text="联系"
-        android:textColor="@color/main_color"
-        android:textSize="14sp"
-        />
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:orientation="vertical"
-      android:background="@color/white"
-      android:paddingLeft="10dp"
-      android:gravity="center_vertical"
-      android:layout_height="72.5dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#555555"
-        android:text="捐赠"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="13sp"
-        android:textColor="#757575"
-        android:layout_marginTop="5dp"
-        android:text="买个咖啡给开发者提提神"
-        android:layout_height="wrap_content"/>
-  </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#E0E0E0"
-        android:layout_height="0.5dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:paddingLeft="10dp"
-        android:gravity="center_vertical"
-        android:layout_height="72.5dp">
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="16sp"
-          android:textColor="#555555"
-          android:text="微博"
-          android:layout_height="wrap_content"/>
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="13sp"
-          android:textColor="#757575"
-          android:layout_marginTop="5dp"
-          android:text="呼叫 dicallc"
-          android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#E0E0E0"
-        android:layout_height="0.5dp"/>
-  <TextView
-      android:layout_width="match_parent"
-      android:textSize="14sp"
-      android:paddingLeft="10dp"
-      android:background="@color/white"
-      android:textColor="@color/main_color"
-      android:text="关于"
-      android:gravity="center_vertical"
-      android:layout_height="40dp"/>
-  <LinearLayout
-      android:layout_width="match_parent"
-      android:orientation="vertical"
-      android:background="@color/white"
-      android:paddingLeft="10dp"
-      android:gravity="center_vertical"
-      android:layout_height="72.5dp">
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="16sp"
-        android:textColor="#555555"
-        android:text="关于"
-        android:layout_height="wrap_content"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="13sp"
-        android:textColor="#757575"
-        android:layout_marginTop="5dp"
-        android:text="Privacy Policy"
-        android:layout_height="wrap_content"/>
-  </LinearLayout>
-  <View
-      android:layout_width="match_parent"
-      android:background="#E0E0E0"
-      android:layout_height="0.5dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:paddingLeft="10dp"
-        android:gravity="center_vertical"
-        android:layout_height="72.5dp">
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="16sp"
-          android:textColor="#555555"
-          android:text="检查更新"
-          android:layout_height="wrap_content"/>
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="13sp"
-          android:textColor="#757575"
-          android:layout_marginTop="5dp"
-          android:text="1.0.0(1)"
-          android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#E0E0E0"
-        android:layout_height="0.5dp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white"
-        android:paddingLeft="10dp"
-        android:gravity="center_vertical"
-        android:layout_height="72.5dp">
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="16sp"
-          android:textColor="#555555"
-          android:text="评价"
-          android:layout_height="wrap_content"/>
-      <TextView
-          android:layout_width="wrap_content"
-          android:textSize="13sp"
-          android:textColor="#757575"
-          android:layout_marginTop="5dp"
-          android:text="给冬眠五星好评吧"
-          android:layout_height="wrap_content"/>
-    </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:background="#E0E0E0"
-        android:layout_height="0.5dp"/>
-  </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="编辑"
+                android:textColor="@color/main_color"
+                android:textSize="14sp" />
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:id="@+id/setting_select_app"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="显示在主界面立即冻结"
+                app:title="选择应用">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="通用"
+                android:textColor="@color/main_color"
+                android:textSize="14sp" />
+
+            <com.allen.library.SuperTextView
+                android:id="@+id/setting_screen_sleep"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:sLeftTopTextSize="16sp"
+                app:sLeftTopTextString="锁屏睡眠"
+                app:sLeftViewGravity="left_center"
+                app:sRightViewType="switchBtn" />
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:id="@+id/setting_screen_sleep_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="默认是立即睡眠"
+                app:title="锁屏睡眠时间">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="联系"
+                android:textColor="@color/main_color"
+                android:textSize="14sp" />
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="买个咖啡给开发者提提神"
+                app:title="捐赠">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="呼叫 dicallc"
+                app:title="微博">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:paddingLeft="10dp"
+                android:text="关于"
+                android:textColor="@color/main_color"
+                android:textSize="14sp" />
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="Privacy Policy"
+                app:title="关于">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="1.0.0(1)"
+                app:title="检查更新">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+            <com.xiaoxin.sleep.view.SettingNormalView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:sub_title="给冬眠五星好评吧"
+                app:title="评价">
+
+            </com.xiaoxin.sleep.view.SettingNormalView>
+
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>
