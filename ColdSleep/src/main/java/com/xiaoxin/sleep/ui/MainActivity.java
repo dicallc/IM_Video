@@ -26,6 +26,7 @@ import com.xiaoxin.sleep.ShellUtils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +67,6 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     list.addAll(sList);
     mAdapter.setOnItemClickListener(this);
     mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
-
       private DialogWithCircularReveal dialog;
 
       @Override public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView,
@@ -134,28 +134,26 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
   private void sleepApp() {
     showloadDialog("正在冷冻中");
     //找出已经解冻的app进行冻结
-    List<AppInfo> sList=new ArrayList<>();
     List<AppInfo> mData = mAdapter.getData();
-    findWarnApp(mData);
+    int mWarnApp = AppDao.getInstance().findWarnApp(mData);
     mAdapter.notifyDataSetChanged();
     List<AppInfo> mOtherAdapterData = mOtherAdapter.getData();
-    findWarnApp(mOtherAdapterData);
+    int mWarnApp1 = AppDao.getInstance().findWarnApp(mOtherAdapterData);
     mOtherAdapter.notifyDataSetChanged();
-    goneloadDialog();
     //缓存
-    sList.addAll(mData);
-    sList.addAll(mOtherAdapterData);
-    AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+    saveUserDis(mData, mOtherAdapterData);
+    goneloadDialog();
+    ToastUtils.showShortToast("睡眠"+mWarnApp+mWarnApp1+"个");
   }
 
-  private void findWarnApp(List<AppInfo> mData) {
-    for (AppInfo mAppInfo : mData) {
-      if (mAppInfo.isWarn) {
-        ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true, true);
-        mAppInfo.isWarn = false;
-      }
-    }
+  private void saveUserDis(List<AppInfo> mData, List<AppInfo> mOtherAdapterData) {
+    List<AppInfo> sList=new ArrayList<>();
+    sList.addAll(mData);
+    sList.addAll(mOtherAdapterData);
+    AppDao.getInstance().saveUserSaveDisAppToDB(sList);
   }
+
+
 
   private void initView() {
     initRecylerView();
@@ -202,7 +200,7 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     WarnApp(mAppInfo);
     openApp(mAppInfo);
     //缓存
-    AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+    saveUserDis(mData,mOtherAdapter.getData());
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {

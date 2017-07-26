@@ -116,6 +116,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         goneloadDialog();
         Intent mIntent = new Intent(SelectAppActivity.this, MainActivity.class);
         startActivity(mIntent);
+        finish();
         break;
     }
   }

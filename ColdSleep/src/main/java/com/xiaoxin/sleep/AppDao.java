@@ -245,4 +245,16 @@ public class AppDao {
     List<AppInfo> appInfos = list.subList(0, 8);
     return appInfos;
   }
+
+  public int findWarnApp(List<AppInfo> mData) {
+    int num = 0;
+    for (AppInfo mAppInfo : mData) {
+      if (mAppInfo.isWarn) {
+        num++;
+        ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true, true);
+        mAppInfo.isWarn = false;
+      }
+    }
+    return num;
+  }
 }
