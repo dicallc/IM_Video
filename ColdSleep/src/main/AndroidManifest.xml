@@ -29,8 +29,16 @@
 
     <service android:name=".service.TraceServiceImpl"/>
 
-    <activity android:name=".ui.SelectAppActivity"
+    <activity
+        android:name=".ui.SelectAppActivity"
         android:theme="@style/AppTheme.NoActionBar">
+      <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN"/>-->
+
+        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
+      <!--</intent-filter>-->
+    </activity>
+    <activity android:name=".ui.SettingActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

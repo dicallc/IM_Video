@@ -35,6 +35,9 @@ android {
     targetSdkVersion globalConfiguration.androidTargetSdkVersion
     versionCode 1
     versionName "1.0"
+
+
+    vectorDrawables.useSupportLibrary = true
   }
   buildTypes {
     release {
@@ -102,5 +105,8 @@ andResGuard {
 dependencies {
   compile fileTree(include: ['*.jar'], dir: 'libs')
   compile project(':Library')
+
+  compile 'com.android.support.constraint:constraint-layout:1.0.2'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
+  compile 'com.github.lygttpod:SuperTextView:2.0.8'
 }

@@ -24,6 +24,7 @@ import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.ShellUtils;
 import com.xiaoxin.sleep.adapter.AppListAdapter;
+import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.ToastUtils;
@@ -34,7 +35,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnItemClickListener {
+public class MainActivity extends BaseActivity
+    implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
   @BindView(R.id.app_list) RecyclerView mAppList;
 
@@ -46,7 +48,8 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
   private AppListAdapter mAdapter;
   private List<AppInfo> mAllUserAppInfos = new ArrayList<>();
   private ViewCompleteImpl mViewComplete;
-  private AppListAdapter mOtherAdapter;
+  private OtherAppListAdapter mOtherAdapter;
+  private AppInfo mAppInfo;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -66,55 +69,9 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     list.clear();
     list.addAll(sList);
     mAdapter.setOnItemClickListener(this);
-    mAdapter.setOnItemLongClickListener(new BaseQuickAdapter.OnItemLongClickListener() {
-      private DialogWithCircularReveal dialog;
-
-      @Override public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView,
-          final int mI) {
-        final List<AppInfo> mData = mBaseQuickAdapter.getData();
-        final AppInfo mAppInfo = mData.get(mI);
-        View mInflate = View.inflate(MainActivity.this, R.layout.dialog_dis_content_normal, null);
-        TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
-        TextView fuc_remoove = (TextView) mInflate.findViewById(R.id.fuc_remoove);
-        TextView fuc_wake = (TextView) mInflate.findViewById(R.id.fuc_wake);
-        TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
-        ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
-        app_title.setText(mAppInfo.appName);
-        Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
-        //解冻
-        fuc_wake.setOnClickListener(new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            WarnApp(mAppInfo);
-          }
-        });
-        //移出列表
-        fuc_remoove.setOnClickListener(new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            dialog.dismiss();
-            showloadDialog("操作中");
-            WarnApp(mAppInfo);
-            mBaseQuickAdapter.getData().remove(mAppInfo);
-            mBaseQuickAdapter.notifyDataSetChanged();
-            //缓存
-            AppDao.getInstance().saveUserSaveDisAppToDB(mData);
-          }
-        });
-        uninstall_app.setOnClickListener(new View.OnClickListener() {
-          @Override public void onClick(View v) {
-            dialog.dismiss();
-            ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
-            mBaseQuickAdapter.getData().remove(mAppInfo);
-            mAdapter.notifyDataSetChanged();
-            //缓存
-            AppDao.getInstance().saveUserSaveDisAppToDB(mData);
-          }
-        });
-        dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
-        dialog.setRevealview(R.id.myView);
-        dialog.showDialog();
-        return true;
-      }
-    });
+    mOtherAdapter.setOnItemClickListener(this);
+    mAdapter.setOnItemLongClickListener(this);
+    mOtherAdapter.setOnItemLongClickListener(this);
   }
 
   private void WarnApp(AppInfo mAppInfo) {
@@ -143,17 +100,16 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     //缓存
     saveUserDis(mData, mOtherAdapterData);
     goneloadDialog();
-    ToastUtils.showShortToast("睡眠"+mWarnApp+mWarnApp1+"个");
+    int num = mWarnApp + mWarnApp1;
+    ToastUtils.showShortToast("睡眠" + num + "个");
   }
 
   private void saveUserDis(List<AppInfo> mData, List<AppInfo> mOtherAdapterData) {
-    List<AppInfo> sList=new ArrayList<>();
+    List<AppInfo> sList = new ArrayList<>();
     sList.addAll(mData);
     sList.addAll(mOtherAdapterData);
     AppDao.getInstance().saveUserSaveDisAppToDB(sList);
   }
-
-
 
   private void initView() {
     initRecylerView();
@@ -172,7 +128,7 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     mOtherAppList.setLayoutManager(mGridLayoutManager);
     mOtherAppList.setHasFixedSize(true);
     mOtherAppList.setNestedScrollingEnabled(false);
-    mOtherAdapter = new AppListAdapter(other_list);
+    mOtherAdapter = new OtherAppListAdapter(other_list);
     mOtherAppList.setAdapter(mOtherAdapter);
   }
 
@@ -200,7 +156,11 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     WarnApp(mAppInfo);
     openApp(mAppInfo);
     //缓存
-    saveUserDis(mData,mOtherAdapter.getData());
+    if (mBaseQuickAdapter instanceof AppListAdapter) {
+      saveUserDis(mData, mOtherAdapter.getData());
+    } else {
+      saveUserDis(mData, mAdapter.getData());
+    }
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -208,6 +168,55 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
     mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
     startActivity(mIntent);
     return super.onOptionsItemSelected(item);
+  }
+
+  DialogWithCircularReveal dialog = null;
+
+  @Override
+  public boolean onItemLongClick(final BaseQuickAdapter mBaseQuickAdapter, View mView, int mI) {
+    final List<AppInfo> mData = mBaseQuickAdapter.getData();
+    final AppInfo mAppInfo = mData.get(mI);
+    View mInflate = View.inflate(MainActivity.this, R.layout.dialog_dis_content_normal, null);
+    TextView uninstall_app = (TextView) mInflate.findViewById(R.id.fuc_delete);
+    TextView fuc_remoove = (TextView) mInflate.findViewById(R.id.fuc_remoove);
+    TextView fuc_wake = (TextView) mInflate.findViewById(R.id.fuc_wake);
+    TextView app_title = (TextView) mInflate.findViewById(R.id.app_title);
+    ImageView app_icon = (ImageView) mInflate.findViewById(R.id.app_icon);
+    app_title.setText(mAppInfo.appName);
+    Glide.with(MainActivity.this).load(mAppInfo.file_path).into(app_icon);
+    //解冻
+    fuc_wake.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        WarnApp(mAppInfo);
+      }
+    });
+    //移出列表
+    fuc_remoove.setOnClickListener(new View.OnClickListener() {
+
+      @Override public void onClick(View v) {
+        dialog.dismiss();
+        showloadDialog("操作中");
+        WarnApp(mAppInfo);
+        mBaseQuickAdapter.getData().remove(mAppInfo);
+        mBaseQuickAdapter.notifyDataSetChanged();
+        //缓存
+        AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+      }
+    });
+    uninstall_app.setOnClickListener(new View.OnClickListener() {
+      @Override public void onClick(View v) {
+        dialog.dismiss();
+        ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
+        mBaseQuickAdapter.getData().remove(mAppInfo);
+        mAdapter.notifyDataSetChanged();
+        //缓存
+        AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+      }
+    });
+    dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
+    dialog.setRevealview(R.id.myView);
+    dialog.showDialog();
+    return true;
   }
 
   class ViewCompleteImpl implements ViewTreeObserver.OnGlobalLayoutListener {
@@ -227,7 +236,7 @@ public class MainActivity extends BaseActivity implements BaseQuickAdapter.OnIte
         //排序取出8个使用频率比较高的
         List<AppInfo> mAppInfos = AppDao.getInstance().sortAppList(lists);
         list.addAll(mAppInfos);
-        other_list.addAll(lists.subList(8,lists.size()));
+        other_list.addAll(lists.subList(8, lists.size()));
         mOtherAdapter.notifyDataSetChanged();
         mAdapter.notifyDataSetChanged();
         break;
