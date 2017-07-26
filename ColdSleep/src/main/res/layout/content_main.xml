@@ -1,20 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:id="@+id/main_layout"
     android:layout_height="match_parent"
     android:background="@color/white"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.xiaoxin.sleep.ui.MainActivity"
     tools:showIn="@layout/activity_main"
     >
-  <android.support.v7.widget.RecyclerView
-      android:id="@+id/app_list"
+  <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      ></android.support.v7.widget.RecyclerView>
+      android:gravity="center_vertical"
+      android:orientation="vertical"
+      >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:background="#EEEEEE"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        >
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="常用"
+          android:textSize="13sp"
+          />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="29dp"
+        android:background="#EEEEEE"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        >
+      <TextView
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="其他"
+          android:textSize="13sp"
+          />
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/other_app_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ></android.support.v7.widget.RecyclerView>
+  </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+
+</android.support.v4.widget.NestedScrollView>

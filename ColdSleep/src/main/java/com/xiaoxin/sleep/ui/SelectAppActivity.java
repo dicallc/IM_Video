@@ -61,7 +61,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
   }
 
   private void initData() {
-    showloadDialog("获取app中");
+    //showloadDialog("获取app中");
   }
 
   private void initTab() {
