@@ -1,13 +1,16 @@
 package com.xiaoxin.library.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by Administrator on 2017/7/12 0012.
  */
 
-public class AppInfo {
+public class AppInfo implements Comparable<AppInfo>{
     public String appName;
     public String packageName;
     public String file_path;
+    public int open_num;
     public boolean isEnable;
     public boolean isSelect;
     public boolean isWarn;
@@ -22,4 +25,10 @@ public class AppInfo {
         appName = mAppName;
     }
 
+
+    @Override
+    public int compareTo(@NonNull AppInfo appInfo) {
+        int i = open_num - appInfo.open_num;
+        return i;
+    }
 }

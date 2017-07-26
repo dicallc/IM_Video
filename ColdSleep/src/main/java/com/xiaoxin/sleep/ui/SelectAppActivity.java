@@ -16,7 +16,6 @@ import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.AppDao;
-import com.xiaoxin.sleep.MainActivity;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.ShellUtils;
 import com.xiaoxin.sleep.adapter.ViewPageAdapter;
@@ -63,7 +62,6 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
 
   private void initData() {
     showloadDialog("获取app中");
-
   }
 
   private void initTab() {
