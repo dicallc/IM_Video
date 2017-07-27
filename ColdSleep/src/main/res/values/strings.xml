@@ -64,11 +64,13 @@
     <item>Entry 3</item>
   </string-array>
 
-  <string-array name="list_preference_entry_values">
-    <item>1</item>
-    <item>2</item>
-    <item>3</item>
+  <string-array name="sleep_time">
+    <item>1分钟</item>
+    <item>5分钟</item>
+    <item>8分钟</item>
+    <item>15分钟</item>
   </string-array>
+
 
   <string-array name="multi_select_list_preference_default_value"/>
 

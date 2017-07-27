@@ -1,8 +1,8 @@
 package com.xiaoxin.sleep;
 
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.socks.library.KLog;
@@ -12,12 +12,11 @@ import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.Utils;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.greenrobot.eventbus.EventBus;
 
 /**
@@ -167,6 +166,16 @@ public class AppDao {
     }
     KLog.e(EnList);
   }
+  private List<String> loadEnAppListApplyPackage() {
+
+    ShellUtils.CommandResult allEnAppsRes =
+        ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
+    String mAllEnMsg = allEnAppsRes.successMsg;
+    String[] mSplit = mAllEnMsg.split("package:");
+    List<String> arr = Arrays.asList(mSplit);
+    arr.remove(0);
+    return arr;
+  }
 
   private void loadDisAppList() {
     ShellUtils.CommandResult allDisAppsRes =
@@ -256,5 +265,37 @@ public class AppDao {
       }
     }
     return num;
+  }
+
+  public void DoScreenBrSync(Context mContext) {
+    new ScreenBrSyncThread(mContext).start();
+  }
+
+  class ScreenBrSyncThread extends Thread {
+    private Context mContext;
+
+    public ScreenBrSyncThread(Context mContext) {
+      this.mContext = mContext;
+    }
+
+    @Override public void run() {
+      super.run();
+      long startTime = System.nanoTime();  //開始時間
+      List<String> mList = loadEnAppListApplyPackage();
+      //从缓存中拿到用户保存的需要睡眠的列表
+      List<AppInfo> mUserSaveDisAppFromDB = getUserSaveDisAppFromDB();
+      //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
+      for (AppInfo userdis : mUserSaveDisAppFromDB) {
+        for (String info : mList) {
+          if (info.equals(userdis.packageName)) {
+            userdis.isWarn = false;
+            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true, true);
+            break;
+          }
+        }
+      }
+      long consumingTime = System.nanoTime() - startTime; //消耗時間
+      KLog.e(consumingTime / 1000 + "微妙");
+    }
   }
 }

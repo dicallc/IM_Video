@@ -164,8 +164,7 @@ public class MainActivity extends BaseActivity
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
-    Intent mIntent = new Intent(mActivity, SelectAppActivity.class);
-    mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
+    Intent mIntent = new Intent(mActivity, SettingActivity.class);
     startActivity(mIntent);
     return super.onOptionsItemSelected(item);
   }
