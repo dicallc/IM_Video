@@ -80,10 +80,10 @@ public class SettingActivity extends AppCompatActivity {
         .show();
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-    super.onResume();
-  }
+//  @Override protected void onResume() {
+//    super.onResume();
+//    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+//    super.onResume();
+//  }
 
 }

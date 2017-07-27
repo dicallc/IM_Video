@@ -158,8 +158,8 @@ public class BaseActivity extends AppCompatActivity {
     return content.getChildAt(0);
   }
 
-  @Override protected void onResume() {
-    super.onResume();
-    overridePendingTransition(0, android.R.anim.fade_out);
-  }
+//  @Override protected void onResume() {
+//    super.onResume();
+//    overridePendingTransition(0, android.R.anim.fade_out);
+//  }
 }
