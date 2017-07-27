@@ -6,4 +6,5 @@ package com.xiaoxin.sleep.common;
 
 public class Constant {
   public static boolean isOpenScreenSL = false;
+  public final static String ISOPENSCREENSLKEY = "isOpenScreenSL";
 }

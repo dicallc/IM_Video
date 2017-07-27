@@ -110,6 +110,12 @@ public class MainActivity extends BaseActivity
     sList.addAll(mOtherAdapterData);
     AppDao.getInstance().saveUserSaveDisAppToDB(sList);
   }
+  private void saveUserDis() {
+    List<AppInfo> sList = new ArrayList<>();
+    sList.addAll(mAdapter.getData());
+    sList.addAll(mOtherAdapter.getData());
+    AppDao.getInstance().saveUserSaveDisAppToDB(sList);
+  }
 
   private void initView() {
     initRecylerView();
@@ -156,11 +162,13 @@ public class MainActivity extends BaseActivity
     WarnApp(mAppInfo);
     openApp(mAppInfo);
     //缓存
-    if (mBaseQuickAdapter instanceof AppListAdapter) {
-      saveUserDis(mData, mOtherAdapter.getData());
-    } else {
-      saveUserDis(mData, mAdapter.getData());
-    }
+    saveUserDis();
+    notifyDataSetChanged();
+    //if (mBaseQuickAdapter instanceof AppListAdapter) {
+    //  saveUserDis(mData, mOtherAdapter.getData());
+    //} else {
+    //  saveUserDis(mData, mAdapter.getData());
+    //}
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -187,6 +195,7 @@ public class MainActivity extends BaseActivity
     fuc_wake.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         WarnApp(mAppInfo);
+        notifyDataSetChanged();
       }
     });
     //移出列表
@@ -197,9 +206,9 @@ public class MainActivity extends BaseActivity
         showloadDialog("操作中");
         WarnApp(mAppInfo);
         mBaseQuickAdapter.getData().remove(mAppInfo);
-        mBaseQuickAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
         //缓存
-        AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+        saveUserDis();
       }
     });
     uninstall_app.setOnClickListener(new View.OnClickListener() {
@@ -207,15 +216,21 @@ public class MainActivity extends BaseActivity
         dialog.dismiss();
         ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
         mBaseQuickAdapter.getData().remove(mAppInfo);
-        mAdapter.notifyDataSetChanged();
+        notifyDataSetChanged();
+
         //缓存
-        AppDao.getInstance().saveUserSaveDisAppToDB(mData);
+        saveUserDis();
       }
     });
     dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
     dialog.setRevealview(R.id.myView);
     dialog.showDialog();
     return true;
+  }
+
+  private void notifyDataSetChanged() {
+    mAdapter.notifyDataSetChanged();
+    mOtherAdapter.notifyDataSetChanged();
   }
 
   class ViewCompleteImpl implements ViewTreeObserver.OnGlobalLayoutListener {

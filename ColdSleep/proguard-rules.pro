@@ -6,6 +6,8 @@
 #-------------------------------------------------------------------------
 
 #---------------------------------2.第三方包-------------------------------
+-keep class com.allen.library.**{*;}
+-dontwarn com.allen.library.**
 -keep class com.xdandroid.hellodaemon.**{*;}
 -dontwarn com.xdandroid.hellodaemon.**
 -keep class com.jaeger.library.**{*;}

@@ -114,8 +114,8 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         AppDao.getInstance().saveUserSaveDisAppToDB(part);
         EventBus.getDefault().post(new Event(Event.TUESDAY));
         goneloadDialog();
-        Intent mIntent = new Intent(SelectAppActivity.this, MainActivity.class);
-        startActivity(mIntent);
+        //Intent mIntent = new Intent(SelectAppActivity.this, MainActivity.class);
+        //startActivity(mIntent);
         finish();
         break;
     }

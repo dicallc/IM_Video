@@ -13,6 +13,7 @@ import butterknife.OnClick;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.allen.library.SuperTextView;
 import com.xiaoxin.library.common.LibraryCons;
+import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.utils.ToastUtils;
@@ -31,10 +32,17 @@ public class SettingActivity extends AppCompatActivity {
     setContentView(R.layout.activity_setting);
     ButterKnife.bind(this);
     initToobar();
+    if (Constant.isOpenScreenSL){
+      settingScreenSleep.setSwitchIsChecked(true);
+    }else{
+      settingScreenSleep.setSwitchIsChecked(false);
+    }
     settingScreenSleep.setSwitchCheckedChangeListener(
         new SuperTextView.OnSwitchCheckedChangeListener() {
           @Override public void onCheckedChanged(CompoundButton mCompoundButton, boolean mB) {
             Constant.isOpenScreenSL = mB;
+            SpUtils.setParam(SettingActivity.this, Constant.ISOPENSCREENSLKEY,
+                Constant.isOpenScreenSL);
           }
         });
   }
@@ -55,6 +63,7 @@ public class SettingActivity extends AppCompatActivity {
     Intent mIntent = new Intent(SettingActivity.this, SelectAppActivity.class);
     mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
     startActivity(mIntent);
+    finish();
   }
 
   @OnClick(R.id.setting_screen_sleep_time) public void showSingleChoice() {
@@ -70,11 +79,11 @@ public class SettingActivity extends AppCompatActivity {
         })
         .show();
   }
-  @Override
-  protected void onResume() {
+
+  @Override protected void onResume() {
     super.onResume();
-    overridePendingTransition(android.R.anim.fade_in,
-        android.R.anim.fade_out);
+    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     super.onResume();
   }
+
 }

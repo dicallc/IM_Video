@@ -133,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
         }
 
         @Override public void onAnimationEnd(Animator animation) {
-          mView.setVisibility(View.GONE);
+
           finish();
         }
 
@@ -145,7 +145,7 @@ public class BaseActivity extends AppCompatActivity {
 
         }
       });
-
+      mView.setVisibility(View.GONE);
       anim.start();
     }else{
       finish();
@@ -156,5 +156,10 @@ public class BaseActivity extends AppCompatActivity {
     ViewGroup view = (ViewGroup)getWindow().getDecorView();
     FrameLayout content = (FrameLayout)view.findViewById(android.R.id.content);
     return content.getChildAt(0);
+  }
+
+  @Override protected void onResume() {
+    super.onResume();
+    overridePendingTransition(0, android.R.anim.fade_out);
   }
 }

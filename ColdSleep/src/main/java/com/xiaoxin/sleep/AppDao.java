@@ -14,7 +14,6 @@ import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.Utils;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -166,14 +165,17 @@ public class AppDao {
     }
     KLog.e(EnList);
   }
+
   private List<String> loadEnAppListApplyPackage() {
 
     ShellUtils.CommandResult allEnAppsRes =
         ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
     String mAllEnMsg = allEnAppsRes.successMsg;
     String[] mSplit = mAllEnMsg.split("package:");
-    List<String> arr = Arrays.asList(mSplit);
-    arr.remove(0);
+    List<String> arr = new ArrayList<>();
+    for (int i = 1; i < mSplit.length; i++) {
+      arr.add(mSplit[i]);
+    }
     return arr;
   }
 
@@ -288,14 +290,17 @@ public class AppDao {
       for (AppInfo userdis : mUserSaveDisAppFromDB) {
         for (String info : mList) {
           if (info.equals(userdis.packageName)) {
+            KLog.e("睡眠"+userdis.appName);
             userdis.isWarn = false;
-            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true, true);
+            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true,
+                true);
             break;
           }
         }
       }
       long consumingTime = System.nanoTime() - startTime; //消耗時間
-      KLog.e(consumingTime / 1000 + "微妙");
+      KLog.e(consumingTime / 1000000 + "微秒");
+      saveUserSaveDisAppToDB(mUserSaveDisAppFromDB);
     }
   }
 }
