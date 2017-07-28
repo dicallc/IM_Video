@@ -32,4 +32,8 @@ public class AppInfo implements Comparable<AppInfo> {
       return 1;
     }
   }
+
+  @Override public String toString() {
+    return "AppInfo{" + "open_num=" + open_num + '}';
+  }
 }

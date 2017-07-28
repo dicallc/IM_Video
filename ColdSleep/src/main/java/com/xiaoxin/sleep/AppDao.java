@@ -253,6 +253,7 @@ public class AppDao {
 
   public List<AppInfo> sortAppList(List<AppInfo> list) {
     Collections.sort(list);
+    KLog.e("dicallc",list.toString());
     List<AppInfo> appInfos = list.subList(0, 8);
     return appInfos;
   }

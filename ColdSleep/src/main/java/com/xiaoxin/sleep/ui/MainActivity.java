@@ -23,12 +23,12 @@ import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.ShellUtils;
-import com.xiaoxin.sleep.adapter.AppListAdapter;
 import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
+import com.xiaoxin.sleep.view.SleepHeaderView;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -38,18 +38,13 @@ import org.greenrobot.eventbus.ThreadMode;
 public class MainActivity extends BaseActivity
     implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
 
-  @BindView(R.id.app_list) RecyclerView mAppList;
-
-  List<AppInfo> list = new ArrayList<>();
   List<AppInfo> other_list = new ArrayList<>();
   @BindView(R.id.fab) FloatingActionButton mFab;
   @BindView(R.id.toolbar) Toolbar mToolbar;
   @BindView(R.id.other_app_list) RecyclerView mOtherAppList;
-  private AppListAdapter mAdapter;
-  private List<AppInfo> mAllUserAppInfos = new ArrayList<>();
   private ViewCompleteImpl mViewComplete;
   private OtherAppListAdapter mOtherAdapter;
-  private AppInfo mAppInfo;
+  private SleepHeaderView mSleepHeaderView;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -65,13 +60,18 @@ public class MainActivity extends BaseActivity
 
   private void initData() {
     List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
+    List<AppInfo> headList = AppDao.getInstance().sortAppList(sList);
+    initList(sList, headList);
     AppDao.getInstance().SyncDisData(mActivity);
-    list.clear();
-    list.addAll(sList);
-    mAdapter.setOnItemClickListener(this);
+    mSleepHeaderView.getAdapter().setOnItemClickListener(this);
     mOtherAdapter.setOnItemClickListener(this);
-    mAdapter.setOnItemLongClickListener(this);
+    mSleepHeaderView.getAdapter().setOnItemLongClickListener(this);
     mOtherAdapter.setOnItemLongClickListener(this);
+  }
+
+  private void initList(List<AppInfo> mSList, List<AppInfo> mHeadList) {
+    mSleepHeaderView.setList(mHeadList);
+    mOtherAdapter.setList(mSList.subList(8, mSList.size()));
   }
 
   private void WarnApp(AppInfo mAppInfo) {
@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity
 
   private void openApp(AppInfo mAppInfo) {
     Utils.openApp(MainActivity.this, mAppInfo.packageName);
-    mAdapter.notifyDataSetChanged();
+    notifyDataSetChanged();
   }
 
   @OnClick(R.id.fab) public void onFabClicked() {
@@ -91,12 +91,11 @@ public class MainActivity extends BaseActivity
   private void sleepApp() {
     showloadDialog("正在冷冻中");
     //找出已经解冻的app进行冻结
-    List<AppInfo> mData = mAdapter.getData();
+    List<AppInfo> mData = mSleepHeaderView.getAdapter().getData();
     int mWarnApp = AppDao.getInstance().findWarnApp(mData);
-    mAdapter.notifyDataSetChanged();
     List<AppInfo> mOtherAdapterData = mOtherAdapter.getData();
     int mWarnApp1 = AppDao.getInstance().findWarnApp(mOtherAdapterData);
-    mOtherAdapter.notifyDataSetChanged();
+    notifyDataSetChanged();
     //缓存
     saveUserDis(mData, mOtherAdapterData);
     goneloadDialog();
@@ -110,9 +109,10 @@ public class MainActivity extends BaseActivity
     sList.addAll(mOtherAdapterData);
     AppDao.getInstance().saveUserSaveDisAppToDB(sList);
   }
+
   private void saveUserDis() {
     List<AppInfo> sList = new ArrayList<>();
-    sList.addAll(mAdapter.getData());
+    sList.addAll(mSleepHeaderView.getAdapter().getData());
     sList.addAll(mOtherAdapter.getData());
     AppDao.getInstance().saveUserSaveDisAppToDB(sList);
   }
@@ -123,30 +123,16 @@ public class MainActivity extends BaseActivity
   }
 
   private void initRecylerView() {
-    initAppList();
-    initOther();
+    initSleepList();
   }
 
-  private void initOther() {
-    GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 4);
-    mGridLayoutManager.setSmoothScrollbarEnabled(true);
-    mGridLayoutManager.setAutoMeasureEnabled(true);
-    mOtherAppList.setLayoutManager(mGridLayoutManager);
-    mOtherAppList.setHasFixedSize(true);
-    mOtherAppList.setNestedScrollingEnabled(false);
+  private void initSleepList() {
+    //建立headView
+    mSleepHeaderView = new SleepHeaderView(mActivity);
+    mOtherAppList.setLayoutManager(new GridLayoutManager(this, 4));
     mOtherAdapter = new OtherAppListAdapter(other_list);
+    mOtherAdapter.addHeaderView(mSleepHeaderView);
     mOtherAppList.setAdapter(mOtherAdapter);
-  }
-
-  private void initAppList() {
-    GridLayoutManager mGridLayoutManager = new GridLayoutManager(this, 4);
-    mGridLayoutManager.setSmoothScrollbarEnabled(true);
-    mGridLayoutManager.setAutoMeasureEnabled(true);
-    mAppList.setLayoutManager(mGridLayoutManager);
-    mAppList.setHasFixedSize(true);
-    mAppList.setNestedScrollingEnabled(false);
-    mAdapter = new AppListAdapter(list);
-    mAppList.setAdapter(mAdapter);
   }
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
@@ -164,11 +150,6 @@ public class MainActivity extends BaseActivity
     //缓存
     saveUserDis();
     notifyDataSetChanged();
-    //if (mBaseQuickAdapter instanceof AppListAdapter) {
-    //  saveUserDis(mData, mOtherAdapter.getData());
-    //} else {
-    //  saveUserDis(mData, mAdapter.getData());
-    //}
   }
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
@@ -229,7 +210,7 @@ public class MainActivity extends BaseActivity
   }
 
   private void notifyDataSetChanged() {
-    mAdapter.notifyDataSetChanged();
+    mSleepHeaderView.getAdapter().notifyDataSetChanged();
     mOtherAdapter.notifyDataSetChanged();
   }
 
@@ -245,14 +226,10 @@ public class MainActivity extends BaseActivity
     switch (msg.getCurrentDay()) {
       case Event.getDisList:
         List<AppInfo> lists = msg.list;
-        list.clear();
-        other_list.clear();
         //排序取出8个使用频率比较高的
         List<AppInfo> mAppInfos = AppDao.getInstance().sortAppList(lists);
-        list.addAll(mAppInfos);
-        other_list.addAll(lists.subList(8, lists.size()));
-        mOtherAdapter.notifyDataSetChanged();
-        mAdapter.notifyDataSetChanged();
+        //赋值给头部
+        initList(lists, mAppInfos);
         break;
     }
   }

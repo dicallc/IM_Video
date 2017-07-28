@@ -16,41 +16,6 @@
       android:gravity="center_vertical"
       android:orientation="vertical"
       >
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="29dp"
-        android:background="#EEEEEE"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        >
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="常用"
-          android:textSize="13sp"
-          />
-    </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/app_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        ></android.support.v7.widget.RecyclerView>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="29dp"
-        android:background="#EEEEEE"
-        android:gravity="center_vertical"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        >
-      <TextView
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="其他"
-          android:textSize="13sp"
-          />
-    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/other_app_list"
         android:layout_width="match_parent"

@@ -19,13 +19,21 @@ public class OtherAppListAdapter extends BaseQuickAdapter<AppInfo, BaseViewHolde
   }
 
   @Override protected void convert(BaseViewHolder mBaseViewHolder, AppInfo mAppInfo) {
-    if (mAppInfo.isWarn){
-      mBaseViewHolder.setTextColor(R.id.app_name,mContext.getResources().getColor(R.color.text_danger_color));
-    }else{
-      mBaseViewHolder.setTextColor(R.id.app_name,mContext.getResources().getColor(R.color.main_color));
+    if (mAppInfo.isWarn) {
+      mBaseViewHolder.setTextColor(R.id.app_name,
+          mContext.getResources().getColor(R.color.text_danger_color));
+    } else {
+      mBaseViewHolder.setTextColor(R.id.app_name,
+          mContext.getResources().getColor(R.color.main_color));
     }
     mBaseViewHolder.setText(R.id.app_name, mAppInfo.appName);
     ImageView mView = mBaseViewHolder.getView(R.id.app_icon);
     Glide.with(mContext).load(mAppInfo.file_path).into(mView);
+  }
+
+  public void setList(List<AppInfo> mList) {
+    getData().clear();
+    getData().addAll(mList);
+    notifyDataSetChanged();
   }
 }
