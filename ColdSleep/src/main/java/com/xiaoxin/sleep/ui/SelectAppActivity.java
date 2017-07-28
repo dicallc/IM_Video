@@ -8,6 +8,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.View;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,6 +60,12 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
     mToolbar.inflateMenu(R.menu.menu_select);
     mFab.setOnClickListener(this);
     initData();
+    Transition transitionSlideRight = null;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      transitionSlideRight =
+          TransitionInflater.from(this).inflateTransition(R.transition.slide_right);
+      getWindow().setEnterTransition(transitionSlideRight);
+    }
   }
 
   private void initData() {

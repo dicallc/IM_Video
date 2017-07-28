@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context="com.xiaoxin.sleep.ui.MainActivity">
   <android.support.design.widget.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -16,13 +17,13 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:background="@color/main_color"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
       <android.support.design.widget.TabLayout
           android:id="@+id/tab_layout"
-          app:tabIndicatorColor="@color/custom_blue"
-          app:tabTextColor="@color/custom_medum_black"
-          app:tabSelectedTextColor="@color/custom_black"
+          app:tabIndicatorColor="@color/white"
+          app:tabTextColor="@color/white"
+          app:tabSelectedTextColor="@color/white"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           >

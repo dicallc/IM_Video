@@ -12,14 +12,19 @@ import com.xiaoxin.sleep.service.TraceServiceImpl;
 
 public class App extends Application {
   static Context context;
+
   @Override public void onCreate() {
     super.onCreate();
     DaemonEnv.initialize(this, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
-    try {startService(new Intent(this, TraceServiceImpl.class));} catch (Exception ignored) {}
-    context=this;
+    try {
+      startService(new Intent(this, TraceServiceImpl.class));
+    } catch (Exception ignored) {
+    }
+    context = this;
   }
 
   public static Context getAppContext() {
     return context;
   }
+
 }

@@ -1,10 +1,15 @@
 package com.xiaoxin.sleep.ui;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import butterknife.BindView;
@@ -32,9 +37,9 @@ public class SettingActivity extends AppCompatActivity {
     setContentView(R.layout.activity_setting);
     ButterKnife.bind(this);
     initToobar();
-    if (Constant.isOpenScreenSL){
+    if (Constant.isOpenScreenSL) {
       settingScreenSleep.setSwitchIsChecked(true);
-    }else{
+    } else {
       settingScreenSleep.setSwitchIsChecked(false);
     }
     settingScreenSleep.setSwitchCheckedChangeListener(
@@ -45,6 +50,13 @@ public class SettingActivity extends AppCompatActivity {
                 Constant.isOpenScreenSL);
           }
         });
+
+    Transition transitionSlideRight = null;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      transitionSlideRight =
+          TransitionInflater.from(this).inflateTransition(R.transition.slide_right);
+      getWindow().setEnterTransition(transitionSlideRight);
+    }
   }
 
   private void initToobar() {
@@ -60,11 +72,17 @@ public class SettingActivity extends AppCompatActivity {
   }
 
   @OnClick(R.id.setting_select_app) public void toSelectApp() {
+    overridePendingTransition(0, 0);
     Intent mIntent = new Intent(SettingActivity.this, SelectAppActivity.class);
     mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
-    startActivity(mIntent);
-    finish();
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      startActivityWithOptions(mIntent);
+    } else {
+      startActivity(mIntent);
+    }
   }
+
+
 
   @OnClick(R.id.setting_screen_sleep_time) public void showSingleChoice() {
     new MaterialDialog.Builder(this).title("睡眠时间")
@@ -80,10 +98,10 @@ public class SettingActivity extends AppCompatActivity {
         .show();
   }
 
-//  @Override protected void onResume() {
-//    super.onResume();
-//    overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-//    super.onResume();
-//  }
-
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  private void startActivityWithOptions(Intent intent) {
+    ActivityOptions transitionActivity = null;
+    transitionActivity = ActivityOptions.makeSceneTransitionAnimation(SettingActivity.this);
+    startActivity(intent, transitionActivity.toBundle());
+  }
 }

@@ -1,7 +1,10 @@
 package com.xiaoxin.sleep.ui;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -154,8 +157,19 @@ public class MainActivity extends BaseActivity
 
   @Override public boolean onOptionsItemSelected(MenuItem item) {
     Intent mIntent = new Intent(mActivity, SettingActivity.class);
-    startActivity(mIntent);
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+      startActivityWithOptions(mIntent);
+    } else {
+      startActivity(mIntent);
+    }
+
     return super.onOptionsItemSelected(item);
+  }
+
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) private void startActivityWithOptions(Intent intent) {
+    ActivityOptions transitionActivity = null;
+    transitionActivity = ActivityOptions.makeSceneTransitionAnimation(mActivity);
+    startActivity(intent, transitionActivity.toBundle());
   }
 
   DialogWithCircularReveal dialog = null;
