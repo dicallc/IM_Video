@@ -72,6 +72,12 @@ public class MainActivity extends BaseActivity
     mOtherAdapter.setOnItemLongClickListener(this);
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    AppDao.getInstance().SyncDisData(mActivity);
+  }
+
   private void initList(List<AppInfo> mSList, List<AppInfo> mHeadList) {
     mSleepHeaderView.setList(mHeadList);
     mOtherAdapter.setList(mSList.subList(8, mSList.size()));

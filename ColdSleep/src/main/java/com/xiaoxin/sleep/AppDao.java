@@ -118,8 +118,8 @@ public class AppDao {
           }
         }
       }
-      saveUserSaveDisAppToDB(userSaveDisAppFromDB);
       EventBus.getDefault().post(new Event(Event.getDisList, userSaveDisAppFromDB));
+      saveUserSaveDisAppToDB(userSaveDisAppFromDB);
     }
   }
 
@@ -155,15 +155,12 @@ public class AppDao {
     for (int i = 1; i < mSplit.length; i++) {
       for (AppInfo mAppInfo : mAllUserAppInfos) {
         if (mSplit[i].equals(mAppInfo.packageName)) {
-          //mAppInfo.isSelect = false;
           mAppInfo.isEnable = true;
           EnList.add(mAppInfo);
-          //看缓存列表是否存在不存在就添加
-          //checkCacheExit(mAppInfo);
         }
       }
     }
-    KLog.e(EnList);
+//    KLog.e(EnList.toString());
   }
 
   private List<String> loadEnAppListApplyPackage() {
