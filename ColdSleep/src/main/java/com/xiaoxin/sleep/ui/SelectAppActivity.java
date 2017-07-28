@@ -112,10 +112,8 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         }
         //缓存数据
         AppDao.getInstance().saveUserSaveDisAppToDB(part);
-        EventBus.getDefault().post(new Event(Event.TUESDAY));
+        EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER,mList));
         goneloadDialog();
-        //Intent mIntent = new Intent(SelectAppActivity.this, MainActivity.class);
-        //startActivity(mIntent);
         finish();
         break;
     }

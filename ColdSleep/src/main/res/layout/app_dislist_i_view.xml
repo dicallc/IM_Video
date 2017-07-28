@@ -4,6 +4,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="20dp"
     android:gravity="center"
+    android:background="@drawable/item_click"
     android:orientation="vertical"
     >
   <ImageView

@@ -198,7 +198,6 @@ public class MainActivity extends BaseActivity
         ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
         mBaseQuickAdapter.getData().remove(mAppInfo);
         notifyDataSetChanged();
-
         //缓存
         saveUserDis();
       }
@@ -230,6 +229,12 @@ public class MainActivity extends BaseActivity
         List<AppInfo> mAppInfos = AppDao.getInstance().sortAppList(lists);
         //赋值给头部
         initList(lists, mAppInfos);
+        break;
+      case Event.NOTIFYADAPTER:
+        List<AppInfo> mList = msg.list;
+        List<AppInfo> headList = AppDao.getInstance().sortAppList(mList);
+        initList(mList, headList);
+        notifyDataSetChanged();
         break;
     }
   }

@@ -16,13 +16,16 @@ public class Event {
   public List<AppInfo> list;
   public static final int SUNDAY = 0;
   public static final int MONDAY = 1;
-  public static final int TUESDAY = 2;
+  /**
+   * 传递数据，并且刷新adapter
+   */
+  public static final int NOTIFYADAPTER = 2;
   public static final int getDisList = 3;
   public static final int THURSDAY = 4;
   public static final int FRIDAY = 5;
   public static final int SATURDAY = 6;
 
-  @IntDef({ SUNDAY, MONDAY, TUESDAY, getDisList, THURSDAY, FRIDAY, SATURDAY })
+  @IntDef({ SUNDAY, MONDAY, NOTIFYADAPTER, getDisList, THURSDAY, FRIDAY, SATURDAY })
   @Retention(RetentionPolicy.SOURCE) public @interface WeekDays {
   }
 

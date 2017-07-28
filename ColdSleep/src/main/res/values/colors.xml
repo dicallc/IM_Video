@@ -12,4 +12,6 @@
   <color name="custom_blue">#0091EA</color>
   <color name="select_item_bg_color">#D4E9F3</color>
   <color name="transparent">#0000</color>
+  <color name="line_grey">#D7D7D7</color>
+  <color name="super_light_grey">#FAFAFA</color>
 </resources>
