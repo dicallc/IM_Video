@@ -106,16 +106,22 @@ public class AppDao {
     }
 
     @Override public void run() {
-      if (mAllUserAppInfos.size() == 0) mAllUserAppInfos = Utils.getAllUserAppInfos(mContext);
-      loadEnAppList();
       List<AppInfo> userSaveDisAppFromDB = getUserSaveDisAppFromDB();
+      if (mAllUserAppInfos.size() == 0) mAllUserAppInfos = Utils.getAllUserAppInfos(mContext);
+      //从所有列表中找用户所存app是否存在
+      for (int i = 0; i < userSaveDisAppFromDB.size(); i++) {
+        if (!mAllUserAppInfos.contains(userSaveDisAppFromDB.get(i))) {
+          userSaveDisAppFromDB.remove(i);
+        }
+      }
+      loadEnAppList();
+
       //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
       for (AppInfo userdis : userSaveDisAppFromDB) {
-        for (AppInfo info : EnList) {
-          if (info.appName.equals(userdis.appName)) {
-            userdis.isWarn = true;
-            break;
-          }
+        if (EnList.contains(userdis)) {
+          userdis.isWarn = true;
+        } else {
+          userdis.isWarn = false;
         }
       }
       EventBus.getDefault().post(new Event(Event.getDisList, userSaveDisAppFromDB));
@@ -160,7 +166,7 @@ public class AppDao {
         }
       }
     }
-//    KLog.e(EnList.toString());
+    //    KLog.e(EnList.toString());
   }
 
   private List<String> loadEnAppListApplyPackage() {
@@ -183,7 +189,6 @@ public class AppDao {
     for (int i = 1; i < DisApps.length; i++) {
       for (AppInfo mAppInfo : mAllUserAppInfos) {
         if (DisApps[i].equals(mAppInfo.packageName)) {
-          //mAppInfo.isSelect = true;
           mAppInfo.isEnable = false;
           Dislist.add(mAppInfo);
         }
@@ -232,9 +237,13 @@ public class AppDao {
     }
 
     @Override public void run() {
-      String mJson = new Gson().toJson(mAppInfos);
-      SpUtils.setParam(App.getAppContext(), LibraryCons.LOCAL_USER_DISAPP_DB_NAME, mJson);
+      saveUserDisFunc(mAppInfos);
     }
+  }
+
+  private void saveUserDisFunc(List<AppInfo> mAppInfos) {
+    String mJson = new Gson().toJson(mAppInfos);
+    SpUtils.setParam(App.getAppContext(), LibraryCons.LOCAL_USER_DISAPP_DB_NAME, mJson);
   }
 
   private AppInfo findModel(List<AppInfo> lists, AppInfo mAppInfo) {
@@ -250,7 +259,7 @@ public class AppDao {
 
   public List<AppInfo> sortAppList(List<AppInfo> list) {
     Collections.sort(list);
-    KLog.e("dicallc",list.toString());
+    KLog.e("dicallc", list.toString());
     List<AppInfo> appInfos = list.subList(0, 8);
     return appInfos;
   }
@@ -281,24 +290,24 @@ public class AppDao {
     @Override public void run() {
       super.run();
       long startTime = System.nanoTime();  //開始時間
+      //未睡眠列表
       List<String> mList = loadEnAppListApplyPackage();
       //从缓存中拿到用户保存的需要睡眠的列表
       List<AppInfo> mUserSaveDisAppFromDB = getUserSaveDisAppFromDB();
       //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
       for (AppInfo userdis : mUserSaveDisAppFromDB) {
-        for (String info : mList) {
-          if (info.equals(userdis.packageName)) {
-            KLog.e("睡眠"+userdis.appName);
-            userdis.isWarn = false;
-            ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true,
-                true);
-            break;
-          }
+        if (mList.contains(userdis.packageName)) {
+          KLog.e("睡眠" + userdis.appName);
+          userdis.isWarn = false;
+          ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true,
+              true);
+        } else {
+          userdis.isWarn = false;
         }
       }
       long consumingTime = System.nanoTime() - startTime; //消耗時間
       KLog.e(consumingTime / 1000000 + "微秒");
-      saveUserSaveDisAppToDB(mUserSaveDisAppFromDB);
+      saveUserDisFunc(mUserSaveDisAppFromDB);
     }
   }
 }

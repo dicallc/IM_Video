@@ -41,15 +41,16 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
 
   private String arr[] = { "App", "系统" };
   private AppListFragment mAppListFragment;
+  private boolean mIsFirst;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     String action = getIntent().getStringExtra(LibraryCons.ACTION);
 
     //第一次为false，点击冷冻后既不是第一次
-    boolean isFirst = (boolean) SpUtils.getParam(mActivity, LibraryCons.NotFIRST, false);
-    if (isFirst&&!LibraryCons.ACTION_OPEN.equals(action)){
-      Intent mIntent=new Intent(mActivity,MainActivity.class);
+    mIsFirst = (boolean) SpUtils.getParam(mActivity, LibraryCons.NotFIRST, false);
+    if (mIsFirst && !LibraryCons.ACTION_OPEN.equals(action)) {
+      Intent mIntent = new Intent(mActivity, MainActivity.class);
       startActivity(mIntent);
       finish();
     }
@@ -91,7 +92,6 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         KLog.e("MONDAY");
         goneloadDialog();
         break;
-
     }
   }
 
@@ -103,14 +103,14 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
   @Override public void onClick(View v) {
     switch (v.getId()) {
       case R.id.fab:
+        SpUtils.setParam(mActivity, LibraryCons.NotFIRST, true);
         showloadDialog("正在冷冻中");
-        SpUtils.setParam(mActivity,LibraryCons.NotFIRST,true);
         List<AppInfo> mList = mAppListFragment.list;
         List<AppInfo> part = new ArrayList<>();
         for (AppInfo mAppInfo : mList) {
           if (mAppInfo.isSelect) {
             //  如果已经禁用了，就不执行命令了
-            if (mAppInfo.isEnable){
+            if (mAppInfo.isEnable) {
               mAppInfo.isEnable = false;
               ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
                   true);
@@ -120,9 +120,15 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         }
         //缓存数据
         AppDao.getInstance().saveUserSaveDisAppToDB(part);
-        EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER,mList));
+        EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER, mList));
         goneloadDialog();
-        finish();
+        if (mIsFirst) {
+          finish();
+        } else {
+          Intent mIntent = new Intent(this, MainActivity.class);
+          startActivity(mIntent);
+        }
+
         break;
     }
   }

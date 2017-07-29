@@ -122,10 +122,13 @@ public class Utils {
       AppInfo appInfo = new AppInfo(appName, packageName, icon_path);
       //如果是在用户已经选择冷冻列表中则要设置选中状态
       List<AppInfo> mUserSaveDisAppFromDB = AppDao.getInstance().getUserSaveDisAppFromDB();
-      for (AppInfo sAppInfo : mUserSaveDisAppFromDB) {
-        if (sAppInfo.appName.equals(appInfo.appName)) {
+      //如果内存为空就直接赋值为false
+      if (null == mUserSaveDisAppFromDB || mUserSaveDisAppFromDB.size() == 0) {
+        appInfo.isSelect = false;
+      } else {
+          //对比用户所存列表是否存在设置是否选中
+        if (mUserSaveDisAppFromDB.contains(appInfo)) {
           appInfo.isSelect = true;
-          break;
         } else {
           appInfo.isSelect = false;
         }
