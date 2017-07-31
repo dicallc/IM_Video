@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 /**
  * Created by Administrator on 2017/7/12 0012.
  */
-
 public class AppInfo implements Comparable<AppInfo> {
   public String appName;
   public String packageName;
@@ -34,6 +33,17 @@ public class AppInfo implements Comparable<AppInfo> {
   }
 
   @Override public String toString() {
-    return "AppInfo{" + "open_num=" + open_num + '}';
+    return "AppInfo{" + "appName='" + appName + '\'' + ", open_num=" + open_num + '}';
+  }
+
+  @Override public boolean equals(Object obj) {
+    if (obj instanceof AppInfo) {
+      AppInfo u = (AppInfo) obj;
+      return this.packageName.equals(u.packageName);
+    }else if(obj instanceof String){
+      String u = (String) obj;
+      return this.packageName.equals(u);
+    }
+    return super.equals(obj);
   }
 }

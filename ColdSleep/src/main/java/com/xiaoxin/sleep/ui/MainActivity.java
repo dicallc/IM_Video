@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
@@ -20,6 +22,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.Utils;
@@ -45,9 +48,11 @@ public class MainActivity extends BaseActivity
   @BindView(R.id.fab) FloatingActionButton mFab;
   @BindView(R.id.toolbar) Toolbar mToolbar;
   @BindView(R.id.other_app_list) RecyclerView mOtherAppList;
+  @BindView(R.id.search_view) MaterialSearchView mSearchView;
   private ViewCompleteImpl mViewComplete;
   private OtherAppListAdapter mOtherAdapter;
   private SleepHeaderView mSleepHeaderView;
+  private List<AppInfo> mLists;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -65,15 +70,13 @@ public class MainActivity extends BaseActivity
     List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
     List<AppInfo> headList = AppDao.getInstance().sortAppList(sList);
     initList(sList, headList);
-    AppDao.getInstance().SyncDisData(mActivity);
     mSleepHeaderView.getAdapter().setOnItemClickListener(this);
     mOtherAdapter.setOnItemClickListener(this);
     mSleepHeaderView.getAdapter().setOnItemLongClickListener(this);
     mOtherAdapter.setOnItemLongClickListener(this);
   }
 
-  @Override
-  protected void onResume() {
+  @Override protected void onResume() {
     super.onResume();
     AppDao.getInstance().SyncDisData(mActivity);
   }
@@ -127,8 +130,44 @@ public class MainActivity extends BaseActivity
   }
 
   private void initView() {
+    mSearchView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        mSearchView.closeSearch();
+        showloadDialog("加载中");
+        AppInfo mAppInfo = null;
+        List<AppInfo> mListData = getListData();
+        TextView mTextView = (TextView) view.findViewById(R.id.suggestion_text);
+        String str = mTextView.getText().toString();
+        for (AppInfo sAppInfo : mListData) {
+          if (str.equals(sAppInfo.appName)) {
+            mAppInfo = sAppInfo;
+            break;
+          }
+        }
+        WarnApp(mAppInfo);
+        goneloadDialog();
+        openApp(mAppInfo);
+      }
+    });
+    mSearchView.setEllipsize(true);
+    mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+      @Override public boolean onQueryTextSubmit(String query) {
+        Snackbar.make(findViewById(R.id.main_layout), "Query: " + query, Snackbar.LENGTH_LONG)
+            .show();
+        return false;
+      }
+
+      @Override public boolean onQueryTextChange(String newText) {
+        //Do some magic
+        return false;
+      }
+    });
     initRecylerView();
     setSupportActionBar(mToolbar);
+  }
+
+  private List<AppInfo> getListData() {
+    return mLists;
   }
 
   private void initRecylerView() {
@@ -146,6 +185,8 @@ public class MainActivity extends BaseActivity
 
   @Override public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_main, menu);
+    MenuItem item = menu.findItem(R.id.action_search);
+    mSearchView.setMenuItem(item);
     return true;
   }
 
@@ -161,18 +202,31 @@ public class MainActivity extends BaseActivity
     notifyDataSetChanged();
   }
 
-  @Override public boolean onOptionsItemSelected(MenuItem item) {
-    Intent mIntent = new Intent(mActivity, SettingActivity.class);
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-      startActivityWithOptions(mIntent);
+  @Override public void onBackPressed() {
+    if (mSearchView.isSearchOpen()) {
+      mSearchView.closeSearch();
     } else {
-      startActivity(mIntent);
+      super.onBackPressed();
+    }
+  }
+
+  @Override public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.action_search) {
+
+    } else {
+      Intent mIntent = new Intent(mActivity, SettingActivity.class);
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        startActivityWithOptions(mIntent);
+      } else {
+        startActivity(mIntent);
+      }
     }
 
     return super.onOptionsItemSelected(item);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP) private void startActivityWithOptions(Intent intent) {
+  @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+  private void startActivityWithOptions(Intent intent) {
     ActivityOptions transitionActivity = null;
     transitionActivity = ActivityOptions.makeSceneTransitionAnimation(mActivity);
     startActivity(intent, transitionActivity.toBundle());
@@ -244,11 +298,12 @@ public class MainActivity extends BaseActivity
   @Subscribe(threadMode = ThreadMode.MAIN) public void onAppDaoMessage(Event msg) {
     switch (msg.getCurrentDay()) {
       case Event.getDisList:
-        List<AppInfo> lists = msg.list;
+        mSearchView.setSuggestions(AppDao.getInstance().getSuggestions());
+        mLists = msg.list;
         //排序取出8个使用频率比较高的
-        List<AppInfo> mAppInfos = AppDao.getInstance().sortAppList(lists);
+        List<AppInfo> mAppInfos = AppDao.getInstance().sortAppList(mLists);
         //赋值给头部
-        initList(lists, mAppInfos);
+        initList(mLists, mAppInfos);
         break;
       case Event.NOTIFYADAPTER:
         List<AppInfo> mList = msg.list;

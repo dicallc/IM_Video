@@ -38,5 +38,5 @@ dependencies {
   compile 'com.google.code.gson:gson:2.2.4'
   compile 'org.greenrobot:eventbus:3.0.0'
   compile 'com.xdandroid:hellodaemon:+'
-
+//  compile 'org.greenrobot:greendao:3.2.0' // add library
 }

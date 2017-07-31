@@ -23,7 +23,13 @@ import org.greenrobot.eventbus.EventBus;
  */
 public class AppDao {
 
+  private String[] mSuggestions;
+
   private AppDao() {
+  }
+
+  public String[] getSuggestions() {
+    return mSuggestions;
   }
 
   public static synchronized AppDao getInstance() {
@@ -109,13 +115,14 @@ public class AppDao {
       List<AppInfo> userSaveDisAppFromDB = getUserSaveDisAppFromDB();
       if (mAllUserAppInfos.size() == 0) mAllUserAppInfos = Utils.getAllUserAppInfos(mContext);
       //从所有列表中找用户所存app是否存在
+      mSuggestions = new String[userSaveDisAppFromDB.size()];
       for (int i = 0; i < userSaveDisAppFromDB.size(); i++) {
+        mSuggestions[i]=userSaveDisAppFromDB.get(i).appName;
         if (!mAllUserAppInfos.contains(userSaveDisAppFromDB.get(i))) {
           userSaveDisAppFromDB.remove(i);
         }
       }
       loadEnAppList();
-
       //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
       for (AppInfo userdis : userSaveDisAppFromDB) {
         if (EnList.contains(userdis)) {
@@ -153,20 +160,27 @@ public class AppDao {
   }
 
   private void loadEnAppList() {
-
+    EnList.clear();
+    KLog.e(EnList.toString() + "" + mAllUserAppInfos.toString());
     ShellUtils.CommandResult allEnAppsRes =
         ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
     String mAllEnMsg = allEnAppsRes.successMsg;
     String[] mSplit = mAllEnMsg.split("package:");
     for (int i = 1; i < mSplit.length; i++) {
+      //int index = mAllUserAppInfos.indexOf(mSplit[i]);
+      //AppInfo mAppInfo = mAllUserAppInfos.get(index);
+      //mAppInfo.isEnable = true;
+      //EnList.add(mAppInfo);
       for (AppInfo mAppInfo : mAllUserAppInfos) {
         if (mSplit[i].equals(mAppInfo.packageName)) {
+          KLog.e(mSplit[i] + "   " + mAppInfo.packageName);
           mAppInfo.isEnable = true;
           EnList.add(mAppInfo);
+          break;
         }
       }
     }
-    //    KLog.e(EnList.toString());
+    KLog.e(EnList.size());
   }
 
   private List<String> loadEnAppListApplyPackage() {
