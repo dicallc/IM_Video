@@ -65,10 +65,10 @@
   </string-array>
 
   <string-array name="sleep_time">
-    <item>1分钟</item>
+    <item>3分钟</item>
     <item>5分钟</item>
     <item>8分钟</item>
-    <item>15分钟</item>
+    <item>10分钟</item>
   </string-array>
 
 

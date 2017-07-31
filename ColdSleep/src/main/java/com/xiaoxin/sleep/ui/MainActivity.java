@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,12 +26,14 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
+import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.ShellUtils;
 import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
+import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
@@ -67,6 +70,12 @@ public class MainActivity extends BaseActivity
   }
 
   private void initData() {
+    String time = (String) SpUtils.getParam(mActivity, Constant.SLEEP_TIME_KEY, "");
+    if (null==time|| TextUtils.isEmpty(time)){
+      Constant.SLEEP_TIME_VALUE=0;
+    }else{
+      Constant.SLEEP_TIME_VALUE=Integer.parseInt(time);
+    }
     List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
     List<AppInfo> headList = AppDao.getInstance().sortAppList(sList);
     initList(sList, headList);

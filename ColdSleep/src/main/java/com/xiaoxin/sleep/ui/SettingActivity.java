@@ -8,6 +8,7 @@ import android.support.annotation.RequiresApi;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.view.View;
@@ -21,8 +22,9 @@ import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.common.Constant;
-import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.SettingNormalView;
+
+import static com.xiaoxin.sleep.common.Constant.SLEEP_TIME_VALUE;
 
 public class SettingActivity extends AppCompatActivity {
 
@@ -31,6 +33,7 @@ public class SettingActivity extends AppCompatActivity {
   @BindView(R.id.setting_select_app) SettingNormalView settingSelectApp;
   @BindView(R.id.setting_screen_sleep) SuperTextView settingScreenSleep;
   @BindView(R.id.setting_screen_sleep_time) SettingNormalView settingScreenSleepTime;
+  int select_index = 0;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -57,6 +60,28 @@ public class SettingActivity extends AppCompatActivity {
           TransitionInflater.from(this).inflateTransition(R.transition.slide_right);
       getWindow().setEnterTransition(transitionSlideRight);
     }
+    initData();
+  }
+
+  private void initData() {
+
+    loadSelectIndex();
+  }
+
+  private void loadSelectIndex() {
+    String time = (String) SpUtils.getParam(SettingActivity.this, Constant.SLEEP_TIME_KEY, "");
+    if (null == time || TextUtils.isEmpty(time)) {
+      SLEEP_TIME_VALUE = 0;
+    } else {
+      SLEEP_TIME_VALUE = Integer.parseInt(time);
+    }
+    String[] mArray = getResources().getStringArray(R.array.sleep_time);
+    for (int i = 0; i < mArray.length; i++) {
+      if (mArray[i].contains(SLEEP_TIME_VALUE + "")) {
+        select_index = i;
+        break;
+      }
+    }
   }
 
   private void initToobar() {
@@ -82,16 +107,17 @@ public class SettingActivity extends AppCompatActivity {
     }
   }
 
-
-
   @OnClick(R.id.setting_screen_sleep_time) public void showSingleChoice() {
     new MaterialDialog.Builder(this).title("睡眠时间")
         .items(R.array.sleep_time)
         .positiveText("确定")
-        .itemsCallbackSingleChoice(2, new MaterialDialog.ListCallbackSingleChoice() {
+        .itemsCallbackSingleChoice(select_index, new MaterialDialog.ListCallbackSingleChoice() {
           @Override public boolean onSelection(MaterialDialog mMaterialDialog, View mView, int mI,
               CharSequence mCharSequence) {
-            ToastUtils.showShortToast(mI + ": " + mCharSequence);
+            select_index=mI;
+            String time = mCharSequence.toString().replace("分钟", "");
+            int mInt = Integer.parseInt(time);
+            SpUtils.setParam(SettingActivity.this, Constant.SLEEP_TIME_KEY, mInt + "");
             return true;
           }
         })

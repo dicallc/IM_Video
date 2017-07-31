@@ -161,7 +161,7 @@ public class AppDao {
 
   private void loadEnAppList() {
     EnList.clear();
-    KLog.e(EnList.toString() + "" + mAllUserAppInfos.toString());
+    //KLog.e(EnList.toString() + "" + mAllUserAppInfos.toString());
     ShellUtils.CommandResult allEnAppsRes =
         ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
     String mAllEnMsg = allEnAppsRes.successMsg;
@@ -173,14 +173,14 @@ public class AppDao {
       //EnList.add(mAppInfo);
       for (AppInfo mAppInfo : mAllUserAppInfos) {
         if (mSplit[i].equals(mAppInfo.packageName)) {
-          KLog.e(mSplit[i] + "   " + mAppInfo.packageName);
+          //KLog.e(mSplit[i] + "   " + mAppInfo.packageName);
           mAppInfo.isEnable = true;
           EnList.add(mAppInfo);
           break;
         }
       }
     }
-    KLog.e(EnList.size());
+    //KLog.e(EnList.size());
   }
 
   private List<String> loadEnAppListApplyPackage() {
@@ -273,7 +273,7 @@ public class AppDao {
 
   public List<AppInfo> sortAppList(List<AppInfo> list) {
     Collections.sort(list);
-    KLog.e("dicallc", list.toString());
+    //KLog.e("dicallc", list.toString());
     List<AppInfo> appInfos = list.subList(0, 8);
     return appInfos;
   }
