@@ -215,8 +215,7 @@ public class MainActivity extends BaseActivity
   @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
     //打开app先解冻
     Observable.create(new ObservableOnSubscribe<AppInfo>() {
-      @Override public void subscribe(ObservableEmitter<AppInfo> subscriber)
-          throws Exception {
+      @Override public void subscribe(ObservableEmitter<AppInfo> subscriber) throws Exception {
         List<AppInfo> mData = mBaseQuickAdapter.getData();
         AppInfo mAppInfo = mData.get(position);
         mAppInfo.open_num++;
@@ -231,7 +230,6 @@ public class MainActivity extends BaseActivity
         openApp(mAppInfo);
         //缓存
         saveUserDis();
-
       }
     });
   }
@@ -283,8 +281,19 @@ public class MainActivity extends BaseActivity
     //解冻
     fuc_wake.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
-        WarnApp(mAppInfo);
-        notifyDataSetChanged();
+        Observable.create(new ObservableOnSubscribe<String>() {
+          @Override public void subscribe(ObservableEmitter<String> mObservableEmitter)
+              throws Exception {
+            WarnApp(mAppInfo);
+            mObservableEmitter.onNext("");
+            mObservableEmitter.onComplete();
+          }
+        }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+          @Override public void accept(String mS) throws Exception {
+            notifyDataSetChanged();
+          }
+        });
       }
     });
     //移出列表
@@ -293,21 +302,46 @@ public class MainActivity extends BaseActivity
       @Override public void onClick(View v) {
         dialog.dismiss();
         showloadDialog("操作中");
-        WarnApp(mAppInfo);
-        mBaseQuickAdapter.getData().remove(mAppInfo);
-        notifyDataSetChanged();
-        //缓存
-        saveUserDis();
+        Observable.create(new ObservableOnSubscribe<AppInfo>() {
+          @Override public void subscribe(ObservableEmitter<AppInfo> mObservableEmitter)
+              throws Exception {
+            WarnApp(mAppInfo);
+            mBaseQuickAdapter.getData().remove(mAppInfo);
+            mObservableEmitter.onNext(mAppInfo);
+            mObservableEmitter.onComplete();
+          }
+        }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<AppInfo>() {
+          @Override public void accept(AppInfo mAppInfo) throws Exception {
+            notifyDataSetChanged();
+            //缓存
+            saveUserDis();
+            goneloadDialog();
+          }
+        });
       }
     });
     uninstall_app.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
         dialog.dismiss();
-        ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
-        mBaseQuickAdapter.getData().remove(mAppInfo);
-        notifyDataSetChanged();
-        //缓存
-        saveUserDis();
+        showloadDialog("删除中");
+        Observable.create(new ObservableOnSubscribe<String>() {
+          @Override public void subscribe(ObservableEmitter<String> mObservableEmitter)
+              throws Exception {
+            ShellUtils.execCommand(LibraryCons.uninstall_app + mAppInfo.packageName, true, true);
+            mBaseQuickAdapter.getData().remove(mAppInfo);
+            mObservableEmitter.onNext("");
+            mObservableEmitter.onComplete();
+          }
+        }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
+          @Override public void accept(String mS) throws Exception {
+            notifyDataSetChanged();
+            goneloadDialog();
+            //缓存
+            saveUserDis();
+          }
+        });
       }
     });
     dialog = new DialogWithCircularReveal(MainActivity.this, mInflate);
