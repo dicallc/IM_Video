@@ -11,6 +11,7 @@ import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.utils.Utils;
 import java.lang.reflect.Type;
 import java.util.ArrayList;

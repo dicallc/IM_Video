@@ -19,7 +19,7 @@ import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
-import com.xiaoxin.sleep.ShellUtils;
+import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.adapter.ViewPageAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.model.Event;

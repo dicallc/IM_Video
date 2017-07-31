@@ -47,7 +47,7 @@ public class BaseActivity extends AppCompatActivity {
   }
 
   protected void goneloadDialog() {
-    if (null != mDialog) if (mDialog.isShowing()) mDialog.dismiss();
+    if (null != mDialog&&mDialog.isShowing()) if (mDialog.isShowing()) mDialog.dismiss();
   }
 
   /**

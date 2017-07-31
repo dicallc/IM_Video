@@ -30,14 +30,20 @@ import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
-import com.xiaoxin.sleep.ShellUtils;
 import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
 import com.xiaoxin.sleep.view.SleepHeaderView;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -71,10 +77,10 @@ public class MainActivity extends BaseActivity
 
   private void initData() {
     String time = (String) SpUtils.getParam(mActivity, Constant.SLEEP_TIME_KEY, "");
-    if (null==time|| TextUtils.isEmpty(time)){
-      Constant.SLEEP_TIME_VALUE=0;
-    }else{
-      Constant.SLEEP_TIME_VALUE=Integer.parseInt(time);
+    if (null == time || TextUtils.isEmpty(time)) {
+      Constant.SLEEP_TIME_VALUE = 0;
+    } else {
+      Constant.SLEEP_TIME_VALUE = Integer.parseInt(time);
     }
     List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
     List<AppInfo> headList = AppDao.getInstance().sortAppList(sList);
@@ -101,6 +107,7 @@ public class MainActivity extends BaseActivity
   }
 
   private void openApp(AppInfo mAppInfo) {
+    goneloadDialog();
     Utils.openApp(MainActivity.this, mAppInfo.packageName);
     notifyDataSetChanged();
   }
@@ -143,19 +150,25 @@ public class MainActivity extends BaseActivity
       @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         mSearchView.closeSearch();
         showloadDialog("加载中");
-        AppInfo mAppInfo = null;
-        List<AppInfo> mListData = getListData();
-        TextView mTextView = (TextView) view.findViewById(R.id.suggestion_text);
-        String str = mTextView.getText().toString();
-        for (AppInfo sAppInfo : mListData) {
-          if (str.equals(sAppInfo.appName)) {
-            mAppInfo = sAppInfo;
-            break;
+
+        final List<AppInfo> mListData = getListData();
+        final TextView mTextView = (TextView) view.findViewById(R.id.suggestion_text);
+        Observable.create(new ObservableOnSubscribe<AppInfo>() {
+          @Override public void subscribe(ObservableEmitter<AppInfo> subscriber) throws Exception {
+            AppInfo mAppInfo = null;
+            String str = mTextView.getText().toString();
+            for (AppInfo sAppInfo : mListData) {
+              if (str.equals(sAppInfo.appName)) {
+                mAppInfo = sAppInfo;
+                break;
+              }
+            }
+            WarnApp(mAppInfo);
+            subscriber.onNext(mAppInfo);
+            subscriber.onComplete();
           }
-        }
-        WarnApp(mAppInfo);
-        goneloadDialog();
-        openApp(mAppInfo);
+        }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(mAppInfo -> openApp(mAppInfo));
       }
     });
     mSearchView.setEllipsize(true);
@@ -201,14 +214,26 @@ public class MainActivity extends BaseActivity
 
   @Override public void onItemClick(BaseQuickAdapter mBaseQuickAdapter, View mView, int position) {
     //打开app先解冻
-    List<AppInfo> mData = mBaseQuickAdapter.getData();
-    AppInfo mAppInfo = mData.get(position);
-    mAppInfo.open_num++;
-    WarnApp(mAppInfo);
-    openApp(mAppInfo);
-    //缓存
-    saveUserDis();
-    notifyDataSetChanged();
+    Observable.create(new ObservableOnSubscribe<AppInfo>() {
+      @Override public void subscribe(ObservableEmitter<AppInfo> subscriber)
+          throws Exception {
+        List<AppInfo> mData = mBaseQuickAdapter.getData();
+        AppInfo mAppInfo = mData.get(position);
+        mAppInfo.open_num++;
+        WarnApp(mAppInfo);
+        subscriber.onNext(mAppInfo);
+        subscriber.onComplete();
+      }
+    }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+        .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<AppInfo>() {
+      @Override public void accept(AppInfo mAppInfo) throws Exception {
+        notifyDataSetChanged();
+        openApp(mAppInfo);
+        //缓存
+        saveUserDis();
+
+      }
+    });
   }
 
   @Override public void onBackPressed() {

@@ -16,7 +16,7 @@ import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
-import com.xiaoxin.sleep.ShellUtils;
+import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.adapter.SelectAppListAdapter;
 import com.xiaoxin.sleep.common.BaseFragment;
 import com.xiaoxin.sleep.model.Event;

@@ -1,4 +1,4 @@
-package com.xiaoxin.sleep;
+package com.xiaoxin.sleep.utils;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

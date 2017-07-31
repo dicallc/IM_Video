@@ -37,9 +37,16 @@ android {
     versionCode 1
     versionName "1.0"
 
-
+    jackOptions {
+      enabled=true
+    }
     vectorDrawables.useSupportLibrary = true
   }
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_8
+    targetCompatibility JavaVersion.VERSION_1_8
+  }
+
   buildTypes {
     release {
       minifyEnabled true
@@ -118,4 +125,5 @@ dependencies {
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
   compile 'com.github.lygttpod:SuperTextView:2.0.8'
   compile project(':MaterialSearchView')
+  compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
 }
