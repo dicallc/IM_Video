@@ -162,26 +162,19 @@ public class AppDao {
 
   private void loadEnAppList() {
     EnList.clear();
-    //KLog.e(EnList.toString() + "" + mAllUserAppInfos.toString());
     ShellUtils.CommandResult allEnAppsRes =
         ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
     String mAllEnMsg = allEnAppsRes.successMsg;
     String[] mSplit = mAllEnMsg.split("package:");
     for (int i = 1; i < mSplit.length; i++) {
-      //int index = mAllUserAppInfos.indexOf(mSplit[i]);
-      //AppInfo mAppInfo = mAllUserAppInfos.get(index);
-      //mAppInfo.isEnable = true;
-      //EnList.add(mAppInfo);
       for (AppInfo mAppInfo : mAllUserAppInfos) {
         if (mSplit[i].equals(mAppInfo.packageName)) {
-          //KLog.e(mSplit[i] + "   " + mAppInfo.packageName);
           mAppInfo.isEnable = true;
           EnList.add(mAppInfo);
           break;
         }
       }
     }
-    //KLog.e(EnList.size());
   }
 
   private List<String> loadEnAppListApplyPackage() {

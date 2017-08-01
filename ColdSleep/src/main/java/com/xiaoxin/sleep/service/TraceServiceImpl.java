@@ -6,6 +6,7 @@ import android.os.IBinder;
 import com.socks.library.KLog;
 import com.xdandroid.hellodaemon.AbsWorkService;
 import com.xiaoxin.library.utils.SpUtils;
+import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.receiver.ScreenBroadcastReceiver;
 import io.reactivex.Flowable;
@@ -74,6 +75,8 @@ public class TraceServiceImpl extends AbsWorkService {
         }).subscribe(new Consumer<Long>() {
           @Override public void accept(Long count) throws Exception {
             KLog.d("每一分钟采集一次数据... count = " + count);
+            //如果为零就代表已经被重启过一次，开启睡眠一次
+            if (count==0)AppDao.getInstance().DoScreenBrSync(getApplicationContext());
             if (count > 0 && count % 18 == 0) KLog.d("保存数据到磁盘。 saveCount = " + (count / 18 - 1));
           }
         });

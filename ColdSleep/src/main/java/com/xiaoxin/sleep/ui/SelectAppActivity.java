@@ -19,10 +19,17 @@ import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.AppDao;
 import com.xiaoxin.sleep.R;
-import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.adapter.ViewPageAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.utils.ShellUtils;
+import com.xiaoxin.sleep.utils.ToastUtils;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import java.util.ArrayList;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
@@ -53,6 +60,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
       Intent mIntent = new Intent(mActivity, MainActivity.class);
       startActivity(mIntent);
       finish();
+      return;
     }
     setContentView(R.layout.activity_select_app);
     ButterKnife.bind(this);
@@ -70,7 +78,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
   }
 
   private void initData() {
-    //showloadDialog("获取app中");
+    showloadDialog("获取app中");
   }
 
   private void initTab() {
@@ -99,35 +107,49 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
     super.onDestroy();
     EventBus.getDefault().unregister(this);
   }
-
+  private List<AppInfo> mList;
   @Override public void onClick(View v) {
     switch (v.getId()) {
       case R.id.fab:
-        SpUtils.setParam(mActivity, LibraryCons.NotFIRST, true);
         showloadDialog("正在冷冻中");
-        List<AppInfo> mList = mAppListFragment.list;
-        List<AppInfo> part = new ArrayList<>();
-        for (AppInfo mAppInfo : mList) {
-          if (mAppInfo.isSelect) {
-            //  如果已经禁用了，就不执行命令了
-            if (mAppInfo.isEnable) {
-              mAppInfo.isEnable = false;
-              ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
-                  true);
+        Observable.create(new ObservableOnSubscribe< List<AppInfo>>() {
+          @Override public void subscribe(ObservableEmitter<List<AppInfo>> subscriber)
+              throws Exception {
+            SpUtils.setParam(mActivity, LibraryCons.NotFIRST, true);
+            mList = mAppListFragment.list;
+            List<AppInfo> part = new ArrayList<>();
+            for (AppInfo mAppInfo : mList) {
+              if (mAppInfo.isSelect) {
+                //  如果已经禁用了，就不执行命令了
+                if (mAppInfo.isEnable) {
+                  mAppInfo.isEnable = false;
+                  ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
+                      true);
+                }
+                part.add(mAppInfo);
+              }
             }
-            part.add(mAppInfo);
+            subscriber.onNext(part);
+            subscriber.onComplete();
           }
-        }
-        //缓存数据
-        AppDao.getInstance().saveUserSaveDisAppToDB(part);
-        EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER, mList));
-        goneloadDialog();
-        if (mIsFirst) {
-          finish();
-        } else {
-          Intent mIntent = new Intent(this, MainActivity.class);
-          startActivity(mIntent);
-        }
+        }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<List<AppInfo>>() {
+          @Override public void accept(List<AppInfo> part) throws Exception {
+            //缓存数据
+            AppDao.getInstance().saveUserSaveDisAppToDB(part);
+            EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER, mList));
+            goneloadDialog();
+            ToastUtils.showShortToast("冷冻成功");
+            if (mIsFirst) {
+              finish();
+            } else {
+              Intent mIntent = new Intent(SelectAppActivity.this, MainActivity.class);
+              startActivity(mIntent);
+            }
+          }
+        });
+
+
 
         break;
     }
