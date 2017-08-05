@@ -120,6 +120,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
             List<AppInfo> part = new ArrayList<>();
             for (AppInfo mAppInfo : mList) {
               if (mAppInfo.isSelect) {
+
                 //  如果已经禁用了，就不执行命令了
                 if (mAppInfo.isEnable) {
                   mAppInfo.isEnable = false;
@@ -137,7 +138,7 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
           @Override public void accept(List<AppInfo> part) throws Exception {
             //缓存数据
             AppDao.getInstance().saveUserSaveDisAppToDB(part);
-            EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER, mList));
+            EventBus.getDefault().post(new Event(Event.NOTIFYADAPTER, part));
             goneloadDialog();
             ToastUtils.showShortToast("冷冻成功");
             if (mIsFirst) {
