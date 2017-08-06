@@ -1,7 +1,7 @@
 <resources>
   <string name="app_name">ColdSleep</string>
-  <string name="action_colded">切换已冷冻列表</string>
-  <string name="action_cold">切换未冷冻列表</string>
+  <string name="action_colded">选中所有已睡眠</string>
+  <string name="action_cold">未睡眠优先显示</string>
   <string name="action_all">切换全部列表</string>
 
   <string-array name="sleep_custion_function">

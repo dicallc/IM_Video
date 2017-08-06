@@ -8,15 +8,16 @@
       android:title="搜索"
       app:showAsAction="ifRoom" />
   <item
-      android:id="@+id/action_cold"
-      android:orderInCategory="100"
-      android:title="@string/action_cold"
-      app:showAsAction="never"/>
-  <item
       android:id="@+id/action_colded"
       android:orderInCategory="100"
       android:title="@string/action_colded"
       app:showAsAction="never"/>
+  <item
+      android:id="@+id/action_cold"
+      android:orderInCategory="100"
+      android:title="@string/action_cold"
+      app:showAsAction="never"/>
+
   <item
       android:id="@+id/action_all"
       android:orderInCategory="100"

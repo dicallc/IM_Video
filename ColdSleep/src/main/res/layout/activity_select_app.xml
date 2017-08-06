@@ -24,6 +24,7 @@
           app:tabIndicatorColor="@color/white"
           app:tabTextColor="@color/white"
           app:tabSelectedTextColor="@color/white"
+          android:minWidth="120dp"
           android:layout_width="wrap_content"
           android:layout_height="match_parent"
           >

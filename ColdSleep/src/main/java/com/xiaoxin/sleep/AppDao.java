@@ -302,6 +302,8 @@ public class AppDao {
       List<String> mList = loadEnAppListApplyPackage();
       //从缓存中拿到用户保存的需要睡眠的列表
       List<AppInfo> mUserSaveDisAppFromDB = getUserSaveDisAppFromDB();
+      if (null==mUserSaveDisAppFromDB||mUserSaveDisAppFromDB.size()==0)
+        return;
       //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
       for (AppInfo userdis : mUserSaveDisAppFromDB) {
         if (mList.contains(userdis.packageName)) {
