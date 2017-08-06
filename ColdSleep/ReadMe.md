@@ -12,4 +12,7 @@
 ### 7.考虑使用rxjava代替线程等切换√###
 ### 8.使用数据库代替缓存X###
 ### 8.所有命令去子线程子线程X###
+
+Android6.0以后，怎样获取当前运行的app
+http://blog.csdn.net/yishifu/article/details/52104129
     

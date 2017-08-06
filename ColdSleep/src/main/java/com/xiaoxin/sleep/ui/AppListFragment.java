@@ -25,6 +25,7 @@ import com.xiaoxin.sleep.model.Event;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
@@ -139,20 +140,19 @@ public class AppListFragment extends BaseFragment
     }
 
     public void filterEnableToHeader() {
-        int k = 1;
         List<AppInfo> data = getData();
-        for (int i = 0; i < data.size(); i++) {
-            AppInfo appInfo = data.get(i);
-            if (!appInfo.isEnable) {
-                int index = data.size() - k;
-                //如果后面交换的为已睡眠
-                while (!data.get(index).isEnable) {
-                    k++;
-                    index = data.size() - k;
+        Collections.sort(data, new Comparator<AppInfo>() {
+            @Override
+            public int compare(AppInfo o1, AppInfo o2) {
+                if (o1.isEnable && !o2.isEnable) {
+                    return -1;
+                } else if (!o1.isEnable && o2.isEnable) {
+                    return 1;
+                } else{
+                    return 0;
                 }
-                Collections.swap(data, i, index);
             }
-        }
+        });
         getAdapter().notifyDataSetChanged();
     }
 

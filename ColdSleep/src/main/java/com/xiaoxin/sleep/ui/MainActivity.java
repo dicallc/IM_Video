@@ -24,6 +24,7 @@ import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
+import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
@@ -34,6 +35,7 @@ import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.model.RxModelWithSy;
 import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.utils.ToastUtils;
 import com.xiaoxin.sleep.view.DialogWithCircularReveal;
@@ -49,6 +51,8 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import static com.xiaoxin.library.common.LibraryCons.load_recent_run_app;
 
 public class MainActivity extends BaseActivity
     implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
@@ -89,6 +93,8 @@ public class MainActivity extends BaseActivity
     mOtherAdapter.setOnItemClickListener(this);
     mSleepHeaderView.getAdapter().setOnItemLongClickListener(this);
     mOtherAdapter.setOnItemLongClickListener(this);
+//    ShellUtils.CommandResult commandResult = ShellUtils.execCommand(load_recent_run_app, true, true);
+//    KLog.e(commandResult);
   }
 
   @Override protected void onResume() {
@@ -118,17 +124,34 @@ public class MainActivity extends BaseActivity
 
   private void sleepApp() {
     showloadDialog("正在冷冻中");
-    //找出已经解冻的app进行冻结
-    List<AppInfo> mData = mSleepHeaderView.getAdapter().getData();
-    int mWarnApp = AppDao.getInstance().findWarnApp(mData);
-    List<AppInfo> mOtherAdapterData = mOtherAdapter.getData();
-    int mWarnApp1 = AppDao.getInstance().findWarnApp(mOtherAdapterData);
-    notifyDataSetChanged();
-    //缓存
-    saveUserDis(mData, mOtherAdapterData);
-    goneloadDialog();
-    int num = mWarnApp + mWarnApp1;
-    ToastUtils.showShortToast("睡眠" + num + "个");
+
+    Observable.create(new ObservableOnSubscribe<RxModelWithSy>() {
+      @Override
+      public void subscribe(ObservableEmitter<RxModelWithSy> subscriber) throws Exception {
+        //找出已经解冻的app进行冻结
+        List<AppInfo> mData = mSleepHeaderView.getAdapter().getData();
+        int mWarnApp = AppDao.getInstance().findWarnApp(mData);
+        List<AppInfo> mOtherAdapterData = mOtherAdapter.getData();
+        int mWarnApp1 = AppDao.getInstance().findWarnApp(mOtherAdapterData);
+        RxModelWithSy rxModelWithSy = new RxModelWithSy(mWarnApp, mWarnApp1, mData, mOtherAdapterData);
+        subscriber.onNext(rxModelWithSy);
+        subscriber.onComplete();
+      }
+    }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<RxModelWithSy>() {
+      @Override
+      public void accept(RxModelWithSy rxModelWithSy) throws Exception {
+        notifyDataSetChanged();
+        //缓存
+        saveUserDis(rxModelWithSy.mData, rxModelWithSy.mOtherAdapterData);
+        goneloadDialog();
+        int num = rxModelWithSy.mWarnApp + rxModelWithSy.mWarnApp1;
+        ToastUtils.showShortToast("睡眠" + num + "个");
+
+      }
+    });
+
+
   }
 
   private void saveUserDis(List<AppInfo> mData, List<AppInfo> mOtherAdapterData) {
@@ -281,6 +304,8 @@ public class MainActivity extends BaseActivity
     //解冻
     fuc_wake.setOnClickListener(new View.OnClickListener() {
       @Override public void onClick(View v) {
+        dialog.dismiss();
+        showloadDialog("操作中");
         Observable.create(new ObservableOnSubscribe<String>() {
           @Override public void subscribe(ObservableEmitter<String> mObservableEmitter)
               throws Exception {
@@ -291,6 +316,7 @@ public class MainActivity extends BaseActivity
         }).subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
             .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<String>() {
           @Override public void accept(String mS) throws Exception {
+            goneloadDialog();
             notifyDataSetChanged();
           }
         });
