@@ -9,6 +9,7 @@ import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
+import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.utils.ShellUtils;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.greenrobot.eventbus.EventBus;
+
+import static com.xiaoxin.library.common.LibraryCons.load_rencent_run_app;
 
 /**
  * dao层，与数据打交道，所有数据应从此取，存到此
@@ -118,7 +121,7 @@ public class AppDao {
       //从所有列表中找用户所存app是否存在
       mSuggestions = new String[userSaveDisAppFromDB.size()];
       for (int i = 0; i < userSaveDisAppFromDB.size(); i++) {
-        mSuggestions[i]=userSaveDisAppFromDB.get(i).appName;
+        mSuggestions[i] = userSaveDisAppFromDB.get(i).appName;
         if (!mAllUserAppInfos.contains(userSaveDisAppFromDB.get(i))) {
           userSaveDisAppFromDB.remove(i);
         }
@@ -297,16 +300,23 @@ public class AppDao {
 
     @Override public void run() {
       super.run();
+      ShellUtils.CommandResult commandResult =
+          ShellUtils.execCommand(load_rencent_run_app, true, true);
+      String result = Utils.loadRecentRunSubStr(commandResult.successMsg);
+      KLog.e("正在运行的app: " + result);
       long startTime = System.nanoTime();  //開始時間
       //未睡眠列表
       List<String> mList = loadEnAppListApplyPackage();
       //从缓存中拿到用户保存的需要睡眠的列表
       List<AppInfo> mUserSaveDisAppFromDB = getUserSaveDisAppFromDB();
-      if (null==mUserSaveDisAppFromDB||mUserSaveDisAppFromDB.size()==0)
-        return;
+      if (null == mUserSaveDisAppFromDB || mUserSaveDisAppFromDB.size() == 0) return;
       //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
       for (AppInfo userdis : mUserSaveDisAppFromDB) {
         if (mList.contains(userdis.packageName)) {
+          //如果在前台默认不睡眠
+          if (Constant.isOpenRecentKill && userdis.packageName.equals(result)) {
+            return;
+          }
           KLog.e("睡眠" + userdis.appName);
           userdis.isWarn = false;
           ShellUtils.execCommand(LibraryCons.make_app_to_disenble + userdis.packageName, true,

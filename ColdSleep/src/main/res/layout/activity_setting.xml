@@ -64,6 +64,14 @@
                 android:textSize="14sp" />
 
             <com.allen.library.SuperTextView
+                android:id="@+id/setting_recent_app_kill"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                app:sLeftTopTextSize="16sp"
+                app:sLeftTopTextString="正在使用应用不睡眠"
+                app:sLeftViewGravity="left_center"
+                app:sRightViewType="switchBtn" />
+            <com.allen.library.SuperTextView
                 android:id="@+id/setting_screen_sleep"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"

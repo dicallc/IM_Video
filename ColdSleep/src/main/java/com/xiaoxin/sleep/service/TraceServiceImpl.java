@@ -59,6 +59,9 @@ public class TraceServiceImpl extends AbsWorkService {
     boolean isopen =
         (boolean) SpUtils.getParam(getApplicationContext(), Constant.ISOPENSCREENSLKEY, false);
     Constant.isOpenScreenSL = isopen;
+    boolean isRecentKill =
+        (boolean) SpUtils.getParam(getApplicationContext(), Constant.ISOPENRECENTKILLKEY, false);
+    Constant.isOpenRecentKill = isRecentKill;
     registerBroadCast();
     return sShouldStopService;
   }

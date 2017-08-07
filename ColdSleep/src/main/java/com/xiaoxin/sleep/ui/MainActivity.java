@@ -24,7 +24,6 @@ import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
@@ -51,8 +50,6 @@ import java.util.List;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import static com.xiaoxin.library.common.LibraryCons.load_recent_run_app;
 
 public class MainActivity extends BaseActivity
     implements BaseQuickAdapter.OnItemClickListener, BaseQuickAdapter.OnItemLongClickListener {
@@ -93,8 +90,6 @@ public class MainActivity extends BaseActivity
     mOtherAdapter.setOnItemClickListener(this);
     mSleepHeaderView.getAdapter().setOnItemLongClickListener(this);
     mOtherAdapter.setOnItemLongClickListener(this);
-//    ShellUtils.CommandResult commandResult = ShellUtils.execCommand(load_recent_run_app, true, true);
-//    KLog.e(commandResult);
   }
 
   @Override protected void onResume() {

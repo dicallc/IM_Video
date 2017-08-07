@@ -126,7 +126,7 @@ public class Utils {
       if (null == mUserSaveDisAppFromDB || mUserSaveDisAppFromDB.size() == 0) {
         appInfo.isSelect = false;
       } else {
-          //对比用户所存列表是否存在设置是否选中
+        //对比用户所存列表是否存在设置是否选中
         if (mUserSaveDisAppFromDB.contains(appInfo)) {
           appInfo.isSelect = true;
         } else {
@@ -136,6 +136,13 @@ public class Utils {
       mAppInfos.add(appInfo);
     }
     return mAppInfos;
+  }
+
+  public static String loadRecentRunSubStr(String str) {
+    int indexOf = str.indexOf("u0");
+    int lastIndexOf = str.indexOf("/");
+    String result_str = str.substring(indexOf + 1, lastIndexOf);
+    return result_str;
   }
 }
 

@@ -12,6 +12,7 @@ public class LibraryCons {
   public static final String make_app_to_disenble ="pm disable-user ";
   public static final String make_app_to_enble="pm enable  ";
   public static final String uninstall_app="pm uninstall ";
+  public static final String load_rencent_run_app="dumpsys activity | grep \"mFocusedActivity\"";
   public static final String SELECTENABLE="enable";
   public static final String SELECTDisabled="Disabled";
   public static final String SELECTEAll="all";

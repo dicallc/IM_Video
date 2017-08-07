@@ -34,6 +34,7 @@ public class SettingActivity extends AppCompatActivity {
   @BindView(R.id.setting_screen_sleep) SuperTextView settingScreenSleep;
   @BindView(R.id.setting_screen_sleep_time) SettingNormalView settingScreenSleepTime;
   int select_index = 0;
+  @BindView(R.id.setting_recent_app_kill) SuperTextView mSettingRecentAppKill;
 
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -45,6 +46,11 @@ public class SettingActivity extends AppCompatActivity {
     } else {
       settingScreenSleep.setSwitchIsChecked(false);
     }
+    if (Constant.isOpenRecentKill) {
+      mSettingRecentAppKill.setSwitchIsChecked(true);
+    } else {
+      mSettingRecentAppKill.setSwitchIsChecked(false);
+    }
     settingScreenSleep.setSwitchCheckedChangeListener(
         new SuperTextView.OnSwitchCheckedChangeListener() {
           @Override public void onCheckedChanged(CompoundButton mCompoundButton, boolean mB) {
@@ -53,9 +59,17 @@ public class SettingActivity extends AppCompatActivity {
                 Constant.isOpenScreenSL);
           }
         });
+    mSettingRecentAppKill.setSwitchCheckedChangeListener(
+        new SuperTextView.OnSwitchCheckedChangeListener() {
+          @Override public void onCheckedChanged(CompoundButton mCompoundButton, boolean mB) {
+            Constant.isOpenScreenSL = mB;
+            SpUtils.setParam(SettingActivity.this, Constant.ISOPENRECENTKILLKEY,
+                Constant.isOpenRecentKill);
+          }
+        });
 
     Transition transitionSlideRight = null;
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       transitionSlideRight =
           TransitionInflater.from(this).inflateTransition(R.transition.slide_right);
       getWindow().setEnterTransition(transitionSlideRight);
@@ -100,7 +114,7 @@ public class SettingActivity extends AppCompatActivity {
     overridePendingTransition(0, 0);
     Intent mIntent = new Intent(SettingActivity.this, SelectAppActivity.class);
     mIntent.putExtra(LibraryCons.ACTION, LibraryCons.ACTION_OPEN);
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
       startActivityWithOptions(mIntent);
     } else {
       startActivity(mIntent);
@@ -114,7 +128,7 @@ public class SettingActivity extends AppCompatActivity {
         .itemsCallbackSingleChoice(select_index, new MaterialDialog.ListCallbackSingleChoice() {
           @Override public boolean onSelection(MaterialDialog mMaterialDialog, View mView, int mI,
               CharSequence mCharSequence) {
-            select_index=mI;
+            select_index = mI;
             String time = mCharSequence.toString().replace("分钟", "");
             int mInt = Integer.parseInt(time);
             SpUtils.setParam(SettingActivity.this, Constant.SLEEP_TIME_KEY, mInt + "");
