@@ -62,7 +62,7 @@ public class SettingActivity extends AppCompatActivity {
     mSettingRecentAppKill.setSwitchCheckedChangeListener(
         new SuperTextView.OnSwitchCheckedChangeListener() {
           @Override public void onCheckedChanged(CompoundButton mCompoundButton, boolean mB) {
-            Constant.isOpenScreenSL = mB;
+            Constant.isOpenRecentKill = mB;
             SpUtils.setParam(SettingActivity.this, Constant.ISOPENRECENTKILLKEY,
                 Constant.isOpenRecentKill);
           }

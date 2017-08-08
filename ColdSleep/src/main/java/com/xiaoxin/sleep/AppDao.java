@@ -315,7 +315,7 @@ public class AppDao {
         if (mList.contains(userdis.packageName)) {
           //如果在前台默认不睡眠
           if (Constant.isOpenRecentKill && userdis.packageName.equals(result)) {
-            return;
+           continue;
           }
           KLog.e("睡眠" + userdis.appName);
           userdis.isWarn = false;
