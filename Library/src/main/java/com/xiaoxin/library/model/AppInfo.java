@@ -27,7 +27,9 @@ public class AppInfo implements Comparable<AppInfo> {
   @Override public int compareTo(@NonNull AppInfo appInfo) {
     if (open_num > appInfo.open_num) {
       return -1;
-    } else {
+    } else if(open_num ==appInfo.open_num){
+      return 0;
+    }else {
       return 1;
     }
   }
