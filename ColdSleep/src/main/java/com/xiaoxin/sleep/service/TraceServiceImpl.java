@@ -56,6 +56,7 @@ public class TraceServiceImpl extends AbsWorkService {
    * @return 应当停止服务, true; 应当启动服务, false; 无法判断, 什么也不做, null.
    */
   @Override public Boolean shouldStopService(Intent intent, int flags, int startId) {
+    //是否开启服务关闭应用
     boolean isopen =
         (boolean) SpUtils.getParam(getApplicationContext(), Constant.ISOPENSCREENSLKEY, false);
     Constant.isOpenScreenSL = isopen;

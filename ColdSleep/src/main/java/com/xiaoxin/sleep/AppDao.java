@@ -93,7 +93,7 @@ public class AppDao {
       clearCache();
       SetMemoryCache(mAppCache);
       list.addAll(mAppCache.all);
-      EventBus.getDefault().post(new Event(Event.MONDAY));
+      EventBus.getDefault().post(new Event(Event.ShowList));
       new SyncThread(mActivity, true).start();
     } else {
       new SyncThread(mActivity, true).start();
@@ -140,6 +140,9 @@ public class AppDao {
     }
   }
 
+  /**
+   * root 获取APP列表
+   */
   class SyncThread extends Thread {
     private boolean isSendEvent;
     public Activity mContext;

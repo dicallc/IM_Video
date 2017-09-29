@@ -5,6 +5,9 @@ package com.xiaoxin.sleep.common;
  */
 
 public class Constant {
+  /**
+   * 锁屏杀APP
+   */
   public static boolean isOpenScreenSL = false;
   public static boolean isOpenRecentKill = false;
   public final static String ISOPENSCREENSLKEY = "isOpenScreenSL";

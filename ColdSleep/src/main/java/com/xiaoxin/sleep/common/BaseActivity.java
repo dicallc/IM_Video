@@ -42,7 +42,14 @@ public class BaseActivity extends AppCompatActivity {
     mDialog = new MaterialDialog.Builder(this).title(title)
         .content("请深呼吸休息一下")
         .progress(true, 0)
-        .progressIndeterminateStyle(true)
+        .progressIndeterminateStyle(false)
+        .show();
+  }
+  protected void showloadDialog() {
+    mDialog = new MaterialDialog.Builder(this)
+        .content("请深呼吸休息一下")
+        .progress(true, 0)
+        .progressIndeterminateStyle(false)
         .show();
   }
 

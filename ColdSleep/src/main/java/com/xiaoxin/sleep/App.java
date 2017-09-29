@@ -2,7 +2,7 @@ package com.xiaoxin.sleep;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
+import com.tencent.bugly.crashreport.CrashReport;
 import com.xdandroid.hellodaemon.DaemonEnv;
 import com.xiaoxin.sleep.service.TraceServiceImpl;
 
@@ -19,12 +19,19 @@ public class App extends Application {
     //配置数据库
     //setupDatabase();
     DaemonEnv.initialize(this, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
-    try {
-      startService(new Intent(this, TraceServiceImpl.class));
-    } catch (Exception ignored) {
-    }
+    //try {
+    //  startService(new Intent(this, TraceServiceImpl.class));
+    //} catch (Exception ignored) {
+    //}
     context = this;
+    new Thread(mRunnable).start();
   }
+
+  Runnable mRunnable = new Runnable() {
+    @Override public void run() {
+      CrashReport.initCrashReport(getApplicationContext(), "2d2fba589f", false);
+    }
+  };
 
   public static Context getAppContext() {
     return context;

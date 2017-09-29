@@ -24,7 +24,12 @@ public class SettingNormalView extends LinearLayout {
     TextView subTitleName;
     private String title_text;
     private String sub_title_text;
-
+    public void setTitleText(String str){
+        titleName.setText(str);
+    }
+    public void setSubTitleText(String str){
+        subTitleName.setText(str);
+    }
     public SettingNormalView(Context context) {
         this(context, null);
     }

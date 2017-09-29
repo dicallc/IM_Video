@@ -21,11 +21,11 @@ public class Event {
    */
   public static final int NOTIFYADAPTER = 2;
   public static final int getDisList = 3;
-  public static final int THURSDAY = 4;
+  public static final int ShowList = 4;
   public static final int FRIDAY = 5;
   public static final int SATURDAY = 6;
 
-  @IntDef({ SUNDAY, MONDAY, NOTIFYADAPTER, getDisList, THURSDAY, FRIDAY, SATURDAY })
+  @IntDef({ SUNDAY, MONDAY, NOTIFYADAPTER, getDisList, ShowList, FRIDAY, SATURDAY })
   @Retention(RetentionPolicy.SOURCE) public @interface WeekDays {
   }
 

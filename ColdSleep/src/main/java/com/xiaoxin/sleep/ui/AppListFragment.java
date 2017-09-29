@@ -87,7 +87,7 @@ public class AppListFragment extends BaseFragment
     @Subscribe(threadMode = ThreadMode.MAIN, priority = 100)
     public void onAppDaoMessage(Event msg) {
         switch (msg.getCurrentDay()) {
-            case Event.MONDAY:
+            case Event.ShowList:
                 list.clear();
                 List<AppInfo> mAllUserAppList = AppDao.getInstance().getList();
                 list.addAll(mAllUserAppList);

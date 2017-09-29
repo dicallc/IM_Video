@@ -65,25 +65,24 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String action = getIntent().getStringExtra(LibraryCons.ACTION);
 
-        //第一次为false，点击冷冻后既不是第一次
-        mIsFirst = (boolean) SpUtils.getParam(mActivity, LibraryCons.NotFIRST, false);
-        if (mIsFirst && !LibraryCons.ACTION_OPEN.equals(action)) {
-            Intent mIntent = new Intent(mActivity, MainActivity.class);
-            startActivity(mIntent);
-            finish();
-            return;
-        }
+        if (initLocalData()) return;
         setContentView(R.layout.activity_select_app);
         ButterKnife.bind(this);
         EventBus.getDefault().register(this);
+        initView();
+        initData();
+        initTransition();
+    }
+
+    private void initView() {
         initTab();
         mToolbar.setTitle("");
         setSupportActionBar(mToolbar);
-//        mToolbar.inflateMenu(R.menu.menu_select);
         mFab.setOnClickListener(this);
-        initData();
+    }
+
+    private void initTransition() {
         Transition transitionSlideRight = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             transitionSlideRight =
@@ -92,8 +91,22 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
         }
     }
 
+    private boolean initLocalData() {
+        String action = getIntent().getStringExtra(LibraryCons.ACTION);
+
+        //第一次为false，点击冷冻后既不是第一次
+        mIsFirst = (boolean) SpUtils.getParam(mActivity, LibraryCons.NotFIRST, false);
+        if (mIsFirst && !LibraryCons.ACTION_OPEN.equals(action)) {
+            Intent mIntent = new Intent(mActivity, MainActivity.class);
+            startActivity(mIntent);
+            finish();
+            return true;
+        }
+        return false;
+    }
+
     private void initData() {
-        showloadDialog("获取app中");
+        showloadDialog();
     }
 
     private void initTab() {

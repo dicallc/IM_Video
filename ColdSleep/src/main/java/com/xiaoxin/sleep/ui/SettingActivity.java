@@ -22,6 +22,7 @@ import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.common.Constant;
+import com.xiaoxin.sleep.service.TraceServiceImpl;
 import com.xiaoxin.sleep.view.SettingNormalView;
 
 import static com.xiaoxin.sleep.common.Constant.SLEEP_TIME_VALUE;
@@ -57,6 +58,11 @@ public class SettingActivity extends AppCompatActivity {
             Constant.isOpenScreenSL = mB;
             SpUtils.setParam(SettingActivity.this, Constant.ISOPENSCREENSLKEY,
                 Constant.isOpenScreenSL);
+            if (mB == true) {
+              startService(new Intent(SettingActivity.this, TraceServiceImpl.class));
+            } else {
+              stopService(new Intent(SettingActivity.this, TraceServiceImpl.class));
+            }
           }
         });
     mSettingRecentAppKill.setSwitchCheckedChangeListener(
@@ -86,8 +92,10 @@ public class SettingActivity extends AppCompatActivity {
     String time = (String) SpUtils.getParam(SettingActivity.this, Constant.SLEEP_TIME_KEY, "");
     if (null == time || TextUtils.isEmpty(time)) {
       SLEEP_TIME_VALUE = 0;
+      settingScreenSleepTime.setSubTitleText("默认是立即睡眠");
     } else {
       SLEEP_TIME_VALUE = Integer.parseInt(time);
+      settingScreenSleepTime.setSubTitleText("锁屏" + SLEEP_TIME_VALUE + "分钟后睡眠");
     }
     String[] mArray = getResources().getStringArray(R.array.sleep_time);
     for (int i = 0; i < mArray.length; i++) {
