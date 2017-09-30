@@ -280,7 +280,8 @@ public class AppDao {
 
   public int findWarnApp(List<AppInfo> mData) {
     int num = 0;
-    for (AppInfo mAppInfo : mData) {
+    for (int i = 0; i < mData.size(); i++) {
+      AppInfo mAppInfo=mData.get(i);
       if (mAppInfo.isWarn) {
         num++;
         ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true, true);
