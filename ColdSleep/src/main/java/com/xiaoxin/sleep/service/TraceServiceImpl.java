@@ -64,7 +64,8 @@ public class TraceServiceImpl extends AbsWorkService {
         (boolean) SpUtils.getParam(getApplicationContext(), Constant.ISOPENRECENTKILLKEY, false);
     Constant.isOpenRecentKill = isRecentKill;
     registerBroadCast();
-    return sShouldStopService;
+    KLog.e("isopen"+isopen);
+    return !isopen;
   }
 
   @Override public void startWork(Intent intent, int flags, int startId) {
