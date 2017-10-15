@@ -150,18 +150,22 @@ public class SelectAppActivity extends BaseActivity implements View.OnClickListe
                         SpUtils.setParam(mActivity, LibraryCons.NotFIRST, true);
                         List<AppInfo> mList = mAppListFragment.getData();
                         List<AppInfo> part = new ArrayList<>();
+                        List<String> commands = new ArrayList<>();
+
                         for (AppInfo mAppInfo : mList) {
                             if (mAppInfo.isSelect) {
 
                                 //  如果已经禁用了，就不执行命令了
                                 if (mAppInfo.isEnable) {
                                     mAppInfo.isEnable = false;
-                                    ShellUtils.execCommand(LibraryCons.make_app_to_disenble + mAppInfo.packageName, true,
-                                            true);
+                                    commands.add(LibraryCons.make_app_to_disenble + mAppInfo.packageName);
+
                                 }
                                 part.add(mAppInfo);
                             }
                         }
+                        ShellUtils.execCommand(commands, true,
+                                true);
                         subscriber.onNext(part);
                         subscriber.onComplete();
                     }
