@@ -16,7 +16,7 @@ import butterknife.Unbinder;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
-import com.xiaoxin.sleep.AppDao;
+import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.adapter.SelectAppListAdapter;

@@ -13,7 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import com.xiaoxin.library.model.AppInfo;
-import com.xiaoxin.sleep.AppDao;
+import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.model.RunSericeModel;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,10 +108,14 @@ public class Utils {
     PackageManager pm = mContext.getApplication().getPackageManager();
     List<PackageInfo> packgeInfos =
         pm.getInstalledPackages(PackageManager.GET_UNINSTALLED_PACKAGES);
+    //如果是在用户已经选择冷冻列表中则要设置选中状态
+    List<AppInfo> mUserSaveDisAppFromDB = AppDao.getInstance().getUserSaveDisAppFromDB();
     for (PackageInfo packgeInfo : packgeInfos) {
       ApplicationInfo mApplicationInfo = packgeInfo.applicationInfo;
       //如果是系统程序就跳出本次循环
       if ((mApplicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) > 0) continue;
+      //是否禁用
+      boolean enabled = mApplicationInfo.enabled;
       String appName = packgeInfo.applicationInfo.loadLabel(pm).toString();
       String packageName = packgeInfo.packageName;
       Drawable drawable = packgeInfo.applicationInfo.loadIcon(pm);
@@ -119,9 +123,8 @@ public class Utils {
       Bitmap bm = bd.getBitmap();
       String path = mContext.getFilesDir().getPath();
       String icon_path = com.xiaoxin.library.utils.Utils.savePic(bm, path, packageName);
-      AppInfo appInfo = new AppInfo(appName, packageName, icon_path);
-      //如果是在用户已经选择冷冻列表中则要设置选中状态
-      List<AppInfo> mUserSaveDisAppFromDB = AppDao.getInstance().getUserSaveDisAppFromDB();
+      AppInfo appInfo = new AppInfo(appName, packageName, icon_path,enabled);
+
       //如果内存为空就直接赋值为false
       if (null == mUserSaveDisAppFromDB || mUserSaveDisAppFromDB.size() == 0) {
         appInfo.isSelect = false;

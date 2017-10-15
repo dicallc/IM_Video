@@ -24,12 +24,11 @@ import butterknife.OnClick;
 import com.bumptech.glide.Glide;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
-import com.tencent.bugly.crashreport.CrashReport;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
-import com.xiaoxin.sleep.AppDao;
+import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
@@ -75,6 +74,7 @@ public class MainActivity extends BaseActivity
     isIgnoreBatteryOption(this);
     mViewComplete = new ViewCompleteImpl();
     getContentView().getViewTreeObserver().addOnGlobalLayoutListener(mViewComplete);
+//    Debug.stopMethodTracing();
   }
 
   private void initData() {

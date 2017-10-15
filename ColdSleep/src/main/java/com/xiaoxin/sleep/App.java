@@ -2,8 +2,11 @@ package com.xiaoxin.sleep;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Debug;
+
 import com.tencent.bugly.crashreport.CrashReport;
 import com.xdandroid.hellodaemon.DaemonEnv;
+import com.xiaoxin.sleep.service.InitializeService;
 import com.xiaoxin.sleep.service.TraceServiceImpl;
 
 /**
@@ -11,25 +14,22 @@ import com.xiaoxin.sleep.service.TraceServiceImpl;
  */
 
 public class App extends Application {
-  static Context context;
-  //private static DaoSession daoSession;
+    static Context context;
 
-  @Override public void onCreate() {
-    super.onCreate();
-    //配置数据库
-    DaemonEnv.initialize(this, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
-    context = this;
-    new Thread(mRunnable).start();
-  }
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        DaemonEnv.initialize(this, TraceServiceImpl.class, DaemonEnv.DEFAULT_WAKE_UP_INTERVAL);
+    //GreenDao的初始化
+//        GreenDaoManager.getInstance()
+        context = this;
+//    InitializeService.start(this);
 
-  Runnable mRunnable = new Runnable() {
-    @Override public void run() {
-      CrashReport.initCrashReport(getApplicationContext(), "2d2fba589f", false);
     }
-  };
 
-  public static Context getAppContext() {
-    return context;
-  }
+
+    public static Context getAppContext() {
+        return context;
+    }
 
 }

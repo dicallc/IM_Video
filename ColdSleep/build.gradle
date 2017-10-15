@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.jakewharton.butterknife'
 apply plugin: 'AndResGuard'
 apply plugin: 'me.tatarka.retrolambda'
-//apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'org.greenrobot.greendao'
 
 android {
   def globalConfiguration = rootProject.extensions.getByName("ext")
@@ -56,12 +56,12 @@ android {
     }
   }
   //greendao配置
-//  greendao {
-//    //版本号，升级时可配置
-//    schemaVersion 1
-//    daoPackage 'com.xiaoxin.sleep.greendao'//设置DaoMaster、DaoSession、Dao包名
-//    targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
-//  }
+  greendao {
+    //版本号，升级时可配置
+    schemaVersion 1
+    daoPackage 'com.xiaoxin.sleep.greendao'//设置DaoMaster、DaoSession、Dao包名
+    targetGenDir 'src/main/java'//设置DaoMaster、DaoSession、Dao目录
+  }
 }
 andResGuard {
   // mappingFile = file("./resource_mapping.txt")
@@ -128,4 +128,5 @@ dependencies {
   compile project(':MaterialSearchView')
   compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
   compile 'com.tencent.bugly:crashreport:2.6.5'
+  compile 'org.greenrobot:greendao:3.2.0' // add library
 }

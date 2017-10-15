@@ -1,4 +1,4 @@
-package com.xiaoxin.sleep;
+package com.xiaoxin.sleep.dao;
 
 import android.app.Activity;
 import android.content.Context;
@@ -9,6 +9,7 @@ import com.socks.library.KLog;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.library.utils.SpUtils;
+import com.xiaoxin.sleep.App;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.model.Event;
@@ -53,13 +54,7 @@ public class AppDao {
     return list;
   }
 
-  public List<AppInfo> getAllUserAppList() {
-    return mAllUserAppInfos;
-  }
 
-  public void setAllUserAppInfos(List<AppInfo> mAllUserAppInfos) {
-    this.mAllUserAppInfos = mAllUserAppInfos;
-  }
 
   private void SetMemoryCache(AppCache mAppCache) {
     EnList.addAll(mAppCache.en);
@@ -67,17 +62,6 @@ public class AppDao {
     mAllUserAppInfos.addAll(mAppCache.all);
   }
 
-  private void getLocalCache(Activity mActivity) {
-    String json = (String) SpUtils.getParam(mActivity, LibraryCons.LOCAL_DB_NAME, "");
-    if (!TextUtils.isEmpty(json)) {
-      AppCache mAppCache = new Gson().fromJson(json, AppCache.class);
-      clearCache();
-      SetMemoryCache(mAppCache);
-      list.addAll(mAppCache.en);
-    } else {
-      initListData(mActivity);
-    }
-  }
 
   private void clearCache() {
     //    list.clear();
@@ -122,17 +106,14 @@ public class AppDao {
       mSuggestions = new String[userSaveDisAppFromDB.size()];
       for (int i = 0; i < userSaveDisAppFromDB.size(); i++) {
         mSuggestions[i] = userSaveDisAppFromDB.get(i).appName;
-        if (!mAllUserAppInfos.contains(userSaveDisAppFromDB.get(i))) {
+        //使用indexof寻找
+        int indexOf = mAllUserAppInfos.indexOf(userSaveDisAppFromDB.get(i));
+        if (!(indexOf>= 0)) {
           userSaveDisAppFromDB.remove(i);
-        }
-      }
-      loadEnAppList();
-      //从未睡眠列表中寻找用户需要睡眠是否有已经苏醒
-      for (AppInfo userdis : userSaveDisAppFromDB) {
-        if (EnList.contains(userdis)) {
-          userdis.isWarn = true;
-        } else {
-          userdis.isWarn = false;
+        }else{
+          //如果全部app列表有，就赋值最新状态
+          boolean isEnable = mAllUserAppInfos.get(indexOf).isEnable;
+          userSaveDisAppFromDB.get(i).setEnable(isEnable);
         }
       }
       EventBus.getDefault().post(new Event(Event.getDisList, userSaveDisAppFromDB));
@@ -156,31 +137,33 @@ public class AppDao {
       clearCache();
       mAllUserAppInfos = Utils.getAllUserAppInfos(mContext);
       //获取未被禁用的app列表
-      loadEnAppList();
+//      loadEnAppList();
       //获取禁用列表
-      loadDisAppList();
+//      loadDisAppList();
       saveLocalCache();
       list.clear();
       list.addAll(mAllUserAppInfos);
-      if (isSendEvent) EventBus.getDefault().post(new Event(Event.MONDAY));
+      if (isSendEvent)  EventBus.getDefault().post(new Event(Event.ShowList));
+
+        EventBus.getDefault().post(new Event(Event.MONDAY));
     }
   }
 
   private void loadEnAppList() {
-    EnList.clear();
-    ShellUtils.CommandResult allEnAppsRes =
-        ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
-    String mAllEnMsg = allEnAppsRes.successMsg;
-    String[] mSplit = mAllEnMsg.split("package:");
-    for (int i = 1; i < mSplit.length; i++) {
-      for (AppInfo mAppInfo : mAllUserAppInfos) {
-        if (mSplit[i].equals(mAppInfo.packageName)) {
-          mAppInfo.isEnable = true;
-          EnList.add(mAppInfo);
-          break;
-        }
-      }
-    }
+//    EnList.clear();
+//    ShellUtils.CommandResult allEnAppsRes =
+//        ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
+//    String mAllEnMsg = allEnAppsRes.successMsg;
+//    String[] mSplit = mAllEnMsg.split("package:");
+//    for (int i = 1; i < mSplit.length; i++) {
+//      for (AppInfo mAppInfo : mAllUserAppInfos) {
+//        if (mSplit[i].equals(mAppInfo.packageName)) {
+//          mAppInfo.isEnable = true;
+//          EnList.add(mAppInfo);
+//          break;
+//        }
+//      }
+//    }
   }
 
   private List<String> loadEnAppListApplyPackage() {
@@ -197,17 +180,17 @@ public class AppDao {
   }
 
   private void loadDisAppList() {
-    ShellUtils.CommandResult allDisAppsRes =
-        ShellUtils.execCommand(LibraryCons.allDisabledPackage, true, true);
-    String[] DisApps = allDisAppsRes.successMsg.split("package:");
-    for (int i = 1; i < DisApps.length; i++) {
-      for (AppInfo mAppInfo : mAllUserAppInfos) {
-        if (DisApps[i].equals(mAppInfo.packageName)) {
-          mAppInfo.isEnable = false;
-          Dislist.add(mAppInfo);
-        }
-      }
-    }
+//    ShellUtils.CommandResult allDisAppsRes =
+//        ShellUtils.execCommand(LibraryCons.allDisabledPackage, true, true);
+//    String[] DisApps = allDisAppsRes.successMsg.split("package:");
+//    for (int i = 1; i < DisApps.length; i++) {
+//      for (AppInfo mAppInfo : mAllUserAppInfos) {
+//        if (DisApps[i].equals(mAppInfo.packageName)) {
+//          mAppInfo.isEnable = false;
+//          Dislist.add(mAppInfo);
+//        }
+//      }
+//    }
   }
 
   private void checkCacheExit(AppInfo mAppInfo) {

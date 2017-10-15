@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 import com.socks.library.KLog;
 import com.xiaoxin.library.utils.SpUtils;
-import com.xiaoxin.sleep.AppDao;
+import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.common.Constant;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
