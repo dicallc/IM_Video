@@ -125,11 +125,13 @@ public class MainActivity extends BaseActivity
       @Override
       public void subscribe(ObservableEmitter<RxModelWithSy> subscriber) throws Exception {
         //找出已经解冻的app进行冻结
+        List<AppInfo> list=new ArrayList<>();
         List<AppInfo> mData = mSleepHeaderView.getAdapter().getData();
-        int mWarnApp = AppDao.getInstance().findWarnApp(mData);
         List<AppInfo> mOtherAdapterData = mOtherAdapter.getData();
-        int mWarnApp1 = AppDao.getInstance().findWarnApp(mOtherAdapterData);
-        RxModelWithSy rxModelWithSy = new RxModelWithSy(mWarnApp, mWarnApp1, mData, mOtherAdapterData);
+        list.addAll(mData);
+        list.addAll(mOtherAdapterData);
+        int mWarnApp = AppDao.getInstance().findWarnApp(list);
+        RxModelWithSy rxModelWithSy = new RxModelWithSy(mWarnApp, 0, mData, mOtherAdapterData);
         subscriber.onNext(rxModelWithSy);
         subscriber.onComplete();
       }
