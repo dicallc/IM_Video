@@ -79,7 +79,7 @@ public class MainActivity extends BaseActivity
 
   private void initData() {
     Observable<RxModelWithSy> observable = AppDao.getInstance().MainInit();
-    observable.subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+    observable // 指定 subscribe() 发生在 IO 线程
             .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<RxModelWithSy>() {
       @Override
       public void accept(RxModelWithSy rxModelWithSy) throws Exception {

@@ -28,6 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
 
 import static com.xiaoxin.library.common.LibraryCons.load_rencent_run_app;
 
@@ -244,7 +245,7 @@ public class AppDao {
                 subscriber.onNext(rxModelWithSy);
                 subscriber.onComplete();
             }
-        });
+        }).subscribeOn(Schedulers.io());
         return observable;
 
     }
