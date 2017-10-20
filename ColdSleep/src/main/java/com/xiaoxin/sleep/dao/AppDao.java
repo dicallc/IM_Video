@@ -14,6 +14,7 @@ import com.xiaoxin.sleep.App;
 import com.xiaoxin.sleep.common.Constant;
 import com.xiaoxin.sleep.model.AppCache;
 import com.xiaoxin.sleep.model.Event;
+import com.xiaoxin.sleep.model.RxModelWithSy;
 import com.xiaoxin.sleep.utils.ShellUtils;
 import com.xiaoxin.sleep.utils.Utils;
 
@@ -23,6 +24,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.greenrobot.eventbus.EventBus;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 
 import static com.xiaoxin.library.common.LibraryCons.load_rencent_run_app;
 
@@ -220,6 +225,28 @@ public class AppDao {
      */
     public void saveUserSaveDisAppToDB(List<AppInfo> mAppInfos) {
         new SaveUserDisThread(mAppInfos).start();
+    }
+
+    public Observable<RxModelWithSy> MainInit(){
+        Observable<RxModelWithSy> observable = Observable.create(new ObservableOnSubscribe<RxModelWithSy>() {
+            @Override
+            public void subscribe(ObservableEmitter<RxModelWithSy> subscriber) throws Exception {
+                String time = (String) SpUtils.getParam(App.getAppContext(), Constant.SLEEP_TIME_KEY, "");
+                if (null == time || TextUtils.isEmpty(time)) {
+                    Constant.SLEEP_TIME_VALUE = 0;
+                } else {
+                    Constant.SLEEP_TIME_VALUE = Integer.parseInt(time);
+                }
+                //找出已经解冻的app进行冻结
+                List<AppInfo> list = getUserSaveDisAppFromDB();
+                List<AppInfo> sortAppList = sortAppList(list);
+                RxModelWithSy rxModelWithSy = new RxModelWithSy(list, sortAppList);
+                subscriber.onNext(rxModelWithSy);
+                subscriber.onComplete();
+            }
+        });
+        return observable;
+
     }
 
     public List<AppInfo> getUserSaveDisAppFromDB() {

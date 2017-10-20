@@ -78,15 +78,15 @@ public class MainActivity extends BaseActivity
   }
 
   private void initData() {
-    String time = (String) SpUtils.getParam(mActivity, Constant.SLEEP_TIME_KEY, "");
-    if (null == time || TextUtils.isEmpty(time)) {
-      Constant.SLEEP_TIME_VALUE = 0;
-    } else {
-      Constant.SLEEP_TIME_VALUE = Integer.parseInt(time);
-    }
-    List<AppInfo> sList = AppDao.getInstance().getUserSaveDisAppFromDB();
-    List<AppInfo> headList = AppDao.getInstance().sortAppList(sList);
-    initList(sList, headList);
+    Observable<RxModelWithSy> observable = AppDao.getInstance().MainInit();
+    observable.subscribeOn(Schedulers.io()) // 指定 subscribe() 发生在 IO 线程
+            .observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<RxModelWithSy>() {
+      @Override
+      public void accept(RxModelWithSy rxModelWithSy) throws Exception {
+
+        initList(rxModelWithSy.mData, rxModelWithSy.mOtherAdapterData);
+      }
+    });
     mSleepHeaderView.getAdapter().setOnItemClickListener(this);
     mOtherAdapter.setOnItemClickListener(this);
     mSleepHeaderView.getAdapter().setOnItemLongClickListener(this);

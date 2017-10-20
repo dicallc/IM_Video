@@ -29,6 +29,7 @@ import android.content.pm.ApplicationInfo;
 import android.os.Build;
 import android.view.View;
 import com.tencent.smtt.sdk.ValueCallback;
+import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
 import com.tencent.smtt.sdk.WebView;
@@ -85,7 +86,9 @@ public class SystemWebViewEngine implements CordovaWebViewEngine {
         this.webView = webView;
         cookieManager = new SystemCookieManager(webView);
     }
-
+    public SystemWebView getSystemWebView(){
+        return webView;
+    }
     @Override
     public void init(CordovaWebView parentWebView, CordovaInterface cordova, CordovaWebViewEngine.Client client,
               CordovaResourceApi resourceApi, PluginManager pluginManager,

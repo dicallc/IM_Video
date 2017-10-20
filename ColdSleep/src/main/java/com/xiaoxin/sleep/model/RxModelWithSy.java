@@ -21,6 +21,11 @@ public class RxModelWithSy {
         this.mOtherAdapterData = mOtherAdapterData;
     }
 
+    public RxModelWithSy(List<AppInfo> mData, List<AppInfo> mOtherAdapterData) {
+        this.mData = mData;
+        this.mOtherAdapterData = mOtherAdapterData;
+    }
+
     public RxModelWithSy() {
     }
 }
