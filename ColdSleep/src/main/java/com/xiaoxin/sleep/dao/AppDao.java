@@ -310,6 +310,29 @@ public class AppDao {
 
         return num;
     }
+    public int findWarnApp(List<AppInfo> mData,List<AppInfo> mSecData) {
+        int num = 0;
+        List<String> cmmoands = new ArrayList<>();
+        for (int i = 0; i < mData.size(); i++) {
+            AppInfo mAppInfo = mData.get(i);
+            if (mAppInfo.isWarn) {
+                num++;
+                cmmoands.add(LibraryCons.make_app_to_disenble + mAppInfo.packageName);
+                mAppInfo.isWarn = false;
+            }
+        }
+        for (int i = 0; i < mSecData.size(); i++) {
+            AppInfo mAppInfo = mSecData.get(i);
+            if (mAppInfo.isWarn) {
+                num++;
+                cmmoands.add(LibraryCons.make_app_to_disenble + mAppInfo.packageName);
+                mAppInfo.isWarn = false;
+            }
+        }
+        ShellUtils.execCommand(cmmoands, true, true);
+
+        return num;
+    }
 
     public void DoScreenBrSync(Context mContext) {
         new ScreenBrSyncThread(mContext).start();
