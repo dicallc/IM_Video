@@ -10,7 +10,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,13 +25,11 @@ import com.chad.library.adapter.base.BaseQuickAdapter;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.xiaoxin.library.common.LibraryCons;
 import com.xiaoxin.library.model.AppInfo;
-import com.xiaoxin.library.utils.SpUtils;
 import com.xiaoxin.library.utils.Utils;
-import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.R;
 import com.xiaoxin.sleep.adapter.OtherAppListAdapter;
 import com.xiaoxin.sleep.common.BaseActivity;
-import com.xiaoxin.sleep.common.Constant;
+import com.xiaoxin.sleep.dao.AppDao;
 import com.xiaoxin.sleep.model.Event;
 import com.xiaoxin.sleep.model.RxModelWithSy;
 import com.xiaoxin.sleep.utils.ShellUtils;
@@ -74,7 +71,6 @@ public class MainActivity extends BaseActivity
     isIgnoreBatteryOption(this);
     mViewComplete = new ViewCompleteImpl();
     getContentView().getViewTreeObserver().addOnGlobalLayoutListener(mViewComplete);
-//    Debug.stopMethodTracing();
   }
 
   private void initData() {

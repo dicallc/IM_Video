@@ -160,22 +160,6 @@ public class AppDao {
         }
     }
 
-    private void loadEnAppList() {
-//    EnList.clear();
-//    ShellUtils.CommandResult allEnAppsRes =
-//        ShellUtils.execCommand(LibraryCons.allEnablePackageV3, true, true);
-//    String mAllEnMsg = allEnAppsRes.successMsg;
-//    String[] mSplit = mAllEnMsg.split("package:");
-//    for (int i = 1; i < mSplit.length; i++) {
-//      for (AppInfo mAppInfo : mAllUserAppInfos) {
-//        if (mSplit[i].equals(mAppInfo.packageName)) {
-//          mAppInfo.isEnable = true;
-//          EnList.add(mAppInfo);
-//          break;
-//        }
-//      }
-//    }
-    }
 
     private List<String> loadEnAppListApplyPackage() {
 
@@ -190,30 +174,7 @@ public class AppDao {
         return arr;
     }
 
-    private void loadDisAppList() {
-//    ShellUtils.CommandResult allDisAppsRes =
-//        ShellUtils.execCommand(LibraryCons.allDisabledPackage, true, true);
-//    String[] DisApps = allDisAppsRes.successMsg.split("package:");
-//    for (int i = 1; i < DisApps.length; i++) {
-//      for (AppInfo mAppInfo : mAllUserAppInfos) {
-//        if (DisApps[i].equals(mAppInfo.packageName)) {
-//          mAppInfo.isEnable = false;
-//          Dislist.add(mAppInfo);
-//        }
-//      }
-//    }
-    }
 
-    private void checkCacheExit(AppInfo mAppInfo) {
-        int index = 0;
-        for (int j = 0; j < list.size(); j++) {
-            AppInfo model = list.get(j);
-            if (model.appName.equals(mAppInfo.appName)) index++;
-            if (j == list.size() - 1 && index == 0) {
-                list.add(mAppInfo);
-            }
-        }
-    }
 
     private void saveLocalCache() {
         AppCache mAppCache = new AppCache(EnList, Dislist, mAllUserAppInfos);
@@ -277,16 +238,6 @@ public class AppDao {
         SpUtils.setParam(App.getAppContext(), LibraryCons.LOCAL_USER_DISAPP_DB_NAME, mJson);
     }
 
-    private AppInfo findModel(List<AppInfo> lists, AppInfo mAppInfo) {
-        AppInfo mPartModel = null;
-        for (AppInfo info : lists) {
-            if (info.appName.equals(mAppInfo.appName)) {
-                mPartModel = info;
-                break;
-            }
-        }
-        return mPartModel;
-    }
 
     public List<AppInfo> sortAppList(List<AppInfo> list) {
         Collections.sort(list);
@@ -295,21 +246,6 @@ public class AppDao {
         return appInfos;
     }
 
-    public int findWarnApp(List<AppInfo> mData) {
-        int num = 0;
-        List<String> cmmoands = new ArrayList<>();
-        for (int i = 0; i < mData.size(); i++) {
-            AppInfo mAppInfo = mData.get(i);
-            if (mAppInfo.isWarn) {
-                num++;
-                cmmoands.add(LibraryCons.make_app_to_disenble + mAppInfo.packageName);
-                mAppInfo.isWarn = false;
-            }
-        }
-        ShellUtils.execCommand(cmmoands, true, true);
-
-        return num;
-    }
     public int findWarnApp(List<AppInfo> mData,List<AppInfo> mSecData) {
         int num = 0;
         List<String> cmmoands = new ArrayList<>();
