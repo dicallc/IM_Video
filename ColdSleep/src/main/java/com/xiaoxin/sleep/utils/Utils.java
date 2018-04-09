@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.util.Log;
 import com.xiaoxin.library.model.AppInfo;
 import com.xiaoxin.sleep.dao.AppDao;
@@ -119,8 +120,13 @@ public class Utils {
       String appName = packgeInfo.applicationInfo.loadLabel(pm).toString();
       String packageName = packgeInfo.packageName;
       Drawable drawable = packgeInfo.applicationInfo.loadIcon(pm);
-      BitmapDrawable bd = (BitmapDrawable) drawable;
-      Bitmap bm = bd.getBitmap();
+      Bitmap bm=null;
+      if (Build.VERSION.SDK_INT >=Build.VERSION_CODES.O) {
+        bm=AppIconHelperV26.getAppIcon(pm,packageName);
+      }else{
+        BitmapDrawable bd = (BitmapDrawable) drawable;
+         bm = bd.getBitmap();
+      }
       String path = mContext.getFilesDir().getPath();
       String icon_path = com.xiaoxin.library.utils.Utils.savePic(bm, path, packageName);
       AppInfo appInfo = new AppInfo(appName, packageName, icon_path,enabled);
