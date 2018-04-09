@@ -201,8 +201,14 @@ public class AppDao {
                 }
                 //找出已经解冻的app进行冻结
                 List<AppInfo> list = getUserSaveDisAppFromDB();
-                List<AppInfo> sortAppList = sortAppList(list);
-                RxModelWithSy rxModelWithSy = new RxModelWithSy(list, sortAppList);
+                RxModelWithSy rxModelWithSy=null;
+                //超过8个才进行筛选
+                if (list.size()>8){
+                    List<AppInfo> sortAppList = sortAppList(list);
+                     rxModelWithSy = new RxModelWithSy(list, sortAppList);
+                }else{
+                    rxModelWithSy = new RxModelWithSy(list, list);
+                }
                 subscriber.onNext(rxModelWithSy);
                 subscriber.onComplete();
             }
@@ -240,8 +246,10 @@ public class AppDao {
 
 
     public List<AppInfo> sortAppList(List<AppInfo> list) {
+        if (list.size()<8){
+            return list;
+        }
         Collections.sort(list);
-        //KLog.e("dicallc", list.toString());
         List<AppInfo> appInfos = list.subList(0, 8);
         return appInfos;
     }

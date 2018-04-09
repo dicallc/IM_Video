@@ -1,5 +1,5 @@
 //include ':app'
 include ':ColdSleep',
     ':Library',':MaterialSearchView'
-//include ':sdk', ':tlslibrary', ':presentation', ':ui', ':im', ':CordovaLib', ':ColdSleep',
+//include ':sdk', ':tlslibrary', ':presentation', ':ui', ':im', ':CordovaLib',
 //    ':Library'

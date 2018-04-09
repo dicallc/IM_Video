@@ -96,6 +96,7 @@ public class MainActivity extends BaseActivity
 
   private void initList(List<AppInfo> mSList, List<AppInfo> mHeadList) {
     mSleepHeaderView.setList(mHeadList);
+    if(mSList.size()>8)
     mOtherAdapter.setList(mSList.subList(8, mSList.size()));
   }
 
