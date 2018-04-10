@@ -165,7 +165,7 @@ dependencies {
   compile 'com.jakewharton:butterknife:8.6.0'
   annotationProcessor 'com.jakewharton:butterknife-compiler:8.6.0'
   compile project(':ui')
-  compile 'com.android.support:recyclerview-v7:25+'
+  compile rootProject.ext.androidDependencies["recyclerView"]
   compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.18'
   compile 'com.squareup.okhttp3:okhttp:3.8.0'
   compile 'com.zhy:okhttputils:2.6.2'
@@ -185,9 +185,11 @@ dependencies {
   compile 'com.antonionicolaspina:revealtextview:2.0'
   compile(name: 'aria-core-3.1.9', ext: 'aar')
   compile files('libs/ZipEntry.jar')
-  compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+  compile ('com.afollestad.material-dialogs:core:0.9.4.5') {
+    exclude group: 'com.android.support' //exclude 可以解决 lib冲突的问题。
+  }
   compile 'com.android.support.constraint:constraint-layout:1.0.2'
-  compile 'com.android.support:design:25+'
+  compile rootProject.ext.androidDependencies["design"]
   compile 'com.lzy.widget:imagepicker:0.5.5'
   compile 'com.qiniu:qiniu-android-sdk:7.3.+'
 }

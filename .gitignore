@@ -14,3 +14,6 @@
 !/im/im-release.apk
 /CordovaLib/build/
 /im/im-release.apk
+/Library/Library.iml
+/ColdSleep/ColdSleep.iml
+/MaterialSearchView/MaterialSearchView.iml
