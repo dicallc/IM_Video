@@ -26,6 +26,9 @@
 2.电子书APP
 3.程序冻结
 //http://blog.sina.com.cn/s/blog_7452896e0102w0lq.html
+4.注册监听手机锁频广播
+http://www.cnblogs.com/Coderwei2016/p/6023312.html
+
 4.
 
 
